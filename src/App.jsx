@@ -1,126 +1,28 @@
-import Navbar from "./components/Navbar";
-import "./index.css";
-import { Link } from "react-router-dom";
-import Banner from "./components/Banner";
-import packageAImg from "./assets/packageA.jpg";
-import packageBImg from "./assets/packageB.jpg";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import Booking from "./pages/Booking";
+import AddOn from "./pages/AddOn";
+import ContactPage from "./pages/ContactPage";
+import WhyChooseUs from "./pages/WhyChooseUs";
 
+// Auth Pages
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Dashboard from "./components/Dashboard";
 
 export default function App() {
-    const bookings = [
-    { name: "Ali Bin Ahmad", startDate: "2025-10-20", endDate: "2025-10-22", location: "Taman Negara" },
-    { name: "Sara Lim", startDate: "2025-10-25", endDate: "2025-10-27", location: "Gunung Ledang" },
-    { name: "Mika Tan", startDate: "2025-11-01", endDate: "2025-11-03", location: "Janda Baik" },
-  ];
   return (
-    
-    <div className="bg-gray-50 min-h-screen text-gray-900">
-      <Navbar />
-        <div>
-      <Banner />
-      {/* other content like your packages and booking table */}
-    </div>
-      {/* Hero Section */}
-      <div id="hero"className="text-center mt-10 px-4">
-        <h1 className="text-5xl font-bold text-red-500">Welcome to Kaiso Camp 🏕️</h1>
-        <p className="mt-4 text-lg text-gray-700">
-          Your next adventure starts here.
-        </p>
-      </div>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/booking" element={<Booking />} />
+      <Route path="/addon" element={<AddOn />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/why-us" element={<WhyChooseUs />} />
 
-      {/* Packages Section */}
-      <section id="packages" className="mt-16 px-6 flex flex-col md:flex-row justify-center items-center gap-8">
-        {/* Package A */}
-<div className="relative w-[500px] h-[500px] rounded-2xl overflow-hidden shadow-lg filter grayscale" style={{ backgroundImage: `url(${packageAImg})`, backgroundSize: "cover",      // fill the div completely
-    backgroundPosition: "center", // center the main part of the image
-    backgroundRepeat: "no-repeat" }}>
-  {/* Background Image */}
-
-  {/* Overlay for readability */}
-  <div className="absolute inset-0 bg-black bg-opacity-25"></div>
-
-  {/* Content */}
-  <div className="relative z-10 p-6 text-center text-white flex flex-col justify-between h-full">
-    <div>
-      <h2 className="text-xl font-semibold mb-2">🔥 Package A</h2>
-      <p className="mb-2">Unavailable</p>
-      <p className="mb-4">
-        Tent size: 200cm x 205cm<br />Height: 135cm
-      </p>
-      <div className="space-y-2">
-        <p>RM50 - 2 days 1 night</p>
-        <p>RM80 - 3 days 2 nights</p>
-      </div>
-    </div>
-
-    <button className="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed mt-4">
-      Unavailable
-    </button>
-  </div>
-</div>
-
-{/* Package B */}
-<div className="relative w-[500px] h-[500px] rounded-2xl overflow-hidden shadow-lg"  style={{ backgroundImage: `url(${packageBImg})`,  backgroundSize: "cover",      // fill the div completely
-    backgroundPosition: "center", // center the main part of the image
-    backgroundRepeat: "no-repeat"}}>
-  {/* Background Image */}
-
-  {/* Overlay for darkening so text is readable */}
-  <div className="absolute inset-0 bg-black bg-opacity-30"></div>
-
-  {/* Content */}
-  <div className="relative z-10 p-6 text-center text-white flex flex-col justify-between h-full">
-    <div>
-      <h2 className="text-xl font-semibold mb-2">🔥 Package B</h2>
-      <p className="mb-2">Available</p>
-      <p className="mb-4">
-        Tent size: 210cm x 320cm<br />Height: 180cm
-      </p>
-      <div className="space-y-2">
-        <p>RM110 - 2 days 1 night</p>
-        <p>RM150 - 3 days 2 nights</p>
-      </div>
-    </div>
-
-    <Link to="/booking" state={{ package: "B" }}>
-      <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg mt-4">
-        Book Now
-      </button>
-    </Link>
-  </div>
-</div>
-      </section>
-      
-           {/* Booking Details Table */}
-      <div className="mt-16 mx-auto max-w-4xl bg-white shadow-lg rounded-xl p-6">
-        <h2 className="text-2xl font-bold text-center mb-4">📋 Booking Details</h2>
-        <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden">
-          <thead className="bg-green-600 text-white">
-            <tr>
-              <th className="py-2 px-4 border">Name</th>
-              <th className="py-2 px-4 border">Start Date</th>
-              <th className="py-2 px-4 border">End Date</th>
-              <th className="py-2 px-4 border">Location</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings.map((b, index) => (
-              <tr key={index} className="text-center hover:bg-green-50">
-                <td className="py-2 px-4 border">{b.name}</td>
-                <td className="py-2 px-4 border">{b.startDate}</td>
-                <td className="py-2 px-4 border">{b.endDate}</td>
-                <td className="py-2 px-4 border">{b.location}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-
-      {/* Footer */}
-      <footer className="text-center mt-16 py-6 text-gray-500 border-t">
-        © 2025 Kaiso Camp. All rights reserved.
-      </footer>
-    </div>
+            {/* Auth Pages */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+    </Routes>
   );
 }
