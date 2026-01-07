@@ -4,8 +4,12 @@ export default function AddOnModal({ onClose, onSave, selected }) {
   const [addons, setAddons] = useState([]);
   const [selectedItems, setSelectedItems] = useState(selected);
 
+ 
+  const API_URL = import.meta.env.VITE_API_URL; // your Node.js backend
+
+  // Fetch add-ons from Node.js backend
   useEffect(() => {
-    fetch("http://localhost:8080/api/addon")
+    fetch(`${API_URL}/api/addon`)
       .then((res) => res.json())
       .then((data) => setAddons(data))
       .catch((err) => console.error("Error fetching addons:", err));
@@ -61,8 +65,8 @@ export default function AddOnModal({ onClose, onSave, selected }) {
                     />
                     <h3 className="text-lg font-semibold text-gray-800">{addon.name}</h3>
                     <p className="text-gray-600 mt-1">RM {addon.price}</p>
-                    <p className={`mt-1 text-sm ${addon.avail ? "text-green-600" : "text-red-500"}`}>
-                      {addon.avail ? "Available" : "Unavailable"}
+                    <p className={`mt-1 text-sm ${addon.available  ? "text-green-600" : "text-red-500"}`}>
+                      {addon.available  ? "Available" : "Unavailable"}
                     </p>
                     <input type="checkbox" readOnly checked={isSelected} className="mt-2 w-5 h-5 accent-blue-600" />
                   </div>

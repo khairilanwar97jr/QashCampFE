@@ -64,7 +64,7 @@ export default function Banner() {
   }, [buttonAppeared]);
 
   return (
-    <div className="relative h-[800px] flex flex-col justify-center items-center text-white text-center overflow-hidden">
+    <div className="relative h-[950px] flex flex-col justify-center items-center text-white text-center overflow-hidden">
       {/* Background */}
       {images.map((img, index) => (
         <div

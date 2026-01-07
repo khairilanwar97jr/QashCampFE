@@ -1,40 +1,50 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 import Navbar from "../components/Navbar";
+import maintenance1 from "../assets/maintenance1.jpg";
+import maintenance2 from "../assets/maintenance2.jpg";
+import maintenance3 from "../assets/maintenance3.jpg";
+import maintenance4 from "../assets/maintenance4.jpg";
+import maintenance5 from "../assets/maintenance5.jpg";
+import maintenance6 from "../assets/maintenance6.jpg";
 
+// Export the items array separately
 // Export the items array separately
 export const whyUsItems = [
   {
     title: "Regular Maintenance",
     text: "We make sure every item is properly serviced and maintained on schedule so you always receive it in top condition.",
-    img: "https://picsum.photos/400/300?random=1",
+    img: maintenance6,
   },
   {
     title: "Every Rental = Fresh Setup",
     text: "After each rental, our team checks, cleans, and resets the item before passing it to the next customer.",
-    img: "https://picsum.photos/400/300?random=2",
+    img: maintenance1,
   },
   {
     title: "Safe & Reliable Equipment",
     text: "Our equipment is monitored closely to ensure safety, reliability, and consistent performance.",
-    img: "https://picsum.photos/400/300?random=3",
+    img: maintenance4,
   },
   {
     title: "Responsive Support Team",
     text: "If there’s an issue, our support team responds quickly so your experience stays smooth.",
-    img: "https://picsum.photos/400/300?random=4",
+    img: maintenance2,
   },
   {
     title: "Fair & Transparent Pricing",
     text: "We don’t believe in hidden charges — what you see is what you pay.",
-    img: "https://picsum.photos/400/300?random=5",
+    img: maintenance3,
   },
   {
     title: "Our Tent",
     text: "High-quality tent from trusted brands to ensure durability, safety, and comfort for every camping experience.",
-    img: "https://picsum.photos/400/300?random=6",
+    img: maintenance5,
   },
 ];
+
+
+
 
 export default function WhyChooseUs() {
   return (

@@ -1,124 +1,154 @@
 import React, { useState } from "react";
 
+// Import your new local images
+import exampleImage1 from "../assets/exampleimage1.jpg";
+import exampleImage2 from "../assets/exampleimage2.jpg";
+import exampleImage3 from "../assets/exampleimage3.jpg";
+
 export default function TimelineSection() {
   const [modalImg, setModalImg] = useState(null);
 
   const moments = [
     {
-      date: "2025-01-15",
-      img: "https://picsum.photos/id/1018/400/300",
-      caption: "Had a great camping night with friends!",
-      by: "Ali",
-    },
-    {
-      date: "2025-02-10",
-      img: "https://picsum.photos/id/1025/400/300",
+      date: "2025-11-02",
+      img: exampleImage1,
       caption:
-        "If you want, I can rewrite your polaroid + caption JSX to make it look like a real polaroid with handwritten text under the image, matching your notebook aesthetic.",
-      by: "Sara",
+        "Buat rasa rasa nak try manual tent. Sebelum ni pakai air tent kita kasi survey dulu. So far nice!",
+      by: "Nazri",
     },
     {
-      date: "2025-03-05",
-      img: "https://picsum.photos/id/1035/400/300",
-      caption: "Cooking by the campfire. Delicious meals!",
-      by: "Mika",
+      date: "2025-12-29",
+      img: exampleImage2,
+      caption:
+        "Layan camping dekat Behrang malam new year. 4h3m puas hati satu fam hujan tak masuk air. Sambut new year dengan kawan2",
+      by: "Rawandi",
     },
     {
-      date: "2025-04-12",
-      img: "https://picsum.photos/id/1043/400/300",
-      caption: "Night under the stars, feeling peaceful.",
-      by: "Kaiso",
+      date: "2025-12-31",
+      img: exampleImage3,
+      caption:
+        "Dapat guna Tarp dengan Meja. Cuak gak malam tu kena sekat dengan kepala air hahahax",
+      by: "RARA",
     },
   ];
 
   return (
     <div
       id="timeline"
-      className="max-w-8xl w-full mx-auto mt-16 p-6 rounded-xl shadow-lg h-[600px] overflow-y-scroll bg-repeat bg-center"
+      className="max-w-8xl mx-auto h-[800px] overflow-y-scroll px-12 pt-8"
       style={{
-        backgroundImage: `url(/src/assets/notebook.jpg)`,
-        backgroundSize: "600px",
+        backgroundImage: `url(/src/assets/notebook.jpg), url(/src/assets/woodtree.jpg)`,
+        backgroundSize: "680px auto, cover",
+        backgroundRepeat: "no-repeat, no-repeat",
+        backgroundPosition: "center top, center center",
       }}
     >
-      <h2
-        className="text-3xl text-center mb-6"
-        style={{
-          fontFamily: "'Patrick Hand', cursive",
-          color: "#444", // pencil gray
-          textShadow: "1px 1px 1px #bbb", // subtle pencil shadow
-        }}
-      >
-        Moments Timeline
-      </h2>
+      {/* MAIN ROW */}
+      <div className="flex gap-12">
+        {/* LEFT PANE */}
+        <div className="w-64 sticky top-20 self-start -translate-x-2 sm:-translate-x-0 hidden sm:flex flex-col">
+          <h2
+            className="text-4xl sm:text-8xl mb-6"
+            style={{
+              fontFamily: "'Fredoka One', cursive",
+              color: "#597E52",
+            }}
+          >
+            Share your
+            <br />
+            moments
+          </h2>
 
-      <div className="flex flex-col space-y-8">
-        {moments.map((m, idx) => (
-          <div key={idx} className="flex items-start space-x-6">
-            {/* Date */}
-            <div
+          <p
+            className="text-lg leading-relaxed"
+            style={{
+              fontFamily: "'Patrick Hand', cursive",
+              color: "#444",
+            }}
+          >
+            A place to pin memories, stories, photos and handwritten notes.
+          </p>
+        </div>
+
+        {/* NOTEBOOK / TIMELINE */}
+        <div className="flex-1 flex justify-center w-full">
+          <div className="w-full max-w-[680px] relative translate-x-4 sm:-translate-x-16 md:-translate-x-[150px]">
+            <h2
               className="text-3xl text-center mb-6"
               style={{
-                fontFamily: "'Shadows Into Light', cursive",
-                color: "#373636ff", // pencil gray
-                textShadow: "1px 1px 1px #bbb", // subtle pencil shadow
+                fontFamily: "'Patrick Hand', cursive",
+                color: "#444",
+                textShadow: "1px 1px 1px #bbb",
               }}
             >
-              <p>{m.date}</p>
-            </div>
+              Moments Timeline
+            </h2>
 
-            {/* Image + Caption */}
-            <div className="flex items-start space-x-4">
-              {/* Image */}
-              <div
-                className="relative w-96 h-96 cursor-pointer" // Bigger polaroid
-                onClick={() => setModalImg(m.img)}
-              >
-                {/* Moment image smaller inside polaroid */}
-                <img
-                  src={m.img}
-                  alt={`moment-${idx}`}
-                  className="absolute top-[27px] left-[42px] w-[calc(86%-50px)] h-[calc(85%-50px)] object-cover z-10 rounded"
-                />
+            <div className="flex flex-col space-y-8">
+              {moments.map((m, idx) => (
+                <div key={idx} className="flex justify-center">
+                  {/* Date */}
+<div
+  className="text-xl sm:text-2xl md:text-xl text-center mb-6 mr-4 sm:mr-6 md:mr-10 pr-0 sm:pr-4 md:pr-0"
+  style={{
+    fontFamily: "'Shadows Into Light', cursive",
+    color: "#4379ddff",
+    textShadow: "1px 1px 1px #bbb",
+  }}
+>
+  <p>{m.date}</p>
+</div>
 
-                {/* Polaroid frame behind */}
-                <img
-                  src="/src/assets/pollaroid.png"
-                  alt="polaroid frame"
-                  className="absolute inset-0 w-full h-full z-0 pointer-events-none"
-                />
-              </div>
-
-              {/* Caption + By text, right of image */}
-              <div className="flex flex-col h-80 relative">
-                {/* BY text (Top, static) */}
-                <span
-                  className="text-2xl text-center mb-4"
-                  style={{
-                    fontFamily: "'Shadows Into Light', cursive",
-                    color: "#373636ff",
-                    textShadow: "1px 1px 1px #bbb",
-                  }}
-                >
-                  By: {m.by}
-                </span>
-
-                {/* Sticky Note (independent, positioned inside relative parent) */}
-                <div className="flex-grow relative">
-                  <div
-                    className="absolute bottom-16 left-1 bg-yellow-50 w-72 p-6 rounded shadow-md rotate-[-2deg] text-gray-700 font-handwriting text-base"
-                  >
-                    <p>{m.caption}</p>
-
-                    {/* Tail */}
+                  {/* Image + Caption */}
+                  <div className="flex items-start space-x-4 mr-10">
                     <div
-                      className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[10px] border-b-[10px] border-r-[10px] border-t-transparent border-b-transparent border-r-yellow-50"
-                    ></div>
+                      className="relative w-72 h-72 sm:w-96 sm:h-96 cursor-pointer"
+                      onClick={() => setModalImg(m.img)}
+                    >
+                      <img
+                        src={m.img}
+                        alt={`moment-${idx}`}
+                        className="absolute top-[27px] left-[42px] w-[calc(86%-50px)] h-[calc(85%-50px)] object-cover z-10 rounded"
+                      />
+
+                      <div
+                        className="absolute bottom-9 left-1/2 -translate-x-1/2 z-20 
+                        bg-yellow-50/90 w-72 p-4 rounded shadow-md rotate-[-2deg]"
+                        style={{
+                          fontFamily: "'Shadows Into Light', cursive",
+                          color: "#4379ddff",
+                        }}
+                      >
+                        <p className="text-sm text-center">{m.caption}</p>
+                        <p className="text-xs text-right mt-2">— {m.by}</p>
+                      </div>
+
+                      <img
+                        src="/src/assets/pollaroid.png"
+                        alt="polaroid frame"
+                        className="absolute inset-0 w-full h-full z-0 pointer-events-none"
+                      />
+                    </div>
+
+                    {/* Right-side BY text */}
+                    <div className="flex flex-col h-80 relative">
+                      <span
+                        className="text-2xl text-center mb-4"
+                        style={{
+                          fontFamily: "'Shadows Into Light', cursive",
+                          color: "#4379ddff",
+                          textShadow: "1px 1px 1px #bbb",
+                        }}
+                      >
+                        By: {m.by}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
-        ))}
+        </div>
       </div>
 
       {/* Modal for enlarged image */}

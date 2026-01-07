@@ -12,10 +12,10 @@ export default function PackageSection() {
     {
       displayName: "Package A", // what user sees
       name: "A", // value we send
-      desc: "Tent size: 200cm x 205cm, Height: 135cm",
+      desc: "Tent size: 240cm x 240cm, Height: 160cm",
       img: packageAImg,
-      price: ["RM50 - 2 days 1 night", "RM80 - 3 days 2 nights"],
-      available: false,
+      price: ["RM80 - 2 days 1 night", "RM110 - 3 days 2 nights"],
+      available: true,
     },
     {
       displayName: "Package B",
@@ -36,8 +36,7 @@ export default function PackageSection() {
   ];
 
   return (
-    <div className="w-full py-16 flex flex-col items-center">
-      <h2 className="text-4xl font-bold mb-10">Our Packages</h2>
+    <div className="w-full py-16 flex flex-col items-center bg-[#C6A969]">
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-7xl px-4 auto-rows-fr">
         {items.map((item, i) => (

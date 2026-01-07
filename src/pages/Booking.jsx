@@ -8,16 +8,32 @@ import TermsModal from "../components/TermsModal";
 import packageAImg from "../assets/packageA.jpg";
 import packageBImg from "../assets/packageB.jpg";
 import packageCImg from "../assets/packageC.jpg";
+import packageA1 from "../assets/packageA1.jpg";
+import packageA2 from "../assets/packageA2.jpg";
+import packageA3 from "../assets/packageA3.jpg";
+import packageA4 from "../assets/packageA4.jpg";
 import packageC1 from "../assets/packageC1.png";
 import packageC2 from "../assets/packageC2.png";
 import packageC3 from "../assets/packageC3.png";
 import packageC4 from "../assets/packageC4.png";
+import packageB1 from "../assets/packageB1.jpg";
+import packageB2 from "../assets/packageB2.jpg";
+import packageB3 from "../assets/packageB3.jpg";
+import packageB4 from "../assets/packageB4.jpg";
 
 import ZoomOnHover from "../components/ZoomOnHover"; // import the new component
 
 export default function Booking() {
   const location = useLocation();
-  const selectedPackage = location.state?.packageName; // "A" or "B"
+
+  const packageThumbnails = {
+    A: [packageA1, packageA2, packageA3, packageA4],
+    B: [packageB1, packageB2, packageB3, packageB4],
+    C: [packageC1, packageC2, packageC3, packageC4],
+  };
+
+  const selectedPackage = location.state?.packageName; // "A" | "B" | "C"
+  const thumbnails = packageThumbnails[selectedPackage] || [];
   const packageImg =
     selectedPackage === "A"
       ? packageAImg
@@ -35,7 +51,7 @@ export default function Booking() {
   const [endDate, setEndDate] = useState("");
   // Define package prices per day
   const packagePrices = {
-    A: { 2: 50, 3: 80, 4: 110 }, // etc.
+    A: { 2: 80, 3: 110, 4: 140 }, // etc.
     B: { 2: 110, 3: 150, 4: 180 },
     C: { 2: 150, 3: 200, 4: 220 },
   };
@@ -84,7 +100,6 @@ export default function Booking() {
     alert("Booking submitted successfully!");
   };
 
-  const thumbnails = [packageC1, packageC2, packageC3, packageC4];
   const [enlargedImg, setEnlargedImg] = useState(null);
   const [openBookingForm, setOpenBookingForm] = useState(false);
 
@@ -93,38 +108,108 @@ export default function Booking() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [idNumber, setIdNumber] = useState("");
-  const [address0, setAddress0] = useState("");
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
+  const [address3, setAddress3] = useState("");
   const [campLocation, setCampLocation] = useState("");
   const [submittedData, setSubmittedData] = useState(null);
+
+  const packageIdMapping = {
+    A: 1,
+    B: 2,
+    C: 3,
+  };
+
+  // Add this at the top of your file, after imports
+  const tentPackages = {
+    A: {
+      name: "BLACKDOG",
+      criteria: {
+        type: "Auto Tent",
+        sizeOfPeople: "3-4",
+        color: "Black",
+        desc: "Tent size: 240cm x 240cm, Height: 160cm",
+      },
+    },
+    B: {
+      name: "VIDALIDO POON SAAN M",
+      criteria: {
+        type: "Manual Tent",
+        sizeOfPeople: "4-6",
+        color: "Khakis",
+        desc: "Tent size: 210cm x 320cm, Height: 180cm",
+      },
+    },
+    C: {
+      name: "MOBIGARDEN 10.9 HOLIDAY",
+      criteria: {
+        type: "Auto Tent",
+        sizeOfPeople: "6-8",
+        color: "Black",
+        desc: "Tent size: 450cm x 608cm x 195cm",
+      },
+    },
+  };
 
   return (
     <>
       <Navbar />
-
       {/* Full-width Header Section */}
-      <div className="w-full bg-green-50/80 backdrop-blur-md py-12 mb-8 flex flex-col items-center shadow-md mt-10">
-        <h1 className="text-5xl md:text-6xl font-extrabold text-green-700 mb-4 drop-shadow-md">
-          📝 Book Your Camping Package
+      <div
+        className="w-full backdrop-blur-md mt-24 py-12 mb-4 flex flex-col items-center 
+         px-4 sm:px-6 lg:px-8"
+        style={{
+          backgroundColor: "#fdf6ee",
+        }}
+      >
+        <h1
+          className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 text-center"
+          style={{
+            fontFamily: "'Fredoka One', cursive",
+            color: "#597E52",
+          }}
+        >
+          Book Your Camping Package
         </h1>
-        <p className="text-lg md:text-xl text-gray-700 max-w-2xl text-center px-4">
+
+        <p
+          className="text-base sm:text-lg md:text-xl max-w-2xl text-center px-2"
+          style={{ color: "#4d8a2eff" }}
+        >
           Please fill in your details below and get ready for an amazing
           adventure!
         </p>
       </div>
 
-      <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-200 text-gray-800 py-10 flex flex-col md:flex-row justify-center items-start gap-10 px-4">
+      <div
+        className="min-h-screen text-gray-800 py-10 flex flex-col md:flex-row justify-center items-start gap-10 px-4"
+        style={{ backgroundColor: "#C6A969" }}
+      >
         {/* right: Package Image */}
         <div className="flex flex-col w-full md:w-auto bg-white p-4 rounded-3xl shadow-lg items-center">
-          {/* Main Package Image */}
-          {packageImg && (
-            <ZoomOnHover
-              src={packageImg}
-              className="w-full md:w-[500px] h-auto rounded-2xl"
-            />
+          {/* Package Name */}
+          {selectedPackage && (
+            <h2
+              className="text-2xl md:text-3xl font- mb-4 text-center"
+              style={{
+                fontFamily: "'Fredoka One', cursive",
+                color: "#323631ff",
+              }}
+            >
+              {tentPackages[selectedPackage].name}
+            </h2>
           )}
 
+          {/* right: Package Image */}
+          <div className="flex flex-col w-full md:w-auto bg-white p-4 rounded-3xl shadow-lg items-center max-w-full overflow-hidden">
+            {/* Main Package Image */}
+            {packageImg && (
+              <ZoomOnHover
+                src={packageImg}
+                className="w-full max-w-[300px] md:max-w-[500px] h-auto rounded-2xl"
+              />
+            )}
+          </div>
           {/* Thumbnails */}
           <div className="flex flex-wrap gap-4 mt-6 justify-center">
             {thumbnails.map((img, idx) => (
@@ -137,6 +222,33 @@ export default function Booking() {
               />
             ))}
           </div>
+          {/* Disclaimer */}
+          {selectedPackage && (
+            <div className="mt-2 w-full text-center text-xs text-gray-400 italic">
+              *This picture is taken from the original product owner.
+            </div>
+          )}
+          {/* Package Criteria */}
+          {selectedPackage && (
+            <div className="mt-6 w-full px-4 py-3 bg-gray-100 rounded-xl text-sm">
+              <p>
+                <strong>Type:</strong>{" "}
+                {tentPackages[selectedPackage].criteria.type}
+              </p>
+              <p>
+                <strong>Size:</strong>{" "}
+                {tentPackages[selectedPackage].criteria.sizeOfPeople} people
+              </p>
+              <p>
+                <strong>Color:</strong>{" "}
+                {tentPackages[selectedPackage].criteria.color}
+              </p>
+              <p>
+                <strong>Description:</strong>{" "}
+                {tentPackages[selectedPackage].criteria.desc}
+              </p>
+            </div>
+          )}
 
           {/* Enlarged Image Modal */}
           {enlargedImg && (
@@ -160,10 +272,14 @@ export default function Booking() {
             Book Now
           </button>
         </div>
+
         {openBookingForm && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 px-2">
             {/* Modal Container */}
-            <div className="bg-white rounded-2xl shadow-xl w-[92vw] sm:w-full sm:max-w-md lg:max-w-lg max-h-[90vh] flex flex-col relative mx-auto">
+            <div
+              className="rounded-2xl shadow-xl w-[92vw] sm:w-full sm:max-w-md lg:max-w-lg max-h-[90vh] flex flex-col relative mx-auto"
+              style={{ backgroundColor: "#F7F1DE" }}
+            >
               {/* Header with stacked buttons */}
               <div className="text-center p-3 sm:p-4 border-b relative">
                 <h2 className="text-base sm:text-lg font-bold text-black">
@@ -191,9 +307,9 @@ export default function Booking() {
                       // Reset all controlled state fields
                       setFirstName("");
                       setLastName("");
-                      setAddress0("");
                       setAddress1("");
                       setAddress2("");
+                      setAddress3("");
                       setPhone("");
                       setEmail("");
                       setIdNumber("");
@@ -206,6 +322,7 @@ export default function Booking() {
                       setSubmittedData(null);
                     }}
                     className="absolute top-3 right-12 text-gray-500 hover:text-black text-sm px-2 py-1 border border-gray-300 rounded-md transition"
+                    style={{ backgroundColor: "#ffffffff" }}
                   >
                     Reset
                   </button>
@@ -263,18 +380,18 @@ export default function Booking() {
                 {[
                   {
                     label: "Address Line 1 *",
-                    value: address0,
-                    setValue: setAddress0,
-                  },
-                  {
-                    label: "Address Line 2",
                     value: address1,
                     setValue: setAddress1,
                   },
                   {
-                    label: "Address Line 3",
+                    label: "Address Line 2",
                     value: address2,
                     setValue: setAddress2,
+                  },
+                  {
+                    label: "Address Line 3",
+                    value: address3,
+                    setValue: setAddress3,
                   },
                 ].map((field, idx) => (
                   <div className="relative" key={idx}>
@@ -417,17 +534,16 @@ export default function Booking() {
                         startDate,
                         endDate,
                         campLocation,
-                        address0,
                         address1,
                         address2,
-                        selectedAddOns,
-                        totalPrice,
+                        address3,
                       });
 
                       // Close the modal
                       setOpenBookingForm(false);
                     }}
                     className="flex-1 border border-gray-300 text-black py-3 px-4 rounded-xl font-semibold transition hover:bg-gray-100"
+                    style={{ backgroundColor: "#0b99ffff" }}
                   >
                     No, just submit form
                   </button>
@@ -470,7 +586,7 @@ export default function Booking() {
               pricePerDay === null ? "text-red-600" : "text-gray-800"
             }`}
           >
-            Total Price:{" "}
+            Package Price:{" "}
             {pricePerDay !== null
               ? `RM${totalPricePerDay} (${numDays} ${
                   numDays === 1 ? "day" : "days"
@@ -531,9 +647,9 @@ export default function Booking() {
               <p>
                 <span className="font-semibold">Address:</span>{" "}
                 {[
-                  submittedData.address0,
                   submittedData.address1,
                   submittedData.address2,
+                  submittedData.address3,
                 ]
                   .filter(Boolean)
                   .join(", ") || "-"}
@@ -581,32 +697,60 @@ export default function Booking() {
               </button>
 
               {/* Submit Button */}
+              {/* Submit Button */}
               <button
                 type="submit"
                 onClick={(e) => {
-                  // check mandatory fields
-                  const firstName = document
-                    .getElementById("firstName")
-                    .value.trim();
-                  const phone = document.getElementById("phone").value.trim();
-                  const email = document.getElementById("email").value.trim();
-                  const idNumber = document
-                    .getElementById("idNumber")
-                    .value.trim();
+                  e.preventDefault(); // stop form reload
 
+                  // 1️⃣ Validate mandatory fields
                   if (!firstName || !phone || !email || !idNumber) {
-                    e.preventDefault();
                     alert("Please fill all mandatory fields (*)");
                     return;
                   }
-
                   if (totalPrice === 0) {
-                    e.preventDefault();
                     alert("Please select a valid date range");
                     return;
                   }
 
-                  handleSubmit(e);
+                  // 2️⃣ Build the payload for API
+                  const payload = {
+                    firstName,
+                    lastName,
+                    noId: idNumber,
+                    address1,
+                    address2,
+                    address3,
+                    startDate,
+                    endDate,
+                    packageId: packageIdMapping[selectedPackage],
+                    addOnIds: selectedAddOns.map((a) => a.id),
+                    phoneNo: phone,
+                    emailAddr: email,
+                    campPlace: campLocation,
+                    total: totalPrice,
+                  };
+
+                  // 3️⃣ Check what will be submitted
+                  console.log("Payload to submit:", payload);
+
+                  // 4️⃣ Save summary for display
+                  setSubmittedData({
+                    firstName,
+                    lastName,
+                    phone,
+                    email,
+                    idNumber,
+                    startDate,
+                    endDate,
+                    campLocation,
+                    address1,
+                    address2,
+                    address3,
+                  });
+
+                  // 5️⃣ Later you can send the payload to API
+                  // axios.post("/api/booking", payload)
                 }}
                 className={`bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition w-2/3 ${
                   totalPrice === 0 || !agreed
@@ -626,8 +770,15 @@ export default function Booking() {
       {showModal && (
         <AddOnModal
           selected={selectedAddOns}
-          onClose={() => setShowModal(false)}
-          onSave={handleSaveAddOns}
+          onClose={() => {
+            setShowModal(false);
+            setOpenBookingForm(false); // close booking modal too
+          }}
+          onSave={(data) => {
+            setSelectedAddOns(data); // save add-ons
+            setShowModal(false); // close add-on modal
+            setOpenBookingForm(false); // close booking modal
+          }}
         />
       )}
 

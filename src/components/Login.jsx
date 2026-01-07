@@ -1,10 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showLogin, setShowLogin] = useState(false);
+
+  useEffect(() => {
+    const hasSeenLogin = localStorage.getItem("hasSeenLogin");
+    if (!hasSeenLogin) {
+      setShowLogin(true); // show login modal
+    }
+  }, []);
+
+  const handleClose = () => {
+    localStorage.setItem("hasSeenLogin", "true"); // mark as seen
+    setShowLogin(false);
+  };
 
   const handleLogin = () => {
     const savedUser = JSON.parse(localStorage.getItem("user"));
@@ -19,6 +32,8 @@ export default function Login() {
       alert("Invalid credentials.");
     }
   };
+
+  if (!showLogin) return null; // hide component if already seen
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 px-4">
@@ -52,7 +67,7 @@ export default function Login() {
           <Link className="text-indigo-600 block" to="/register">
             Don't have an account? Register
           </Link>
-          <Link className="text-indigo-600 block" to="/">
+          <Link className="text-indigo-600 block" to="/" onClick={handleClose}>
             Continue as Guest
           </Link>
         </div>
