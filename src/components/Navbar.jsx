@@ -15,6 +15,7 @@ export default function Navbar() {
   const [showModal, setShowModal] = useState(false);
   const [authMode, setAuthMode] = useState("login");
   const [user, setUser] = useState(null);
+  
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user"));
@@ -91,7 +92,8 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <span className="font-medium">Hi, {user.name}</span>
+                <span className="font-medium">Hi, {user.first_name}!</span>
+
                 <button
                   onClick={handleLogout}
                   className="px-5 py-2 border border-gray-700 rounded-full hover:bg-gray-800 hover:text-white transition"
