@@ -22,9 +22,11 @@ import packageB3 from "../assets/packageB3.jpg";
 import packageB4 from "../assets/packageB4.jpg";
 
 import ZoomOnHover from "../components/ZoomOnHover"; // import the new component
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Booking() {
   const location = useLocation();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const packageThumbnails = {
     A: [packageA1, packageA2, packageA3, packageA4],
@@ -150,6 +152,8 @@ export default function Booking() {
       },
     },
   };
+
+  const [successNotification, setSuccessNotification] = useState(null);
 
   return (
     <>
@@ -689,21 +693,11 @@ export default function Booking() {
             <div className="flex gap-3">
               {/* Edit Button */}
               <button
-                type="button"
-                onClick={() => setOpenBookingForm(true)}
-                className="border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-100 transition"
-              >
-                Edit
-              </button>
-
-              {/* Submit Button */}
-              {/* Submit Button */}
-              <button
                 type="submit"
-                onClick={(e) => {
-                  e.preventDefault(); // stop form reload
+                onClick={async (e) => {
+                  e.preventDefault();
 
-                  // 1️⃣ Validate mandatory fields
+                  // Validate mandatory fields
                   if (!firstName || !phone || !email || !idNumber) {
                     alert("Please fill all mandatory fields (*)");
                     return;
@@ -713,7 +707,7 @@ export default function Booking() {
                     return;
                   }
 
-                  // 2️⃣ Build the payload for API
+                  // Build payload
                   const payload = {
                     firstName,
                     lastName,
@@ -731,26 +725,46 @@ export default function Booking() {
                     total: totalPrice,
                   };
 
-                  // 3️⃣ Check what will be submitted
-                  console.log("Payload to submit:", payload);
+                  try {
+                    const res = await fetch(`${API_URL}/api/bookings/book`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(payload),
+                    });
 
-                  // 4️⃣ Save summary for display
-                  setSubmittedData({
-                    firstName,
-                    lastName,
-                    phone,
-                    email,
-                    idNumber,
-                    startDate,
-                    endDate,
-                    campLocation,
-                    address1,
-                    address2,
-                    address3,
-                  });
+                    const data = await res.json();
 
-                  // 5️⃣ Later you can send the payload to API
-                  // axios.post("/api/booking", payload)
+                    if (res.ok) {
+                      // ✅ Show toast notification
+                      setSuccessNotification({
+                        message: "Booking submitted successfully!",
+                        paymentUrl: data.paymentUrl, // optional button
+                      });
+
+                      // Clear form & summary
+                      setFirstName("");
+                      setLastName("");
+                      setPhone("");
+                      setEmail("");
+                      setIdNumber("");
+                      setStartDate("");
+                      setEndDate("");
+                      setCampLocation("");
+                      setAddress1("");
+                      setAddress2("");
+                      setAddress3("");
+                      setSelectedAddOns([]);
+                      setSubmittedData(null);
+                      setOpenBookingForm(false);
+                    } else {
+                      alert(`Error: ${data.message || "Something went wrong"}`);
+                    }
+                  } catch (err) {
+                    console.error("Booking submission error:", err);
+                    alert(
+                      "Failed to submit booking. Check console for details."
+                    );
+                  }
                 }}
                 className={`bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition w-2/3 ${
                   totalPrice === 0 || !agreed
@@ -772,18 +786,58 @@ export default function Booking() {
           selected={selectedAddOns}
           onClose={() => {
             setShowModal(false);
-            setOpenBookingForm(false); // close booking modal too
+            setOpenBookingForm(false);
           }}
           onSave={(data) => {
-            setSelectedAddOns(data); // save add-ons
-            setShowModal(false); // close add-on modal
-            setOpenBookingForm(false); // close booking modal
+            // 1️⃣ Save add-ons
+            setSelectedAddOns(data);
+
+            // 2️⃣ SAVE FORM DATA SNAPSHOT 👇
+            setSubmittedData({
+              firstName,
+              lastName,
+              phone,
+              email,
+              idNumber,
+              startDate,
+              endDate,
+              campLocation,
+              address1,
+              address2,
+              address3,
+            });
+
+            // 3️⃣ Close everything
+            setShowModal(false);
+            setOpenBookingForm(false);
           }}
         />
       )}
 
       {/* Terms & Conditions Modal */}
       {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
+
+      {successNotification && (
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-4 rounded-xl shadow-lg z-50 flex flex-col gap-2">
+          <p>{successNotification.message}</p>
+          {successNotification.paymentUrl && (
+            <button
+              onClick={() =>
+                (window.location.href = successNotification.paymentUrl)
+              }
+              className="bg-white text-green-500 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
+            >
+              Go to Payment
+            </button>
+          )}
+          <button
+            onClick={() => setSuccessNotification(null)}
+            className="text-white underline text-sm mt-1"
+          >
+            Close
+          </button>
+        </div>
+      )}
     </>
   );
 }
