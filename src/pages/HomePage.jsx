@@ -13,6 +13,7 @@ import AuthModal from "../components/AuthModal";
 import LoginForm from "../components/LoginForm";
 import React, { useState, useEffect } from "react";
 import Register from "../components/Register";
+import LatestBookingsTable from "../components/LatestBookingsTable";
 
 export default function HomePage() {
   const bookings = [
@@ -110,6 +111,7 @@ export default function HomePage() {
         <TimelineSection />
       </div>
 
+
       <h2
         className="text-5xl md:text-6xl font-bold text-center mt-10 mb-10"
         style={{
@@ -181,29 +183,11 @@ export default function HomePage() {
 
       {/* Booking Details Table */}
       <div className="mt-16 mx-auto max-w-4xl bg-white shadow-lg rounded-xl p-6">
-        <h2 className="text-2xl font-bold text-center mb-4">
-          📋 Booking Details
-        </h2>
-        <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden">
-          <thead className="bg-green-600 text-white">
-            <tr>
-              <th className="py-2 px-4 border">Name</th>
-              <th className="py-2 px-4 border">Start Date</th>
-              <th className="py-2 px-4 border">End Date</th>
-              <th className="py-2 px-4 border">Location</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings.map((b, index) => (
-              <tr key={index} className="text-center hover:bg-green-50">
-                <td className="py-2 px-4 border">{b.name}</td>
-                <td className="py-2 px-4 border">{b.startDate}</td>
-                <td className="py-2 px-4 border">{b.endDate}</td>
-                <td className="py-2 px-4 border">{b.location}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+         <div>
+      {/* your other homepage content */}
+
+      <LatestBookingsTable />
+    </div>
       </div>
 
       {/* Footer */}
