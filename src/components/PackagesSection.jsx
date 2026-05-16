@@ -1,5 +1,5 @@
 import { Card, CardContent } from "./ui/Card";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/Button";
 import { motion } from "framer-motion";
 import packageAwanImg from "@/assets/package_A_awan.png";
 import packagePurnamaImg from "@/assets/package_B_purnama.png";
