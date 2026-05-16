@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
+
 
 import Navbar from "../components/Navbar";
 import AddOnModal from "../components/AddOnModal";
 import TermsModal from "../components/TermsModal";
 
-import packageAImg from "../assets/packageA.jpg";
-import packageBImg from "../assets/packageB.jpg";
-import packageCImg from "../assets/packageC.jpg";
+import packageAwanImg from "../assets/package_A_awan.png";
+import packagePurnamaImg from "../assets/package_B_purnama.png";
+import packageSenjaImg from "../assets/package_C_senja.png";
+import packageLestariImg from "../assets/package_D_lestari.png";
+import packageEmbunImg from "../assets/package_E_embun.png";
+import packageAuroraImg from "../assets/package_F_aurora.png";
+import packageRimbayuImg from "../assets/package_G_rimbayu.png";
 import packageA1 from "../assets/packageA1.jpg";
 import packageA2 from "../assets/packageA2.jpg";
 import packageA3 from "../assets/packageA3.jpg";
@@ -24,26 +30,66 @@ import packageB4 from "../assets/packageB4.jpg";
 import ZoomOnHover from "../components/ZoomOnHover"; // import the new component
 const API_URL = import.meta.env.VITE_API_URL;
 
+
 export default function Booking() {
   const location = useLocation();
-  const API_URL = import.meta.env.VITE_API_URL;
+  const bookingState = location.state?.booking;
+  const { bookingRef } = useParams();
+  const isExistingBooking = !!bookingRef;
+  const [bookingData, setBookingData] = useState(null);
+
+
+  const [loading, setLoading] = useState(false);
+  const selectedPackage =
+    bookingData?.package?.name || location.state?.packageName;
+
+  const selectedPackageId =
+    bookingData?.package?.id || location.state?.packageId;
+
+  const bookingType =
+    bookingData?.booking_type || location.state?.type || "BOOKING";
+
+  const formMode = isExistingBooking
+    ? (location.state?.type ?? "FINAL_PAYMENT")
+    : (location.state?.type ?? "BOOKING");
+
+  const isWalkIn = formMode === "WALK_IN";
+  const isBooking = formMode === "BOOKING";
+  const isFinalPayment = formMode === "FINAL_PAYMENT";
+
+  const canChooseAddOns =
+    isWalkIn || isExistingBooking;
+
+  const selectedPackagePrice = Number(
+    bookingData?.package_price ?? location.state?.packagePrice ?? 0
+  );
+
+  const depositAmount = Number(
+    bookingData?.deposit_amount ?? location.state?.depositAmount ?? 0
+  );
 
   const packageThumbnails = {
-    A: [packageA1, packageA2, packageA3, packageA4],
-    B: [packageB1, packageB2, packageB3, packageB4],
-    C: [packageC1, packageC2, packageC3, packageC4],
+    Awan: [packageAwanImg, packageA1, packageA2, packageA3, packageA4],
+    Purnama: [packagePurnamaImg, packageB1, packageB2, packageB3, packageB4],
+    Senja: [packageSenjaImg, packageC1, packageC2, packageC3, packageC4],
+    Lestari: [packageLestariImg, packageA1, packageA2, packageA3, packageA4],
+    Embun: [packageEmbunImg, packageB1, packageB2, packageB3, packageB4],
+    Aurora: [packageAuroraImg, packageC1, packageC2, packageC3, packageC4],
+    Rimbayu: [packageRimbayuImg],
   };
 
-  const selectedPackage = location.state?.packageName; // "A" | "B" | "C"
+  const packageImages = {
+    Awan: packageAwanImg,
+    Purnama: packagePurnamaImg,
+    Senja: packageSenjaImg,
+    Lestari: packageLestariImg,
+    Embun: packageEmbunImg,
+    Aurora: packageAuroraImg,
+    Rimbayu: packageRimbayuImg,
+  };
+
   const thumbnails = packageThumbnails[selectedPackage] || [];
-  const packageImg =
-    selectedPackage === "A"
-      ? packageAImg
-      : selectedPackage === "B"
-      ? packageBImg
-      : selectedPackage === "C"
-      ? packageCImg
-      : null;
+  const packageImg = packageImages[selectedPackage] || null;
 
   const [showModal, setShowModal] = useState(false);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
@@ -51,39 +97,130 @@ export default function Booking() {
   const [agreed, setAgreed] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  // Define package prices per day
-  const packagePrices = {
-    A: { 2: 80, 3: 110, 4: 140 }, // etc.
-    B: { 2: 110, 3: 150, 4: 180 },
-    C: { 2: 150, 3: 200, 4: 220 },
-  };
-  // Calculate number of days safely
-  let numDays = 0;
+  // Calculate number of nights safely. Example: Apr 10 -> Apr 11 = 1 night.
+  let numNights = 0;
   if (startDate && endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-    numDays = diffDays > 0 ? diffDays : 0;
+    const diffNights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    numNights = diffNights > 0 ? diffNights : 0;
   }
 
-  // Get price for selected package and days
-  let pricePerDay = null;
-  if (numDays > 0 && packagePrices[selectedPackage]?.[numDays]) {
-    pricePerDay = packagePrices[selectedPackage][numDays];
-  }
+  // Total price from package selected on homepage
+  const basePackagePrice = selectedPackagePrice;
+  const additionalNights = Math.max(numNights - 1, 0);
+  const additionalNightCharge = additionalNights * 50;
+  const packagePrice = basePackagePrice + additionalNightCharge;
+  const addOnsTotal = selectedAddOns.reduce(
+    (sum, a) => sum + Number(a.price || 0),
+    0
+  );
+  const totalPrice = packagePrice + addOnsTotal + depositAmount;
+  const apiTotal = isExistingBooking
+    ? basePackagePrice + additionalNightCharge + addOnsTotal
+    : bookingType === "BOOKING"
+      ? depositAmount
+      : totalPrice;
 
-  // Total price including add-ons
-  const addOnsTotal = selectedAddOns.reduce((sum, a) => sum + a.price, 0);
-  const totalPrice = pricePerDay !== null ? pricePerDay + addOnsTotal : 0;
-  const totalPricePerDay = pricePerDay !== null ? pricePerDay : 0;
+  const submitLabel = isFinalPayment
+    ? "Pay Final Balance"
+    : isWalkIn
+      ? "Confirm Walk In"
+      : "Submit Booking";
 
-  // get package price based on number of days
-  const packagePrice = packagePrices[selectedPackage]?.[numDays] || 0;
+
+  const summaryTheme = isWalkIn
+    ? {
+      card: "bg-green-50 border-green-500",
+      badge: "bg-green-600 text-white",
+      total: "text-green-800",
+      label: "WALK IN",
+    }
+    : isFinalPayment
+      ? {
+        card: "bg-purple-50 border-purple-500",
+        badge: "bg-purple-600 text-white",
+        total: "text-purple-800",
+        label: "FINAL PAYMENT",
+      }
+      : {
+        card: "bg-blue-50 border-blue-500",
+        badge: "bg-blue-600 text-white",
+        total: "text-blue-800",
+        label: "BOOKING",
+      };
 
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to top when component mounts
   }, []);
 
+  useEffect(() => {
+    if (!canChooseAddOns) {
+      setSelectedAddOns([]);
+      setShowModal(false);
+    }
+  }, [canChooseAddOns]);
+
+  useEffect(() => {
+    if (!bookingRef) {
+      setBookingData(null);
+      return;
+    }
+
+    const fetchBooking = async () => {
+      try {
+        const res = await fetch(
+          `${API_URL}/api/bookings/getBooking?ref=${bookingRef}`
+        );
+
+        const data = await res.json();
+
+        if (data.success) {
+          setBookingData(data.data);
+        }
+      } catch (err) {
+        setLoading(false);
+        console.error("Failed to fetch booking:", err);
+      }
+    };
+
+    fetchBooking();
+  }, [bookingRef]);
+
+  useEffect(() => {
+    if (!bookingData) return;
+
+    setFirstName(bookingData.first_name || "");
+    setLastName(bookingData.last_name || "");
+    setPhone(bookingData.phone_no || "");
+    setEmail(bookingData.email_addr || "");
+    setIdNumber(bookingData.no_id || "");
+    setAddress1(bookingData.address1 || "");
+    setAddress2(bookingData.address2 || "");
+    setAddress3(bookingData.address3 || "");
+    setCampLocation(bookingData.camp_place || "");
+    setStartDate(bookingData.start_date || "");
+    setEndDate(bookingData.end_date || "");
+  }, [bookingData]);
+
+
+  useEffect(() => {
+    if (!bookingData) return;
+
+    setSubmittedData({
+      firstName: bookingData.first_name || "",
+      lastName: bookingData.last_name || "",
+      phone: bookingData.phone_no || "",
+      email: bookingData.email_addr || "",
+      idNumber: bookingData.no_id || "",
+      startDate: bookingData.start_date || "",
+      endDate: bookingData.end_date || "",
+      campLocation: bookingData.camp_place || "",
+      address1: bookingData.address1 || "",
+      address2: bookingData.address2 || "",
+      address3: bookingData.address3 || "",
+    });
+  }, [bookingData]);
   // Callback from Add-On modal
   const handleSaveAddOns = (addons) => {
     setSelectedAddOns(addons);
@@ -117,15 +254,19 @@ export default function Booking() {
   const [submittedData, setSubmittedData] = useState(null);
 
   const packageIdMapping = {
-    A: 1,
-    B: 2,
-    C: 3,
+    Awan: 1,
+    Purnama: 2,
+    Senja: 3,
+    Lestari: 4,
+    Embun: 5,
+    Aurora: 6,
+    Rimbayu: 7,
   };
 
   // Add this at the top of your file, after imports
   const tentPackages = {
-    A: {
-      name: "BLACKDOG",
+    Awan: {
+      name: "Package Awan",
       criteria: {
         type: "Auto Tent",
         sizeOfPeople: "3-4",
@@ -133,8 +274,8 @@ export default function Booking() {
         desc: "Tent size: 240cm x 240cm, Height: 160cm",
       },
     },
-    B: {
-      name: "VIDALIDO POON SAAN M",
+    Purnama: {
+      name: "Package Purnama",
       criteria: {
         type: "Manual Tent",
         sizeOfPeople: "4-6",
@@ -142,8 +283,8 @@ export default function Booking() {
         desc: "Tent size: 210cm x 320cm, Height: 180cm",
       },
     },
-    C: {
-      name: "MOBIGARDEN 10.9 HOLIDAY",
+    Senja: {
+      name: "Package Senja",
       criteria: {
         type: "Auto Tent",
         sizeOfPeople: "6-8",
@@ -151,9 +292,78 @@ export default function Booking() {
         desc: "Tent size: 450cm x 608cm x 195cm",
       },
     },
+    Lestari: {
+      name: "Package Lestari",
+      criteria: {
+        type: "Auto Tent",
+        sizeOfPeople: "3-4",
+        color: "Black",
+        desc: "Tent size: 240cm x 240cm, Height: 160cm",
+      },
+    },
+    Embun: {
+      name: "Package Embun",
+      criteria: {
+        type: "Manual Tent",
+        sizeOfPeople: "4-6",
+        color: "Khakis",
+        desc: "Tent size: 210cm x 320cm, Height: 180cm",
+      },
+    },
+    Aurora: {
+      name: "Package Aurora",
+      criteria: {
+        type: "Auto Tent",
+        sizeOfPeople: "6-8",
+        color: "Black",
+        desc: "Tent size: 450cm x 608cm x 195cm",
+      },
+    },
+    Rimbayu: {
+      name: "Package Rimbayu",
+      criteria: {
+        type: "Manual Tent",
+        sizeOfPeople: "6-8",
+        color: "Khakis",
+        desc: "Tent size: 300cm x 300cm, Height: 180cm",
+      },
+    },
   };
 
   const [successNotification, setSuccessNotification] = useState(null);
+
+  const toTitleCase = (str) => {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .filter(Boolean)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  const formatPhone = (value) => {
+    let digits = value.replace(/\D/g, ""); // remove non-numbers
+
+    digits = digits.slice(0, 11); // limit to valid max
+
+    if (digits.length <= 3) return digits;
+
+    return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  };
+
+  const formatNRIC = (value) => {
+    let digits = value.replace(/\D/g, ""); // only numbers
+
+    digits = digits.slice(0, 12); // NRIC = 12 digits
+
+    if (digits.length <= 6) return digits;
+    if (digits.length <= 8)
+      return `${digits.slice(0, 6)}-${digits.slice(6)}`;
+
+    return `${digits.slice(0, 6)}-${digits.slice(6, 8)}-${digits.slice(8)}`;
+  };
+
+  const [finalSummary, setFinalSummary] = useState(null);
 
   return (
     <>
@@ -192,7 +402,7 @@ export default function Booking() {
         {/* right: Package Image */}
         <div className="flex flex-col w-full md:w-auto bg-white p-4 rounded-3xl shadow-lg items-center">
           {/* Package Name */}
-          {selectedPackage && (
+          {selectedPackage && tentPackages[selectedPackage] && (
             <h2
               className="text-2xl md:text-3xl font- mb-4 text-center"
               style={{
@@ -227,7 +437,7 @@ export default function Booking() {
             ))}
           </div>
           {/* Disclaimer */}
-          {selectedPackage && (
+          {selectedPackage && tentPackages[selectedPackage] && (
             <div className="mt-2 w-full text-center text-xs text-gray-400 italic">
               *This picture is taken from the original product owner.
             </div>
@@ -373,8 +583,16 @@ export default function Booking() {
                         type="text"
                         id={field.id}
                         value={field.value}
-                        onChange={(e) => field.setValue(e.target.value)}
-                        className="w-full p-4 rounded-xl border border-gray-300 focus:border-black focus:ring-1 focus:ring-black outline-none bg-white text-black"
+                        onChange={(e) =>
+                          field.setValue(
+                            e.target.value
+                              .toLowerCase()
+                              .split(" ")
+                              .filter(Boolean)
+                              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                              .join(" ")
+                          )
+                        } className="w-full p-4 rounded-xl border border-gray-300 focus:border-black focus:ring-1 focus:ring-black outline-none bg-white text-black"
                         required={field.id === "firstName"}
                       />
                     </div>
@@ -414,6 +632,16 @@ export default function Booking() {
                       id={`address${idx}`}
                       value={field.value}
                       onChange={(e) => field.setValue(e.target.value)}
+                      onBlur={(e) =>
+                        field.setValue(
+                          e.target.value
+                            .toLowerCase()
+                            .split(" ")
+                            .filter(Boolean)
+                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                            .join(" ")
+                        )
+                      }
                       className="w-full p-4 rounded-xl border border-gray-300 focus:border-black focus:ring-1 focus:ring-black outline-none bg-white text-black"
                       required={field.label.includes("*")}
                     />
@@ -452,7 +680,13 @@ export default function Booking() {
                         type={field.type}
                         id={field.id}
                         value={field.value}
-                        onChange={(e) => field.setValue(e.target.value)}
+                        onChange={(e) => {
+                          if (field.id === "phone") {
+                            field.setValue(formatPhone(e.target.value));
+                          } else {
+                            field.setValue(e.target.value);
+                          }
+                        }}
                         className="w-full p-4 rounded-xl border border-gray-300 focus:border-black focus:ring-1 focus:ring-black outline-none bg-white text-black"
                         required
                       />
@@ -468,7 +702,7 @@ export default function Booking() {
                     type="text"
                     id="idNumber"
                     value={idNumber}
-                    onChange={(e) => setIdNumber(e.target.value)}
+                    onChange={(e) => setIdNumber(formatNRIC(e.target.value))}
                     className="w-full p-4 rounded-xl border border-gray-300 focus:border-black focus:ring-1 focus:ring-black outline-none bg-white text-black"
                     required
                   />
@@ -508,6 +742,16 @@ export default function Booking() {
                     id="campLocation"
                     value={campLocation}
                     onChange={(e) => setCampLocation(e.target.value)}
+                    onBlur={(e) =>
+                      setCampLocation(
+                        e.target.value
+                          .toLowerCase()
+                          .split(" ")
+                          .filter(Boolean)
+                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                          .join(" ")
+                      )
+                    }
                     className="w-full p-4 rounded-xl border border-gray-300 focus:border-black focus:ring-1 focus:ring-black outline-none bg-white text-black"
                     required
                   />
@@ -516,13 +760,15 @@ export default function Booking() {
                 {/* Add-On Actions */}
                 <div className="flex gap-3 mt-4">
                   {/* Choose Add-On */}
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(true)}
-                    className="flex-1 bg-black text-white py-3 px-4 rounded-xl font-semibold transition transform hover:scale-105"
-                  >
-                    Choose Add-On
-                  </button>
+                  {canChooseAddOns && (
+                    <button
+                      type="button"
+                      onClick={() => setShowModal(true)}
+                      className="flex-1 bg-black text-white py-3 px-4 rounded-xl font-semibold transition transform hover:scale-105"
+                    >
+                      Choose Add-On
+                    </button>
+                  )}
 
                   {/* No Thank You */}
                   <button
@@ -554,7 +800,7 @@ export default function Booking() {
                 </div>
 
                 {/* Selected Add-Ons Summary */}
-                {selectedAddOns.length > 0 && (
+                {canChooseAddOns && selectedAddOns.length > 0 && (
                   <div className="bg-gray-100 p-4 rounded-xl text-sm">
                     <div className="flex justify-between items-center mb-2">
                       <p className="font-semibold text-black">
@@ -583,20 +829,34 @@ export default function Booking() {
         )}
 
         {/* Summary under the image */}
-        <div className="bg-white shadow-lg rounded-xl p-4 w-full md:w-[500px]">
+        <div
+          className={`${summaryTheme.card} border-2 shadow-lg rounded-xl p-4 w-full md:w-[500px]`}
+        >
           <h2 className="text-lg font-semibold mb-2">🛒 Booking Summary</h2>
+          <div className="mb-3">
+            <span
+              className={`${summaryTheme.badge} rounded-full px-3 py-1 text-xs font-semibold`}
+            >
+              {summaryTheme.label}
+            </span>
+          </div>
           <p
-            className={`font-medium ${
-              pricePerDay === null ? "text-red-600" : "text-gray-800"
-            }`}
+            className={`font-medium ${packagePrice === 0 ? "text-red-600" : "text-gray-800"
+              }`}
           >
             Package Price:{" "}
-            {pricePerDay !== null
-              ? `RM${totalPricePerDay} (${numDays} ${
-                  numDays === 1 ? "day" : "days"
-                })`
-              : "Please select a valid date range"}
+            {basePackagePrice > 0 ? `RM${basePackagePrice}` : "Please choose a package"}
           </p>
+          {additionalNightCharge > 0 && (
+            <p className="mt-1 text-sm text-gray-600">
+              Additional {additionalNights} {additionalNights === 1 ? "night" : "nights"} charge: RM{additionalNightCharge}
+            </p>
+          )}
+          {!isExistingBooking && (
+            <p className="mt-2 font-medium text-gray-800">
+              Deposit: RM{depositAmount}
+            </p>
+          )}
 
           {/* Add-Ons */}
           {selectedAddOns.length > 0 ? (
@@ -616,17 +876,26 @@ export default function Booking() {
 
           {submittedData && (
             <div className="mt-2 border-t pt-3 text-sm text-gray-800 space-y-1">
-              <p className="font-medium mb-1">Customer Details:</p>
+              <div className="flex items-center justify-between gap-3 mb-1">
+                <p className="font-medium">Customer Details:</p>
+                <button
+                  type="button"
+                  onClick={() => setOpenBookingForm(true)}
+                  className="rounded-md bg-white px-3 py-1 text-xs font-semibold text-gray-700 border border-gray-300 hover:bg-gray-100 transition"
+                >
+                  Edit
+                </button>
+              </div>
 
               <p>
                 <span className="font-semibold">Name:</span>{" "}
                 {submittedData.firstName} {submittedData.lastName}
               </p>
-
               <p>
                 <span className="font-semibold">Phone:</span>{" "}
-                {submittedData.phone}
+                {formatPhone(submittedData.phone)}
               </p>
+
 
               <p>
                 <span className="font-semibold">Email:</span>{" "}
@@ -635,7 +904,7 @@ export default function Booking() {
 
               <p>
                 <span className="font-semibold">ID Number:</span>{" "}
-                {submittedData.idNumber}
+                {formatNRIC(submittedData.idNumber)}
               </p>
 
               <p>
@@ -661,8 +930,8 @@ export default function Booking() {
             </div>
           )}
 
-          <div className="mt-4 border-t pt-2 font-semibold">
-            Total: RM{totalPrice}
+          <div className={`mt-4 border-t pt-2 font-bold ${summaryTheme.total}`}>
+            Total: RM{apiTotal}
           </div>
 
           {/* Terms & Submit Row */}
@@ -672,8 +941,7 @@ export default function Booking() {
               <input
                 type="checkbox"
                 checked={agreed}
-                onChange={() => setAgreed(!agreed)}
-                id="agree"
+                readOnly
                 className="w-4 h-4 accent-green-600"
                 required
               />
@@ -697,36 +965,67 @@ export default function Booking() {
                 onClick={async (e) => {
                   e.preventDefault();
 
+
                   // Validate mandatory fields
                   if (!firstName || !phone || !email || !idNumber) {
                     alert("Please fill all mandatory fields (*)");
                     return;
                   }
-                  if (totalPrice === 0) {
+                  if (!startDate || !endDate || numNights === 0) {
                     alert("Please select a valid date range");
                     return;
                   }
-
+                  if (totalPrice === 0) {
+                    alert("Please choose a package");
+                    return;
+                  }
+                  setLoading(true);
+                  const rawNRIC = idNumber.replace(/\D/g, "");
+                  const rawPhone = phone.replace(/\D/g, "");
                   // Build payload
-                  const payload = {
-                    firstName,
-                    lastName,
-                    noId: idNumber,
-                    address1,
-                    address2,
-                    address3,
-                    startDate,
-                    endDate,
-                    packageId: packageIdMapping[selectedPackage],
-                    addOnIds: selectedAddOns.map((a) => a.id),
-                    phoneNo: phone,
-                    emailAddr: email,
-                    campPlace: campLocation,
-                    total: totalPrice,
-                  };
+                  let payload;
+
+                  if (isFinalPayment) {
+                    payload = {
+                      bookingId: bookingData?.id, // or wherever you store it
+                      bookingRef: bookingRef,
+                      addOnIds: selectedAddOns.map((a) => a.id),
+                      extraNightCount: additionalNights,
+                    };
+                  } else {
+                    payload = {
+                      type: formMode,
+                      firstName,
+                      lastName,
+                      noId: rawNRIC,
+                      address1,
+                      address2,
+                      address3,
+                      startDate,
+                      endDate,
+                      packageId: selectedPackageId ?? packageIdMapping[selectedPackage],
+                      addOnIds: selectedAddOns.map((a) => a.id),
+                      phoneNo: rawPhone,
+                      emailAddr: email,
+                      campPlace: campLocation,
+                      package_price: basePackagePrice,
+                      deposit_amount: depositAmount,
+                      total: apiTotal,
+                    };
+                  }
 
                   try {
-                    const res = await fetch(`${API_URL}/api/bookings/book`, {
+                    let endpoint = "";
+
+                    if (isFinalPayment) {
+                      endpoint = `${API_URL}/api/bookings/pay-final`;
+                    } else if (isWalkIn) {
+                      endpoint = `${API_URL}/api/bookings/book`;
+                    } else {
+                      endpoint = `${API_URL}/api/bookings/book`;
+                    }
+
+                    const res = await fetch(endpoint, {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify(payload),
@@ -735,28 +1034,61 @@ export default function Booking() {
                     const data = await res.json();
 
                     if (res.ok) {
-                      // ✅ Show toast notification
+                      setLoading(false);
+                      const bookingId =
+                        data.bookingId || data.id || data.booking?.id;
+
+                      const paymentUrl =
+                        bookingId && data.paymentUrl
+                          ? data.paymentUrl.replace(
+                            "bookingId=undefined",
+                            `bookingId=${bookingId}`
+                          )
+                          : data.paymentUrl;
+
+                      // ✅ TAKE SNAPSHOT (locks summary so it won't change)
+                      const snapshot = {
+                        firstName,
+                        lastName,
+                        phone,
+                        email,
+                        idNumber,
+                        startDate,
+                        endDate,
+                        campLocation,
+                        address1,
+                        address2,
+                        address3,
+                        addOns: [...selectedAddOns],
+                      };
+
+                      setSubmittedData(snapshot);
+
+                      // ✅ Show success popup
                       setSuccessNotification({
                         message: "Booking submitted successfully!",
-                        paymentUrl: data.paymentUrl, // optional button
+                        paymentUrl,
                       });
 
-                      // Clear form & summary
+                      // ✅ Close modal ONLY (DO NOT reset data that affects summary)
+                      setOpenBookingForm(false);
+
+                      // ⚠️ Optional: if you still want UI clean, you can clear form inputs
                       setFirstName("");
                       setLastName("");
                       setPhone("");
                       setEmail("");
                       setIdNumber("");
-                      setStartDate("");
-                      setEndDate("");
                       setCampLocation("");
                       setAddress1("");
                       setAddress2("");
                       setAddress3("");
-                      setSelectedAddOns([]);
-                      setSubmittedData(null);
-                      setOpenBookingForm(false);
+
+                      // ❌ IMPORTANT: DO NOT do this anymore here
+                      // setSelectedAddOns([]);
+                      // setSubmittedData(null);
                     } else {
+                      setLoading(false);
                       alert(`Error: ${data.message || "Something went wrong"}`);
                     }
                   } catch (err) {
@@ -766,14 +1098,20 @@ export default function Booking() {
                     );
                   }
                 }}
-                className={`bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition w-2/3 ${
-                  totalPrice === 0 || !agreed
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
-                }`}
-                disabled={totalPrice === 0 || !agreed}
+                disabled={totalPrice === 0 || !agreed || loading}
+                className={`bg-green-600 hover:bg-green-700 text-white py-3 px-9 rounded-md transition flex-shrink-0 w-2/3 flex items-center justify-center min-h-[48px] text-base font-semibold ${totalPrice === 0 || !agreed || loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+                  }`}
               >
-                Submit Booking
+                {loading ? (
+                  <span className="flex items-center gap-3 text-base font-semibold">
+                    <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+                    Processing...
+                  </span>
+                ) : (
+                  submitLabel
+                )}
               </button>
             </div>
           </div>
@@ -781,7 +1119,7 @@ export default function Booking() {
       </div>
 
       {/* Add-On Modal */}
-      {showModal && (
+      {canChooseAddOns && showModal && (
         <AddOnModal
           selected={selectedAddOns}
           onClose={() => {
@@ -814,8 +1152,20 @@ export default function Booking() {
         />
       )}
 
-      {/* Terms & Conditions Modal */}
-      {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
+      {showTerms && (
+        <TermsModal
+          onClose={() => setShowTerms(false)}
+          onAgree={(signature) => {
+            console.log("Signature:", signature);
+
+            setAgreed(true);       // ✅ AUTO TICK CHECKBOX
+            setShowTerms(false);   // close modal
+
+            // optional: store signature
+            // setSignature(signature);
+          }}
+        />
+      )}
 
       {successNotification && (
         <div className="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-4 rounded-xl shadow-lg z-50 flex flex-col gap-2">

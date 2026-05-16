@@ -1,39 +1,145 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import packageAImg from "@/assets/packageA.jpg";
-import packageBImg from "@/assets/packageB.jpg";
-import packageCImg from "@/assets/packageC.jpg";
+import packageAwanImg from "@/assets/package_A_awan.png";
+import packagePurnamaImg from "@/assets/package_B_purnama.png";
+import packageSenjaImg from "@/assets/package_C_senja.png";
+import packageLestariImg from "@/assets/package_D_lestari.png";
+import packageEmbunImg from "@/assets/package_E_embun.png";
+import packageAuroraImg from "@/assets/package_F_aurora.png";
+import packageRimbayuImg from "@/assets/package_G_rimbayu.png";
 import { useNavigate } from "react-router-dom";
 
 export default function PackageSection() {
   const navigate = useNavigate();
+
+  const getApiPrice = (pkg, fallback) =>
+    Number(
+      pkg?.packagePrice ??
+        pkg?.package_price ??
+        pkg?.price ??
+        pkg?.package_price_amount ??
+        fallback
+    );
+
+  const getApiDeposit = (pkg, fallback) =>
+    Number(
+      pkg?.depositAmount ??
+        pkg?.deposit_amount ??
+        pkg?.deposit ??
+        pkg?.bookingPrice ??
+        pkg?.booking_price ??
+        fallback
+    );
+
   const items = [
     {
-      displayName: "Package A", // what user sees
-      name: "A", // value we send
+      packageId: 1,
+      displayName: "Package Awan", // what user sees
+      name: "Awan", // value we send
       desc: "Tent size: 240cm x 240cm, Height: 160cm",
-      img: packageAImg,
-      price: ["RM80 - 2 days 1 night", "RM110 - 3 days 2 nights"],
+      img: packageAwanImg,
+      price: ["RM70"],
+      packagePrice: 70,
+      depositAmount: 50,
       available: true,
     },
     {
-      displayName: "Package B",
-      name: "B",
+      packageId: 2,
+      displayName: "Package Purnama",
+      name: "Purnama",
       desc: "Tent size: 210cm x 320cm, Height: 180cm",
-      img: packageBImg,
-      price: ["RM110 - 2 days 1 night", "RM150 - 3 days 2 nights"],
+      img: packagePurnamaImg,
+      price: ["RM90"],
+      packagePrice: 90,
+      depositAmount: 50,
       available: true,
     },
     {
-      displayName: "Package C",
-      name: "C",
+      packageId: 3,
+      displayName: "Package Senja",
+      name: "Senja",
       desc: "Tent size: 450cm x 608cm x 195cm",
-      img: packageCImg,
-      price: ["RM150 - 2 days 1 night", "RM200 - 3 days 1 night"],
+      img: packageSenjaImg,
+      price: ["RM100"],
+      packagePrice: 100,
+      depositAmount: 50,
+      available: true,
+    },
+    {
+      packageId: 4,
+      displayName: "Package Lestari",
+      name: "Lestari",
+      desc: "Tent size: 240cm x 240cm, Height: 160cm",
+      img: packageLestariImg,
+      price: ["RM120"],
+      packagePrice: 120,
+      depositAmount: 50,
+      available: true,
+    },
+    {
+      packageId: 5,
+      displayName: "Package Embun",
+      name: "Embun",
+      desc: "Tent size: 210cm x 320cm, Height: 180cm",
+      img: packageEmbunImg,
+      price: ["RM140"],
+      packagePrice: 140,
+      depositAmount: 50,
+      available: true,
+    },
+    {
+      packageId: 6,
+      displayName: "Package Aurora",
+      name: "Aurora",
+      desc: "Tent size: 450cm x 608cm x 195cm",
+      img: packageAuroraImg,
+      price: ["RM160"],
+      packagePrice: 160,
+      depositAmount: 50,
+      available: true,
+    },
+    {
+      packageId: 7,
+      displayName: "Package Rimbayu",
+      name: "Rimbayu",
+      desc: "Tent size: 300cm x 300cm, Height: 180cm",
+      img: packageRimbayuImg,
+      price: ["RM210"],
+      packagePrice: 210,
+      depositAmount: 100,
       available: true,
     },
   ];
+
+  const handleSelectPackage = async (type, item) => {
+    let packageDetail = null;
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/packages/${item.packageId}`
+      );
+
+      if (res.ok) {
+        packageDetail = await res.json();
+      }
+    } catch (err) {
+      console.error("Failed to fetch selected package:", err);
+    }
+
+    const packagePrice = getApiPrice(packageDetail, item.packagePrice);
+    const depositAmount = getApiDeposit(packageDetail, item.depositAmount);
+
+    navigate("/booking", {
+      state: {
+        type: type === "WALK_IN" ? "WALK_IN" : "BOOKING",
+        packageName: item.name,
+        packageId: packageDetail?.id ?? item.packageId,
+        packagePrice,
+        depositAmount,
+      },
+    });
+  };
 
   return (
     <div className="w-full py-16 flex flex-col items-center bg-[#C6A969]">
@@ -73,22 +179,28 @@ export default function PackageSection() {
                   </div>
                 </div>
 
-                {item.available ? (
-                  <Button
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                    onClick={() =>
-                      navigate("/booking", {
-                        state: { packageName: item.name, price: item.price }, // pass package name
-                      })
-                    }
-                  >
-                    Book Now
-                  </Button>
-                ) : (
-                  <Button className="w-full bg-gray-400 text-white cursor-not-allowed">
-                    Unavailable
-                  </Button>
-                )}
+{item.available ? (
+  <div className="flex gap-3">
+    <Button
+      className="w-1/2 bg-green-600 hover:bg-green-700 text-white"
+      onClick={() => handleSelectPackage("WALK_IN", item)}
+    >
+      Walk In
+    </Button>
+
+    <Button
+      className="w-1/2 bg-blue-600 hover:bg-blue-700 text-white"
+      onClick={() => handleSelectPackage("BOOKING", item)}
+    >
+      Booking
+    </Button>
+  </div>
+) : (
+  <Button className="w-full bg-gray-400 text-white cursor-not-allowed">
+    Unavailable
+  </Button>
+)}
+
               </CardContent>
             </Card>
           </motion.div>

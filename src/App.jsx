@@ -15,13 +15,13 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/booking" element={<Booking />} />
+      <Route path="/booking/:bookingRef?" element={<Booking />} />
       <Route path="/addon" element={<AddOn />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/why-us" element={<WhyChooseUs />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
 
-            {/* Auth Pages */}
+      {/* Auth Pages */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard />} />

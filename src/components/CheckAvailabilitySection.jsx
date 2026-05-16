@@ -8,11 +8,15 @@ export default function CheckAvailabilitySection() {
   const [showResult, setShowResult] = useState(false);
   const today = new Date().toISOString().split("T")[0]; // "2026-01-07"
 
-  const PACKAGES = [
-    { key: "Pakej A", label: "Package A" },
-    { key: "Pakej B", label: "Package B" },
-    { key: "Pakej C", label: "Package C" },
-  ];
+const PACKAGES = [
+  { key: "Awan", label: "Awan" },
+  { key: "Purnama", label: "Purnama" },
+  { key: "Senja", label: "Senja" },
+  { key: "Lestari", label: "Lestari" },
+  { key: "Embun", label: "Embun" },
+  { key: "Aurora", label: "Aurora" },
+  { key: "Rimbayu", label: "Rimbayu" },
+];
 
   const handleReset = () => {
     setFromDate("");

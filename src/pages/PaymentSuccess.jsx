@@ -7,7 +7,12 @@ export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
 
-  const bookingId = params.get("bookingId");
+  const bookingIdParam =
+    params.get("bookingId") || params.get("booking_id") || params.get("id");
+  const bookingId =
+    bookingIdParam && bookingIdParam !== "undefined" && bookingIdParam !== "null"
+      ? bookingIdParam
+      : null;
 
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(null);
@@ -23,21 +28,24 @@ useEffect(() => {
 
   let interval;
   let timeout;
+  let initialCheck;
 
   const MIN_LOADING_TIME = 2500; // 👈 ensures spinner is visible
+  const INITIAL_CHECK_DELAY = 3000;
+  const STATUS_TIMEOUT = 60000;
   const startTime = Date.now();
 
   const checkStatus = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/bookings/booking/${bookingId}/status`
+        `${import.meta.env.VITE_API_URL}/api/bookings/booking/${bookingId}/status`
       );
 
       const data = await res.json();
       setBooking(data);
 
       // ✅ SUCCESS CASE
-      if (data.paymentStatus === "PAID") {
+      if (["PAID", "DEPOSIT_PAID"].includes(data.paymentStatus)) {
         setStatus("paid");
 
         const elapsed = Date.now() - startTime;
@@ -55,21 +63,22 @@ useEffect(() => {
   };
 
   // 🔁 polling
-  interval = setInterval(checkStatus, 2000);
+  interval = setInterval(checkStatus, 3000);
 
   // 🚨 safety timeout (only if something goes wrong)
   timeout = setTimeout(() => {
     setStatus("failed");
     setLoading(false);
     clearInterval(interval);
-  }, 20000);
+  }, STATUS_TIMEOUT);
 
-  // first check immediately
-  checkStatus();
+  // Give the backend callback a short moment to update payment status.
+  initialCheck = setTimeout(checkStatus, INITIAL_CHECK_DELAY);
 
   return () => {
     clearInterval(interval);
     clearTimeout(timeout);
+    clearTimeout(initialCheck);
   };
 }, [bookingId]);
 
@@ -182,6 +191,20 @@ useEffect(() => {
           </div>
 
         </div>
+
+        {booking?.bookingRef && (
+          <div className="booking-box">
+
+            <span className="booking-label">
+              Booking Ref
+            </span>
+
+            <div className="booking-id">
+              {booking.bookingRef}
+            </div>
+
+          </div>
+        )}
 
         <div className="countdown-box">
           Redirecting to homepage in{" "}
