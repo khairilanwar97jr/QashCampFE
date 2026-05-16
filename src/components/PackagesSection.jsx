@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "./ui/Card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import packageAwanImg from "@/assets/package_A_awan.png";
