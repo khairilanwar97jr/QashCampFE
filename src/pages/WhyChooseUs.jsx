@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 import { CheckCircle } from "lucide-react";
 import Navbar from "../components/Navbar";
 import maintenance1 from "../assets/maintenance1.jpg";
