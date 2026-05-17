@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -40,9 +41,10 @@ export default function ExistingBookingSection() {
   };
 
   return (
-    <section className="bg-[#fdf6ee] py-14 px-4">
+    <section className="bg-[#fdf6ee] py-14 px-4 overflow-hidden">
       <div className="max-w-3xl mx-auto">
 
+        {/* Header Title */}
         <h2
           className="text-3xl md:text-5xl font-bold text-center mb-10"
           style={{
@@ -53,8 +55,20 @@ export default function ExistingBookingSection() {
           Already Have Booking?
         </h2>
 
-        <div
-          className="bg-[#C6A969] rounded-2xl p-6 md:p-8 space-y-5"
+        {/* Shaker Card Container */}
+        <motion.div
+          initial={{ x: 0 }}
+          whileInView={{
+            // Keyframe sequence mimicking a realistic snappy shake effect
+            x: [0, -12, 12, -12, 12, -6, 6, 0]
+          }}
+          viewport={{ once: true, margin: "-120px" }}
+          transition={{
+            duration: 0.6,
+            ease: "easeInOut",
+            delay: 0.1 // Tiny buffer delay so it shakes right as they lock eyes with it
+          }}
+          className="bg-[#C6A969] rounded-2xl p-6 md:p-8 space-y-5 text-left"
           style={{
             boxShadow: `
               0 4px 6px rgba(0,0,0,0.2),
@@ -90,7 +104,7 @@ export default function ExistingBookingSection() {
             {loading ? "Checking..." : "Check Booking"}
           </button>
 
-        </div>
+        </motion.div>
 
       </div>
     </section>

@@ -15,6 +15,7 @@ import React, { useState, useEffect } from "react";
 import Register from "../components/Register";
 import LatestBookingsTable from "../components/LatestBookingsTable";
 import BookingChecker from "../components/BookingChecker";
+import { motion } from "framer-motion";
 
 export default function HomePage() {
   const bookings = [
@@ -192,10 +193,95 @@ export default function HomePage() {
     </div>
       </div>
 
-      {/* Footer */}
-      <footer className="text-center mt-16 py-6 text-gray-500 border-t">
-        © 2025 Kaiso Camp. All rights reserved.
-      </footer>
+
+<footer 
+      className="w-full bg-[#191C1A] text-gray-300 font-sans mt-24"
+      style={{
+        borderTop: "3px solid #597E52" // Using the premium green as the top accent bar
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        
+        {/* TOP / MAIN FOOTER BLOCK */}
+        <div 
+          className="flex flex-col md:flex-row justify-between items-start gap-8 pb-10"
+          style={{
+            borderBottom: "2px solid #2A2F2B" // Darker complementary divider rule
+          }}
+        >
+          
+          {/* BRAND AND SSM INFORMATION */}
+          <div className="text-left max-w-sm">
+            {/* Premium, High-Contrast Editorial Brand Header Execution */}
+            <h3 className="text-2xl font-black tracking-[0.14em] text-white uppercase leading-none mb-3">
+              QASH CAMP<span className="text-[#597E52] ml-0.5 font-extrabold">.</span>
+            </h3>
+            <p className="text-xs text-gray-400 font-medium leading-relaxed tracking-wide mb-5">
+              Premium Outdoor & Field Gear Rental Systems.
+            </p>
+            
+            {/* OFFICIAL SSM REGISTERED BADGE - High Contrast Dark Mode Variant */}
+            <div 
+              className="inline-block bg-[#222623] rounded-xl p-4 text-left"
+              style={{
+                border: "2px solid #C6A969",
+                boxShadow: "0 4px 0px rgba(198, 169, 105, 0.2)"
+              }}
+            >
+              <span className="block text-[9px] font-bold text-[#C6A969] uppercase tracking-widest mb-1">
+                Registered Entity
+              </span>
+              <span className="block text-sm font-bold text-white uppercase tracking-wide">
+                Qashcamp Enterprise
+              </span>
+              <span className="block font-mono text-[10px] text-gray-400 mt-0.5 font-semibold">
+                Reg No: 202603102331 (IP0624208-V)
+              </span>
+            </div>
+          </div>
+
+          {/* QUICK UTILITY LINKS */}
+          <div className="flex gap-16 text-left text-sm">
+            <div className="flex flex-col gap-3">
+              <span className="font-bold text-xs uppercase tracking-wider text-[#C6A969]">Navigation</span>
+              <a href="#choosePackage" className="text-gray-300 hover:text-[#597E52] transition-colors font-bold">Our Packages</a>
+              <a href="#why-us" className="text-gray-300 hover:text-[#597E52] transition-colors font-bold">Why Kaiso</a>
+            </div>
+            <div className="flex flex-col gap-3">
+              <span className="font-bold text-xs uppercase tracking-wider text-[#C6A969]">Support</span>
+              <span className="text-gray-300 font-semibold">Selangor, MY</span>
+              <span className="text-gray-300 font-semibold">Terms & Deposit</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* BOTTOM COPYRIGHT & ATTRIBUTION */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 text-center sm:text-left">
+          
+          {/* COPYRIGHT */}
+          <p className="text-xs text-gray-500 font-bold">
+            &copy; {new Date().getFullYear()} Kaiso Camp. All rights reserved.
+          </p>
+
+          {/* BINAIDEA ATTRIBUTION */}
+          <div className="flex items-center gap-1.5 text-xs tracking-wide text-gray-500 font-bold">
+            <span>Powered by</span>
+            <a
+              href="https://binaidea.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-[#597E52] font-extrabold transition-all duration-200 underline decoration-[#C6A969] decoration-2 underline-offset-4 hover:scale-105 inline-block"
+            >
+              BinaIdea
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </footer>
+
     </div>
   );
 }

@@ -15,9 +15,6 @@ export default function WhyUsPreviewSection() {
         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500 font-bold block mb-3">
           The Kaiso Standard
         </span>
-        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-neutral-900">
-          Why Rent From Us<span className="text-[#FFC107]">?</span>
-        </h2>
         <p className="text-xs md:text-sm text-neutral-600 mt-4 max-w-xl mx-auto leading-relaxed">
           Here’s a look at the technical execution, sanitization, and premium support architectures that set our camp gear rentals apart.
         </p>
