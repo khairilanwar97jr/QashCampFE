@@ -4,6 +4,7 @@ import LogoImg from "../assets/logo.jpg";
 import AuthModal from "./AuthModal";
 import Login from "./LoginForm";
 import Register from "./Register";
+import { Link } from "react-router-dom";
 
 const scrollWithOffset = (el) => {
   const yOffset = -120; // increase offset so it scrolls a bit higher
@@ -15,7 +16,7 @@ export default function Navbar() {
   const [showModal, setShowModal] = useState(false);
   const [authMode, setAuthMode] = useState("login");
   const [user, setUser] = useState(null);
-  
+
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user"));
@@ -55,9 +56,9 @@ export default function Navbar() {
             >
               Home
             </HashLink>
-            <a href="/contact" className="hover:text-green-600 transition">
+            <Link to="/contact" className="hover:text-green-600 transition">
               Contact
-            </a>
+            </Link>
             <HashLink
               smooth
               to="/#choosePackage"
