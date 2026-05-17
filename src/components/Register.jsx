@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 export default function Register({ onClose, setAuthMode }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ export default function Register({ onClose, setAuthMode }) {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

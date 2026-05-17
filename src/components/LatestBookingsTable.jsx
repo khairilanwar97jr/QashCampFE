@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export default function LatestBookingsTable() {
   const [bookings, setBookings] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
-
+const API_URL = import.meta.env.VITE_API_URL;
   const getPaymentBadge = (status) => {
     switch (status) {
       case "PAID":
@@ -24,7 +24,7 @@ export default function LatestBookingsTable() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/bookings/latest")
+    fetch(`${API_URL}/api/bookings/latest`)
       .then(res => res.json())
       .then(data => setBookings(data))
       .catch(err => console.error(err));
