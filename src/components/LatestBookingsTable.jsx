@@ -34,7 +34,6 @@ export default function LatestBookingsTable() {
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   };
 
-  // Shared explicitly bold border styles to override CSS overrides
   const explicitGridStyle = {
     border: "2px solid #C6A969",
     borderCollapse: "collapse"
@@ -47,7 +46,8 @@ export default function LatestBookingsTable() {
 
   return (
     <div className="w-full py-16 bg-[#fdf6ee] text-gray-800 font-sans">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+      {/* Expanded overall layout constraint container */}
+      <div className="w-full max-w-[95%] mx-auto px-4 md:px-6">
         
         {/* Title */}
         <div className="mb-10 text-center md:text-left">
@@ -59,7 +59,7 @@ export default function LatestBookingsTable() {
           </h2>
         </div>
 
-        {/* ================= DESKTOP VIEW (Explicitly Hardcoded Grid Layout) ================= */}
+        {/* ================= DESKTOP VIEW (Expanded Wide Flow) ================= */}
         <div 
           className="hidden md:block bg-[#fff7ed] rounded-2xl p-6 transition-transform duration-300 hover:-translate-y-1"
           style={{
@@ -71,24 +71,25 @@ export default function LatestBookingsTable() {
             border: "3px solid #bfa363"
           }}
         >
-          <div className="overflow-hidden rounded-xl">
+          {/* Allow smooth horizontal scroll only if extreme screen sizing demands it */}
+          <div className="overflow-x-auto rounded-xl">
             <table className="w-full text-left table-auto text-sm" style={explicitGridStyle}>
               <thead>
                 <tr className="bg-[#C6A969] text-white font-bold text-xs uppercase tracking-wider">
-                  <th className="py-4 px-6" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>Customer Name</th>
-                  <th className="py-4 px-5" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>Created At</th>
-                  <th className="py-4 px-5" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>Start Date</th>
-                  <th className="py-4 px-5" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>End Date</th>
+                  <th className="py-4 px-6 whitespace-nowrap" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>Customer Name</th>
+                  <th className="py-4 px-5 whitespace-nowrap" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>Created At</th>
+                  <th className="py-4 px-5 whitespace-nowrap" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>Start Date</th>
+                  <th className="py-4 px-5 whitespace-nowrap" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>End Date</th>
                   <th className="py-4 px-6" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>Camp Location</th>
-                  <th className="py-4 px-5 text-center w-36" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>Status</th>
-                  <th className="py-4 px-6 text-right w-32" style={{ borderBottom: "3px solid #bfa363" }}>Action</th>
+                  <th className="py-4 px-5 text-center whitespace-nowrap" style={{ borderBottom: "3px solid #bfa363", borderRight: "2px solid #bfa363" }}>Status</th>
+                  <th className="py-4 px-6 text-center whitespace-nowrap" style={{ borderBottom: "3px solid #bfa363" }}>Action</th>
                 </tr>
               </thead>
 
               <tbody className="bg-[#fff7ed] text-gray-700">
                 {bookings.map((b) => (
                   <tr key={b.id} className="hover:bg-[#fbf1e3] transition-colors duration-150">
-                    <td className="py-4 px-6 font-bold text-gray-900" style={cellBorderStyle}>
+                    <td className="py-4 px-6 font-bold text-gray-900 whitespace-nowrap" style={cellBorderStyle}>
                       {b.first_name} {b.last_name}
                     </td>
                     <td className="py-4 px-5 text-gray-500 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>
@@ -96,16 +97,17 @@ export default function LatestBookingsTable() {
                     </td>
                     <td className="py-4 px-5 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>{b.start_date}</td>
                     <td className="py-4 px-5 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>{b.end_date}</td>
-                    <td className="py-4 px-6 truncate max-w-[220px] text-gray-600" style={cellBorderStyle}>{b.camp_place}</td>
+                    {/* Increased standard text allocation width boundaries */}
+                    <td className="py-4 px-6 max-w-sm break-words text-gray-600" style={cellBorderStyle}>{b.camp_place}</td>
                     <td className="py-4 px-5 text-center whitespace-nowrap" style={cellBorderStyle}>
                       <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase ${getPaymentBadge(b.payment_status)}`}>
                         {b.payment_status?.replaceAll("_", " ")}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-right" style={{ borderBottom: "2px solid #C6A969" }}>
+                    <td className="py-4 px-6 text-center whitespace-nowrap" style={{ borderBottom: "2px solid #C6A969" }}>
                       <button
                         onClick={() => setSelectedBooking(b)}
-                        className="bg-[#597E52] hover:bg-[#466340] text-white font-medium text-xs py-2 px-4 rounded-xl transition-all duration-200 shadow-xs"
+                        className="bg-[#597E52] hover:bg-[#466340] text-white font-medium text-xs py-2 px-5 rounded-xl transition-all duration-200 shadow-xs"
                       >
                         Receipt
                       </button>
