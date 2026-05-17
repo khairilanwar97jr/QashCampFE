@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import polaroidFrame from "../assets/pollaroid.png";
 
 export default function TimelineSection({ currentUser }) {
   const [modalImg, setModalImg] = useState(null);
@@ -9,6 +10,7 @@ export default function TimelineSection({ currentUser }) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [guestModalOpen, setGuestModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+
 
   const API_URL = import.meta.env.VITE_API_URL;
   const isAdmin = currentUser?.role === "ADMIN";
@@ -196,7 +198,7 @@ export default function TimelineSection({ currentUser }) {
                         )}
                       </div>
                       <img
-                        src="/src/assets/pollaroid.png"
+                        src={polaroidFrame}
                         alt="polaroid frame"
                         className="absolute inset-0 w-full h-full z-0 pointer-events-none"
                       />
@@ -270,10 +272,9 @@ export default function TimelineSection({ currentUser }) {
               onClick={handleUpload}
               disabled={uploading}
               className={`px-4 py-2 rounded shadow text-white transition
-                ${
-                  uploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-600"
+                ${uploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-500 hover:bg-green-600"
                 }
               `}
             >
