@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 
 export default function AddOn() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [addons, setAddons] = useState([]); // ✅ define state here
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/addon")
+    fetch(`${API_URL}/api/addon`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch addons");
         return res.json();
