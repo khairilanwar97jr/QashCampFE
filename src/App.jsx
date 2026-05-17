@@ -5,7 +5,7 @@ import AddOn from "./pages/AddOn";
 import ContactPage from "./pages/ContactPage";
 import WhyChooseUs from "./pages/WhyChooseUs";
 import PaymentSuccess from "./pages/PaymentSuccess";
-
+import GalleryPage from "./components/GalleryPage";
 // Auth Pages
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -20,6 +20,7 @@ export default function App() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/why-us" element={<WhyChooseUs />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
+      <Route path="/gallery" element={<GalleryPage />} />
 
       {/* Auth Pages */}
       <Route path="/login" element={<Login />} />

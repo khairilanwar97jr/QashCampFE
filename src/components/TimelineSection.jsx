@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import polaroidFrame from "../assets/pollaroid.png";
+import notebook from "../assets/notebook.jpg";
+import woodtree from "../assets/woodtree.jpg";
 
 export default function TimelineSection({ currentUser }) {
   const [modalImg, setModalImg] = useState(null);
@@ -99,9 +101,9 @@ export default function TimelineSection({ currentUser }) {
   return (
     <div
       id="timeline"
-      className="max-w-8xl mx-auto h-[800px] overflow-y-scroll px-12 pt-8 relative"
+      className="min-h-screen w-full mx-auto px-4 sm:px-8 pt-24 pb-20 relative overflow-x-hidden"
       style={{
-        backgroundImage: `url(/src/assets/notebook.jpg), url(/src/assets/woodtree.jpg)`,
+        backgroundImage: `url(${notebook}), url(${woodtree})`,
         backgroundSize: "680px auto, cover",
         backgroundRepeat: "no-repeat, no-repeat",
         backgroundPosition: "center top, center center",
