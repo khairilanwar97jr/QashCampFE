@@ -31,7 +31,7 @@ useEffect(() => {
   let initialCheck;
 
   const MIN_LOADING_TIME = 2500; // 👈 ensures spinner is visible
-  const INITIAL_CHECK_DELAY = 3000;
+  const INITIAL_CHECK_DELAY = 1000;
   const STATUS_TIMEOUT = 60000;
   const startTime = Date.now();
 
