@@ -21,6 +21,7 @@ export default function App() {
       <Route path="/why-us" element={<WhyChooseUs />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="/gallery" element={<GalleryPage />} />
+      
 
       {/* Auth Pages */}
       <Route path="/login" element={<Login />} />
