@@ -814,7 +814,7 @@ if (summaryRef.current) {
     const canvas = await html2canvas(element, {
       useCORS: true,
       backgroundColor: "#FDFBF7",
-      scale: 2, 
+      scale: 1.0, 
       logging: false,
       width: element.offsetWidth,   
       height: element.offsetHeight, 
