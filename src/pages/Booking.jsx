@@ -490,22 +490,23 @@ export default function Booking() {
             </div>
           )}
 
-          {/* Enlarged Roasted Product Stage */}
-          <div
-            className="flex flex-col w-full p-4 rounded-xl border items-center max-w-full overflow-hidden transition-all min-h-[320px] justify-center relative group shadow-inner"
-            style={{
-              backgroundColor: "#EBE2CD", // Darker Roasted Latte Matrix
-              borderColor: "#D3C6A2",
-            }}
-          >
-            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZHRoPSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9Ii4zIi8+Cjwvc3ZnPg==')" }}></div>
-            {packageImg && (
-              <ZoomOnHover
-                src={packageImg}
-                className="w-full max-w-[360px] sm:max-w-[480px] h-auto rounded-xl shadow-md transition-transform duration-300 group-hover:scale-[1.02]"
-              />
-            )}
-          </div>
+{/* Enlarged Roasted Product Stage */}
+<div
+  className="flex flex-col w-full p-4 rounded-xl border items-center max-w-full overflow-hidden transition-all min-h-[260px] sm:min-h-[300px] justify-center relative group shadow-inner"
+  style={{
+    backgroundColor: "#EBE2CD", // Darker Roasted Latte Matrix
+    borderColor: "#D3C6A2",
+  }}
+>
+  <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZHRoPSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9Ii4zIi8+Cjwvc3ZnPg==')" }}></div>
+  {packageImg && (
+    <img
+      src={packageImg}
+      alt={selectedPackage}
+      className="w-full max-w-[260px] sm:max-w-[320px] h-auto rounded-xl shadow-md transition-transform duration-300 object-contain"
+    />
+  )}
+</div>
 
           {/* Thumbnails Portfolio Section */}
           <div className="flex flex-wrap gap-3 mt-6 justify-center w-full">

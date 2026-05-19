@@ -3,7 +3,12 @@ import { useEffect, useState } from "react";
 export default function LatestBookingsTable() {
   const [bookings, setBookings] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const [snapshotImg, setSnapshotImg] = useState(null);
+  
+  // ⏳ NEW: Tracks initial data fetching state to trigger skeleton frames
+  const [loadingTable, setLoadingTable] = useState(true);
+  
+  // 📸 CHANGED: Holds both snapshots together as an object
+  const [snapshots, setSnapshots] = useState({ initial: null, final: null });
   const [loadingSnapshot, setLoadingSnapshot] = useState(false);
 
   // 🔒 AUTHENTICATION STATES
@@ -16,16 +21,23 @@ export default function LatestBookingsTable() {
 
   // 1. Fetch table rows immediately for the public layout view
   useEffect(() => {
+    setLoadingTable(true); // ◄ Start loading animation
     fetch(`${API_URL}/api/bookings/latest`)
       .then((res) => res.json())
-      .then((data) => setBookings(data))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        setBookings(data);
+        setLoadingTable(false); // ◄ Turn off skeleton once data maps
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoadingTable(false);
+      });
   }, []);
 
   // 2. Action handler when someone clicks the Details button
   const handleOpenDetails = (booking) => {
     setSelectedBooking(booking);
-    setSnapshotImg(null);
+    setSnapshots({ initial: null, final: null }); // ◄ Reset snapshot object values
     setAuthError(false);
     setPasswordInput(""); 
   };
@@ -43,10 +55,14 @@ export default function LatestBookingsTable() {
           const res = await fetch(`${API_URL}/api/bookings/${selectedBooking.booking_ref}/attachment`);
           const result = await res.json();
           if (result.success) {
-            setSnapshotImg(result.summarySnapshot);
+            // ◄ Populate both layout snapshot properties mapping the updated backend API
+            setSnapshots({
+              initial: result.summarySnapshot,
+              final: result.summarySnapshotFinal
+            });
           }
         } catch (err) {
-          console.error("Error fetching layout snapshot:", err);
+          console.error("Error fetching layout snapshots:", err);
         } finally {
           setLoadingSnapshot(false);
         }
@@ -62,14 +78,14 @@ export default function LatestBookingsTable() {
     setIsAuthenticated(false);
   };
 
-  // 🚀 NEW: Programmatic Base64 local downloader function
-  const handleDownloadSnapshot = () => {
-    if (!snapshotImg) return;
+  // 🚀 UPDATED: Programmatic Base64 local downloader function with context labels
+  const handleDownloadSnapshot = (base64String, typeLabel) => {
+    if (!base64String) return;
     
     const downloadLink = document.createElement("a");
-    downloadLink.href = snapshotImg;
-    // Names the image explicitly by its tracking reference (e.g., Layout-QC-2026.jpg)
-    downloadLink.download = `Layout-${selectedBooking.booking_ref || "booking"}.jpg`;
+    downloadLink.href = base64String;
+    // Names the file contextually based on the downloaded view type
+    downloadLink.download = `${typeLabel}-${selectedBooking.booking_ref || "booking"}.jpg`;
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
@@ -104,14 +120,27 @@ export default function LatestBookingsTable() {
     <div className="w-full py-16 bg-[#fdf6ee] text-gray-800 font-sans">
       <div className="w-full max-w-[95%] mx-auto px-4 md:px-6">
         
-        {/* Title */}
-        <div className="mb-10 text-center md:text-left">
+        {/* Title & Premium Live Signal Indicator */}
+        <div className="mb-10 text-center md:text-left flex flex-col md:flex-row md:items-center gap-3">
           <h2 
-            className="text-3xl md:text-5xl font-bold mb-2"
+            className="text-3xl md:text-5xl font-bold mb-2 md:mb-0"
             style={{ fontFamily: "'Fredoka One', cursive", color: "#597E52" }}
           >
             Latest Bookings
           </h2>
+          
+          {/* 📡 UPGRADED: Live Signal / Radar Pulse Component */}
+          <div className="flex items-center justify-center gap-2 self-center md:self-end md:mb-1 bg-[#fff7ed] px-3 py-1.5 rounded-xl border border-[#e2c8aa] shadow-xs">
+            <div className="relative flex items-center justify-center h-4 w-4">
+              {/* Outer Pulse Ring 2 */}
+              <span className="animate-[ping_2s_infinite] absolute inline-flex h-full w-full rounded-full bg-[#597E52] opacity-20"></span>
+              {/* Outer Pulse Ring 1 */}
+              <span className="animate-[ping_1.5s_infinite] absolute inline-flex h-[75%] w-[75%] rounded-full bg-[#597E52] opacity-40"></span>
+              {/* Solid Core Dot */}
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#597E52]"></span>
+            </div>
+            <span className="text-[10px] font-bold tracking-widest text-[#597E52] uppercase font-mono">Live Syncing</span>
+          </div>
         </div>
 
         {/* ================= DESKTOP VIEW ================= */}
@@ -137,35 +166,65 @@ export default function LatestBookingsTable() {
               </thead>
 
               <tbody className="bg-[#fff7ed] text-gray-700">
-                {bookings.map((b) => (
-                  <tr key={b.id} className="hover:bg-[#fbf1e3] transition-colors duration-150">
-                    <td className="py-4 px-6 font-bold text-gray-900 whitespace-nowrap" style={cellBorderStyle}>
-                      {b.first_name} {b.last_name}
-                      {b.booking_attch && b.booking_attch.id && (
-                        <span className="ml-2 text-[10px] text-[#C6A969] bg-[#fff7ed] px-1.5 py-0.5 rounded border border-[#e2c8aa]">📸 Layout</span>
-                      )}
-                    </td>
-                    <td className="py-4 px-5 text-gray-500 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>
-                      {new Date(b.createddate).toISOString().split("T")[0]}
-                    </td>
-                    <td className="py-4 px-5 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>{b.start_date}</td>
-                    <td className="py-4 px-5 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>{b.end_date}</td>
-                    <td className="py-4 px-6 max-w-sm break-words text-gray-600" style={cellBorderStyle}>{b.camp_place}</td>
-                    <td className="py-4 px-5 text-center whitespace-nowrap" style={cellBorderStyle}>
-                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase ${getPaymentBadge(b.payment_status)}`}>
-                        {b.payment_status?.replaceAll("_", " ")}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-center whitespace-nowrap" style={{ borderBottom: "2px solid #C6A969" }}>
-                      <button
-                        onClick={() => handleOpenDetails(b)}
-                        className="bg-[#597E52] hover:bg-[#466340] text-white font-medium text-xs py-2 px-5 rounded-xl transition-all duration-200 shadow-xs"
-                      >
-                        Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {loadingTable ? (
+                  /* ⏳ DESKTOP LOADING SKELETON: Loops 4 pulsing rows styled exactly like your cells */
+                  Array.from({ length: 4 }).map((_, idx) => (
+                    <tr key={`skeleton-row-${idx}`} className="animate-pulse">
+                      <td className="py-5 px-6" style={cellBorderStyle}>
+                        <div className="h-4 bg-gray-300/70 rounded w-32 mb-1"></div>
+                        <div className="h-3 bg-gray-300/40 rounded w-16"></div>
+                      </td>
+                      <td className="py-5 px-5" style={cellBorderStyle}>
+                        <div className="h-3.5 bg-gray-300/50 rounded w-20"></div>
+                      </td>
+                      <td className="py-5 px-5" style={cellBorderStyle}>
+                        <div className="h-3.5 bg-gray-300/50 rounded w-16"></div>
+                      </td>
+                      <td className="py-5 px-5" style={cellBorderStyle}>
+                        <div className="h-3.5 bg-gray-300/50 rounded w-16"></div>
+                      </td>
+                      <td className="py-5 px-6" style={cellBorderStyle}>
+                        <div className="h-4 bg-gray-300/50 rounded w-48"></div>
+                      </td>
+                      <td className="py-5 px-5 text-center" style={cellBorderStyle}>
+                        <div className="h-5 bg-gray-300/60 rounded-md w-20 mx-auto"></div>
+                      </td>
+                      <td className="py-5 px-6 text-center" style={{ borderBottom: "2px solid #C6A969" }}>
+                        <div className="h-8 bg-gray-300/60 rounded-xl w-20 mx-auto"></div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  bookings.map((b) => (
+                    <tr key={b.id} className="hover:bg-[#fbf1e3] transition-colors duration-150">
+                      <td className="py-4 px-6 font-bold text-gray-900 whitespace-nowrap" style={cellBorderStyle}>
+                        {b.first_name} {b.last_name}
+                        {b.booking_attch && b.booking_attch.id && (
+                          <span className="ml-2 text-[10px] text-[#C6A969] bg-[#fff7ed] px-1.5 py-0.5 rounded border border-[#e2c8aa]">📸 Layout</span>
+                        )}
+                      </td>
+                      <td className="py-4 px-5 text-gray-500 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>
+                        {new Date(b.createddate).toISOString().split("T")[0]}
+                      </td>
+                      <td className="py-4 px-5 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>{b.start_date}</td>
+                      <td className="py-4 px-5 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>{b.end_date}</td>
+                      <td className="py-4 px-6 max-w-sm break-words text-gray-600" style={cellBorderStyle}>{b.camp_place}</td>
+                      <td className="py-4 px-5 text-center whitespace-nowrap" style={cellBorderStyle}>
+                        <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase ${getPaymentBadge(b.payment_status)}`}>
+                          {b.payment_status?.replaceAll("_", " ")}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-center whitespace-nowrap" style={{ borderBottom: "2px solid #C6A969" }}>
+                        <button
+                          onClick={() => handleOpenDetails(b)}
+                          className="bg-[#597E52] hover:bg-[#466340] text-white font-medium text-xs py-2 px-5 rounded-xl transition-all duration-200 shadow-xs"
+                        >
+                          Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -173,49 +232,72 @@ export default function LatestBookingsTable() {
 
         {/* ================= MOBILE VIEW ================= */}
         <div className="md:hidden space-y-6">
-          {bookings.map((b) => (
-            <div 
-              key={b.id} 
-              className="bg-[#C6A969] rounded-2xl p-4 flex flex-col justify-between text-left border-2 border-[#bfa363]"
-              style={{ boxShadow: "0 4px 6px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,50,0.08)" }}
-            >
-              <div className="bg-[#fff7ed] rounded-xl p-4 space-y-3 border border-[#e2c8aa]">
-                <div className="flex items-center justify-between gap-3 border-b-2 border-[#e2c8aa] pb-3">
-                  <h3 className="font-bold text-base text-gray-900 tracking-tight flex items-center">
-                    {b.first_name} {b.last_name}
-                    {b.booking_attch && b.booking_attch.id && (
-                      <span className="ml-1.5 text-[9px] text-[#C6A969] bg-[#fff7ed] px-1 py-0.2 rounded border border-[#e2c8aa]">📸</span>
-                    )}
-                  </h3>
-                  <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide shrink-0 ${getPaymentBadge(b.payment_status)}`}>
-                    {b.payment_status?.replaceAll("_", " ")}
-                  </span>
+          {loadingTable ? (
+            /* ⏳ MOBILE LOADING SKELETON: Loops 2 pulsing item stacks matching your card layouts */
+            Array.from({ length: 2 }).map((_, idx) => (
+              <div 
+                key={`skeleton-mob-${idx}`}
+                className="bg-[#C6A969]/70 rounded-2xl p-4 flex flex-col justify-between border-2 border-[#bfa363] animate-pulse"
+              >
+                <div className="bg-[#fff7ed] rounded-xl p-4 space-y-4 border border-[#e2c8aa]">
+                  <div className="flex items-center justify-between gap-3 border-b-2 border-[#e2c8aa] pb-3">
+                    <div className="h-4 bg-gray-300 rounded-md w-28"></div>
+                    <div className="h-4 bg-gray-300 rounded-md w-14 shrink-0"></div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between"><div className="h-3 bg-gray-300 rounded w-12"></div><div className="h-3 bg-gray-300 rounded w-16"></div></div>
+                    <div className="flex justify-between"><div className="h-3 bg-gray-300 rounded w-14"></div><div className="h-3 bg-gray-300 rounded w-28"></div></div>
+                    <div className="pt-2 border-t border-dashed border-[#e2c8aa]"><div className="h-3 bg-gray-300 rounded w-24 mb-1.5"></div><div className="h-4 bg-gray-300 rounded w-full"></div></div>
+                  </div>
+                  <div className="h-10 bg-gray-300 rounded-xl w-full mt-2"></div>
                 </div>
-
-                <div className="space-y-2 text-xs text-gray-600">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 font-medium">Created:</span>
-                    <span className="font-mono">{new Date(b.createddate).toISOString().split("T")[0]}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 font-medium">Timeline:</span>
-                    <span className="font-semibold text-gray-900">{b.start_date} → {b.end_date}</span>
-                  </div>
-                  <div className="flex flex-col pt-2 border-t-2 border-dashed border-[#e2c8aa] mt-2">
-                    <span className="text-gray-400 font-medium mb-1">Camp Location:</span>
-                    <span className="text-gray-800 font-medium truncate">{b.camp_place}</span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => handleOpenDetails(b)}
-                  className="w-full bg-[#597E52] hover:bg-[#466340] text-white font-semibold text-xs py-3 rounded-xl transition-all duration-200 mt-2 shadow-xs"
-                >
-                  View Details
-                </button>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            bookings.map((b) => (
+              <div 
+                key={b.id} 
+                className="bg-[#C6A969] rounded-2xl p-4 flex flex-col justify-between text-left border-2 border-[#bfa363]"
+                style={{ boxShadow: "0 4px 6px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,50,0.08)" }}
+              >
+                <div className="bg-[#fff7ed] rounded-xl p-4 space-y-3 border border-[#e2c8aa]">
+                  <div className="flex items-center justify-between gap-3 border-b-2 border-[#e2c8aa] pb-3">
+                    <h3 className="font-bold text-base text-gray-900 tracking-tight flex items-center">
+                      {b.first_name} {b.last_name}
+                      {b.booking_attch && b.booking_attch.id && (
+                        <span className="ml-1.5 text-[9px] text-[#C6A969] bg-[#fff7ed] px-1 py-0.2 rounded border border-[#e2c8aa]">📸</span>
+                      )}
+                    </h3>
+                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide shrink-0 ${getPaymentBadge(b.payment_status)}`}>
+                      {b.payment_status?.replaceAll("_", " ")}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-xs text-gray-600">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400 font-medium">Created:</span>
+                      <span className="font-mono">{new Date(b.createddate).toISOString().split("T")[0]}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400 font-medium">Timeline:</span>
+                      <span className="font-semibold text-gray-900">{b.start_date} → {b.end_date}</span>
+                    </div>
+                    <div className="flex flex-col pt-2 border-t-2 border-dashed border-[#e2c8aa] mt-2">
+                      <span className="text-gray-400 font-medium mb-1">Camp Location:</span>
+                      <span className="text-gray-800 font-medium truncate">{b.camp_place}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleOpenDetails(b)}
+                    className="w-full bg-[#597E52] hover:bg-[#466340] text-white font-semibold text-xs py-3 rounded-xl transition-all duration-200 mt-2 shadow-xs"
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
       </div>
@@ -224,7 +306,7 @@ export default function LatestBookingsTable() {
       {selectedBooking && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div 
-            className="bg-[#C6A969] rounded-2xl w-full max-w-md p-4 relative my-auto flex flex-col border-2 border-[#bfa363]"
+            className="bg-[#C6A969] rounded-2xl w-full max-w-2xl p-4 relative my-auto flex flex-col border-2 border-[#bfa363]"
             style={{ boxShadow: "0 20px 50px rgba(0,0,0,0.3)" }}
           >
             <div className="bg-[#fff7ed] rounded-xl p-6 relative border border-[#e2c8aa]">
@@ -239,7 +321,7 @@ export default function LatestBookingsTable() {
               </button>
 
               {!isAuthenticated ? (
-                <div className="text-center py-4 font-sans">
+                <div className="text-center py-4 font-sans max-w-md mx-auto">
                   <div className="w-14 h-14 bg-[#C6A969] rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-black">
                     <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
@@ -319,7 +401,7 @@ export default function LatestBookingsTable() {
                     </div>
                     <div className="flex justify-between items-baseline gap-4">
                       <span className="text-gray-400 font-medium">Destination</span>
-                      <span className="text-gray-700 text-right truncate max-w-[200px]">
+                      <span className="text-gray-700 text-right truncate">
                         {selectedBooking.camp_place}
                       </span>
                     </div>
@@ -335,48 +417,82 @@ export default function LatestBookingsTable() {
                     </div>
                   </div>
 
-                  {/* Layout Image Attachment View Block with Direct Download Action */}
+                  {/* ================= SNAPSHOTS LAYOUT CONTAINER ================= */}
                   {selectedBooking.booking_attch && selectedBooking.booking_attch.id && (
-                    <div className="mt-4 text-left">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Camp Ground Layout</span>
-                        
-                        {/* 📥 Programmatic Download Link Triggger */}
-                        {snapshotImg && !loadingSnapshot && (
-                          <button
-                            onClick={handleDownloadSnapshot}
-                            className="text-[11px] font-bold text-[#597E52] hover:text-[#466340] flex items-center gap-1 bg-[#fdf6ee] px-2 py-1 rounded-md border border-[#e2c8aa] transition-colors"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                            </svg>
-                            Save Image
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="w-full bg-[#fdf6ee] rounded-xl border border-[#e2c8aa] p-2 flex items-center justify-center min-h-[140px] overflow-hidden">
-                        {loadingSnapshot ? (
-                          <div className="flex flex-col items-center gap-2 py-6">
-                            <div className="w-6 h-6 border-2 border-[#597E52] border-t-transparent rounded-full animate-spin"></div>
-                            <span className="text-xs text-gray-400 font-mono">Loading blueprint...</span>
+                    <div className="mt-5 text-left">
+                      {loadingSnapshot ? (
+                        <div className="w-full bg-[#fdf6ee] rounded-xl border border-[#e2c8aa] flex flex-col items-center justify-center py-10 min-h-[160px]">
+                          <div className="w-6 h-6 border-2 border-[#597E52] border-t-transparent rounded-full animate-spin mb-2"></div>
+                          <span className="text-xs text-gray-400 font-mono">Loading transaction blueprints...</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col md:flex-row gap-4 w-full">
+                          
+                          {/* 1. INITIAL SNAPSHOT */}
+                          <div className="flex-1 flex flex-col">
+                            <div className="flex justify-between items-center mb-1.5 h-6">
+                              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Initial Setup Layout</span>
+                              {snapshots.initial && (
+                                <button
+                                  onClick={() => handleDownloadSnapshot(snapshots.initial, "Initial-Layout")}
+                                  className="text-[10px] font-bold text-[#597E52] hover:text-[#466340] flex items-center gap-1 bg-[#fdf6ee] px-2 py-0.5 rounded border border-[#e2c8aa] transition-colors"
+                                >
+                                  Save Setup
+                                </button>
+                              )}
+                            </div>
+                            <div className="w-full bg-[#fdf6ee] rounded-xl border border-[#e2c8aa] p-2 flex items-center justify-center min-h-[140px] overflow-hidden">
+                              {snapshots.initial ? (
+                                <img 
+                                  src={snapshots.initial} 
+                                  alt="Initial Camp Setup Blueprint" 
+                                  className="w-full h-auto object-contain rounded-lg border border-neutral-200 max-h-[220px] shadow-sm cursor-pointer"
+                                  onClick={() => handleDownloadSnapshot(snapshots.initial, "Initial-Layout")}
+                                  title="Click to download initial setup map"
+                                />
+                              ) : (
+                                <span className="text-xs text-rose-500 font-mono">Initial map snapshot missing.</span>
+                              )}
+                            </div>
                           </div>
-                        ) : snapshotImg ? (
-                          <img 
-                            src={snapshotImg} 
-                            alt="Camp Layout Blueprint" 
-                            className="w-full h-auto object-contain rounded-lg border border-neutral-200 max-h-[260px] shadow-sm cursor-pointer"
-                            onClick={handleDownloadSnapshot} // Clicking the image triggers a download too!
-                            title="Click to download blueprint map"
-                          />
-                        ) : (
-                          <span className="text-xs text-rose-500 font-mono">Snapshot asset corrupt or missing.</span>
-                        )}
-                      </div>
+
+                          {/* 2. FINAL SNAPSHOT */}
+                          <div className="flex-1 flex flex-col">
+                            <div className="flex justify-between items-center mb-1.5 h-6">
+                              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Final Receipt Snapshot</span>
+                              {snapshots.final && (
+                                <button
+                                  onClick={() => handleDownloadSnapshot(snapshots.final, "Final-Receipt")}
+                                  className="text-[10px] font-bold text-[#597E52] hover:text-[#466340] flex items-center gap-1 bg-[#fdf6ee] px-2 py-0.5 rounded border border-[#e2c8aa] transition-colors"
+                                >
+                                  Save Receipt
+                                </button>
+                              )}
+                            </div>
+                            <div className="w-full bg-[#fdf6ee] rounded-xl border border-[#e2c8aa] p-2 flex items-center justify-center min-h-[140px] overflow-hidden">
+                              {snapshots.final ? (
+                                <img 
+                                  src={snapshots.final} 
+                                  alt="Final Receipt Layout Blueprint" 
+                                  className="w-full h-auto object-contain rounded-lg border border-neutral-200 max-h-[220px] shadow-sm cursor-pointer"
+                                  onClick={() => handleDownloadSnapshot(snapshots.final, "Final-Receipt")}
+                                  title="Click to download final receipt map"
+                                />
+                              ) : (
+                                <div className="text-center p-4">
+                                  <span className="text-xs text-gray-400 italic block">Pending settlement</span>
+                                  <span className="text-[10px] text-neutral-400 block font-mono mt-0.5">(Final snapshot not generated)</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                        </div>
+                      )}
                     </div>
                   )}
 
-                  <div className="bg-[#fdf6ee] rounded-xl p-4 flex justify-between items-center mt-4 border border-[#bfa363]">
+                  <div className="bg-[#fdf6ee] rounded-xl p-4 flex justify-between items-center mt-5 border border-[#bfa363]">
                     <span className="text-xs font-bold text-[#C6A969] uppercase tracking-wider">Total Settlement</span>
                     <span className="font-bold text-xl text-gray-900">
                       RM {selectedBooking.total_paid ?? selectedBooking.total}
