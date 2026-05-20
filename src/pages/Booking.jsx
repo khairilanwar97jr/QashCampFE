@@ -258,6 +258,7 @@ export default function Booking() {
       address3: bookingData.address3 || "",
     });
   }, [bookingData]);
+  
   // Callback from Add-On modal
   const handleSaveAddOns = (addons) => {
     setSelectedAddOns(addons);
@@ -1079,36 +1080,55 @@ if (summaryRef.current) {
                     </div>
 
                     {/* Schedule Window Metrics */}
-                    <div className="flex flex-col">
-                      <label className="text-xs font-bold mb-1.5" style={{ color: "#544E45" }}>
-                        Operational Schedule Dates *
-                      </label>
-                      <div className="flex gap-3">
-                        <input
-                          type="date"
-                          className="w-1/2 p-3 text-sm rounded-xl border outline-none bg-stone-50 transition-all font-semibold"
-                          style={{ borderColor: "#E5DCB9", color: "#43613D" }}
-                          value={startDate}
-                          onChange={(e) => setStartDate(e.target.value)}
-                          min={new Date().toISOString().split("T")[0]}
-                          required
-                        />
-                        <input
-                          type="date"
-                          className="w-1/2 p-3 text-sm rounded-xl border outline-none bg-stone-50 transition-all font-semibold"
-                          style={{ borderColor: "#E5DCB9", color: "#43613D" }}
-                          value={endDate}
-                          onChange={(e) => setEndDate(e.target.value)}
-                          min={startDate || new Date().toISOString().split("T")[0]}
-                          required
-                        />
-                      </div>
-                    </div>
+<div className="flex flex-col">
+  <label
+    className="text-xs md:text-sm font-bold mb-2"
+    style={{ color: "#544E45" }}
+  >
+    Choose Your Date *
+  </label>
+
+  <div className="flex flex-col md:flex-row gap-3">
+
+    {/* START DATE */}
+    <div className="flex flex-col w-full md:w-1/2">
+      <span className="text-[10px] md:text-xs font-bold mb-1 text-[#6b665a] uppercase tracking-wider">
+        Start Date
+      </span>
+      <input
+        type="date"
+        className="p-3 md:p-3.5 text-sm rounded-xl border outline-none bg-stone-50 transition-all font-semibold w-full"
+        style={{ borderColor: "#E5DCB9", color: "#43613D" }}
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        min={new Date().toISOString().split("T")[0]}
+        required
+      />
+    </div>
+
+    {/* END DATE */}
+    <div className="flex flex-col w-full md:w-1/2">
+      <span className="text-[10px] md:text-xs font-bold mb-1 text-[#6b665a] uppercase tracking-wider">
+        End Date
+      </span>
+      <input
+        type="date"
+        className="p-3 md:p-3.5 text-sm rounded-xl border outline-none bg-stone-50 transition-all font-semibold w-full"
+        style={{ borderColor: "#E5DCB9", color: "#43613D" }}
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        min={startDate || new Date().toISOString().split("T")[0]}
+        required
+      />
+    </div>
+
+  </div>
+</div>
 
                     {/* Target Location Allocation Point with Auto-Capitalization */}
                     <div className="flex flex-col">
                       <label className="text-xs font-bold mb-1.5" style={{ color: "#544E45" }}>
-                        Campsite Placement Target Destination *
+                        Campsite Name *
                       </label>
                       <input
                         type="text"
