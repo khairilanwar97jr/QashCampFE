@@ -15,6 +15,7 @@ import React, { useState, useEffect } from "react";
 import Register from "../components/Register";
 import LatestBookingsTable from "../components/LatestBookingsTable";
 import BookingChecker from "../components/BookingChecker";
+import CalendarBooked from "../components/CalendarBooked";
 import { motion } from "framer-motion";
 
 export default function HomePage() {
@@ -106,6 +107,7 @@ export default function HomePage() {
                   */}
 
         {/* Check Availability Section */}
+        <CalendarBooked/>
         <CheckAvailabilitySection />
         <BookingChecker/>
 

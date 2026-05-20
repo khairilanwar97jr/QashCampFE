@@ -8,11 +8,9 @@ export default function WhyUsPreviewSection() {
   const previewItems = whyUsItems.slice(0, 3); // first 3 cards for sneak peek
 
   return (
-    <div id="why-us" className="w-full flex flex-col items-center py-24 px-4 md:px-10 bg-[#F4F1EA] text-[#111111] font-sans overflow-hidden">
-      
+<div id="why-us" className="w-full flex flex-col items-center pt-12 pb-24 md:py-24 px-4 md:px-10 bg-[#F4F1EA] text-[#111111] font-sans overflow-hidden">      
       {/* SECTION HEADER */}
-      <div className="max-w-3xl mx-auto text-center mb-16 px-4">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500 font-bold block mb-3">
+<div className="max-w-3xl mx-auto text-center mb-8 md:mb-16 px-4">        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500 font-bold block mb-3">
           The Kaiso Standard
         </span>
         <p className="text-xs md:text-sm text-neutral-600 mt-4 max-w-xl mx-auto leading-relaxed">

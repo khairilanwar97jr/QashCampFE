@@ -191,11 +191,8 @@ export default function PackageSection() {
   };
 
   return (
-    <div id="choosePackage" className="w-full py-24 bg-[#FAF9F5] text-[#111111] font-sans">
-      
-      {/* SECTION HEADER */}
-      <div className="max-w-3xl mx-auto text-center mb-16 px-6">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold block mb-3">
+<div id="choosePackage" className="w-full pt-12 pb-24 bg-[#f9f3e3] text-[#2d2a25] font-sans">      {/* SECTION HEADER */}
+<div className="max-w-3xl mx-auto text-center mb-8 md:mb-16 px-6">        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold block mb-3">
           Premium Field Gear
         </span>
         <p className="text-sm md:text-base text-neutral-600 mt-4 max-w-xl mx-auto leading-relaxed">
