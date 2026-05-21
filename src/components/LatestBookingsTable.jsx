@@ -43,34 +43,41 @@ export default function LatestBookingsTable() {
   };
 
   // 3. Verifies passcode when submitted inside the modal popup split
-  const handleVerifyPasscode = async (e) => {
-    e.preventDefault();
-    if (passwordInput === ADMIN_PASSCODE) {
-      setIsAuthenticated(true);
-      setAuthError(false);
+const handleVerifyPasscode = async (e) => {
+  e.preventDefault();
 
-      if (selectedBooking.booking_attch && selectedBooking.booking_attch.id) {
-        setLoadingSnapshot(true);
-        try {
-          const res = await fetch(`${API_URL}/api/bookings/${selectedBooking.booking_ref}/attachment`);
-          const result = await res.json();
-          if (result.success) {
-            // ◄ Populate both layout snapshot properties mapping the updated backend API
-            setSnapshots({
-              initial: result.summarySnapshot,
-              final: result.summarySnapshotFinal
-            });
-          }
-        } catch (err) {
-          console.error("Error fetching layout snapshots:", err);
-        } finally {
-          setLoadingSnapshot(false);
-        }
+  if (passwordInput === ADMIN_PASSCODE) {
+    setIsAuthenticated(true);
+    setAuthError(false);
+
+    setLoadingSnapshot(true);
+
+    try {
+      const res = await fetch(
+        `${API_URL}/api/bookings/${selectedBooking.booking_ref}/attachment`
+      );
+
+      const result = await res.json();
+
+      if (result.success) {
+        setSnapshots({
+          initial: result.summarySnapshot,
+          final: result.summarySnapshotFinal
+        });
+      } else {
+        console.log("No snapshot found");
       }
-    } else {
-      setAuthError(true);
+
+    } catch (err) {
+      console.error("Error fetching layout snapshots:", err);
+    } finally {
+      setLoadingSnapshot(false);
     }
-  };
+
+  } else {
+    setAuthError(true);
+  }
+};
 
   // 4. Fully clear memory states when closing modal container down
   const handleCloseModal = () => {

@@ -10,6 +10,7 @@ import GalleryPage from "./components/GalleryPage";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
+import ReceiptPage from "./pages/ReceiptPage";
 
 export default function App() {
   return (
@@ -21,6 +22,8 @@ export default function App() {
       <Route path="/why-us" element={<WhyChooseUs />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="/gallery" element={<GalleryPage />} />
+      <Route path="/receipt/:bookingRef" element={<ReceiptPage />} />
+      
       
 
       {/* Auth Pages */}

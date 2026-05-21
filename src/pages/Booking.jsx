@@ -56,6 +56,9 @@ import packageG1 from "../assets/packageG1.jpg";
 import packageG2 from "../assets/packageG2.jpg";
 import packageG3 from "../assets/packageG3.jpg";
 import packageG4 from "../assets/packageG4.jpg";
+
+import voucher from "../assets/voucher.png";
+
 import { useRef } from 'react'; // Add this if you don't have useRef imported yet
 import html2canvas from 'html2canvas'; // Add this line
 
@@ -115,6 +118,8 @@ export default function Booking() {
     Aurora: [packageF, packageF1, packageF2, packageF3, packageF4],
 
     Rimbayu: [packageG, packageG1, packageG2, packageG3, packageG4],
+
+    Voucher: [voucher, voucher, voucher, voucher, voucher],
   };
 
   const packageImages = {
@@ -125,6 +130,7 @@ export default function Booking() {
     Embun: packageEmbunImg,
     Aurora: packageAuroraImg,
     Rimbayu: packageRimbayuImg,
+    Voucher: voucher,
   };
 
   const thumbnails = packageThumbnails[selectedPackage] || [];
@@ -299,6 +305,7 @@ export default function Booking() {
     Embun: 5,
     Aurora: 6,
     Rimbayu: 7,
+    Voucher: 8,
   };
 
   const tentPackages = {
@@ -376,6 +383,17 @@ export default function Booking() {
         weight: "22.0 kg",
         type: "2 Bed 1 Living",
         setup: "Automatic",
+      },
+    },
+
+    Voucher: {
+      name: "Package Voucher",
+      criteria: {
+        brand: "Voucher",
+        size: "N/A",
+        weight: "N/A",
+        type: "Voucher",
+        setup: "N/A",
       },
     },
   };

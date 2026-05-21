@@ -9,6 +9,8 @@ import packageLestariImg from "@/assets/package_D_lestari.png";
 import packageEmbunImg from "@/assets/package_E_embun.png";
 import packageAuroraImg from "@/assets/package_F_aurora.png";
 import packageRimbayuImg from "@/assets/package_G_rimbayu.png";
+import packageVoucher from "@/assets/voucher.png";
+
 import { useNavigate } from "react-router-dom";
 
 export default function PackageSection() {
@@ -152,6 +154,19 @@ export default function PackageSection() {
         { label: "Weight", value: "22.0 kg" },
         { label: "Type", value: "2 Bed 1 Living" },
         { label: "Setup", value: "Automatic" }
+      ]
+    },
+        {
+      packageId: 8,
+      displayName: "Voucher Cookies",
+      name: "Voucher",
+      img: packageVoucher,
+      price: "RM5",
+      packagePrice: 5,
+      depositAmount: 0,
+      available: true,
+      specs: [
+        { label: "Cookies Voucher", value: "Manees Patisserie" },
       ]
     }
   ];
