@@ -1060,7 +1060,7 @@ if (summaryRef.current) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {[
                         { id: "phone", label: "Phone Number *", type: "text", value: phone, setValue: setPhone },
-                        { id: "email", label: "Email Node *", type: "email", value: email, setValue: setEmail },
+                        { id: "email", label: "Email *", type: "email", value: email, setValue: setEmail },
                       ].map((field) => (
                         <div className="flex flex-col" key={field.id}>
                           <label className="text-xs font-bold mb-1.5" style={{ color: "#544E45" }}>
@@ -1082,9 +1082,13 @@ if (summaryRef.current) {
 
                     {/* Identification Matrix Field */}
                     <div className="flex flex-col">
-                      <label className="text-xs font-bold mb-1.5" style={{ color: "#544E45" }}>
-                        Identity / Passport Verification Code *
-                      </label>
+  <label
+    className="text-xs font-bold mb-1.5"
+    style={{ color: "#544E45" }}
+  >
+    IC No / Passport Verification Code{" "}
+    <span className="text-red-500">*</span>
+  </label>
                       <input
                         type="text"
                         value={idNumber}
@@ -1103,7 +1107,7 @@ if (summaryRef.current) {
     className="text-xs md:text-sm font-bold mb-2"
     style={{ color: "#544E45" }}
   >
-    Choose Your Date *
+    Choose Your Date <span className="text-red-500">*</span>
   </label>
 
   <div className="flex flex-col md:flex-row gap-3">
@@ -1146,7 +1150,7 @@ if (summaryRef.current) {
                     {/* Target Location Allocation Point with Auto-Capitalization */}
                     <div className="flex flex-col">
                       <label className="text-xs font-bold mb-1.5" style={{ color: "#544E45" }}>
-                        Campsite Name *
+                        Campsite Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
