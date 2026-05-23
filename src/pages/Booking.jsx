@@ -1176,7 +1176,7 @@ if (summaryRef.current) {
                     className="w-full sm:flex-1 text-white py-3 px-4 rounded-xl font-bold transition-all text-xs uppercase tracking-wider shadow-sm"
                     style={{ backgroundColor: "#B39658" }}
                   >
-                    ⚙️ Configure Add-ons
+                    ⚙️ Add-ons Item
                   </button>
                 )}
                 <button
