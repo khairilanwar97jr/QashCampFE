@@ -115,7 +115,7 @@ const handleVerifyPasscode = async (e) => {
 
   const sendWhatsApp = (b) => {
     const liveReceiptUrl = `${window.location.origin}/receipt/${b.booking_ref}`;
-    const message = `*Receipt Request*\n\n👤 *Name:* ${b.first_name} ${b.last_name}\n🆔 *Booking ID:* ${b.id}\n📅 *Start:* ${b.start_date}\n📅 *End:* ${b.end_date}\n📍 *Location:* ${b.camp_place}\n🔖 *Ref:* ${b.booking_ref}\n📦 *Package:* ${b.package?.name || "N/A"}\n💰 *Total:* RM${b.total}\n\n🗺️ *View Layout Blueprint & Receipt:* \n${liveReceiptUrl}`;
+    const message = `*Receipt Request*\n\n👤 *Name:* ${b.first_name} ${b.last_name}\n🆔 *Booking ID:* ${b.id}\n📅 *Start:* ${b.start_date}\n📅 *End:* ${b.end_date}\n📍 *Location:* ${b.camp_place}\n🔖 *Ref:* ${b.booking_ref}\n📦 *Package:* ${b.package?.name || "N/A"}\n💰 *Total:* RM${b.total_paid}\n\n🗺️ *View Layout Blueprint & Receipt:* \n${liveReceiptUrl}`;
     const phone = "60173469335";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   };

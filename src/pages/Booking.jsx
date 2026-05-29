@@ -268,6 +268,7 @@ export default function Booking() {
   // Callback from Add-On modal
   const handleSaveAddOns = (addons) => {
     setSelectedAddOns(addons);
+    setHasDismissedAddOnHint(true);
     setShowModal(false);
   };
 
@@ -285,6 +286,8 @@ export default function Booking() {
 
   const [enlargedImg, setEnlargedImg] = useState(null);
   const [openBookingForm, setOpenBookingForm] = useState(false);
+  const [shakeRegistryButton, setShakeRegistryButton] = useState(false);
+  const [hasDismissedAddOnHint, setHasDismissedAddOnHint] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -296,6 +299,7 @@ export default function Booking() {
   const [address3, setAddress3] = useState("");
   const [campLocation, setCampLocation] = useState("");
   const [submittedData, setSubmittedData] = useState(null);
+  const [formErrors, setFormErrors] = useState([]);
 
   const packageIdMapping = {
     Awan: 1,
@@ -437,10 +441,82 @@ export default function Booking() {
   const [agreed, setAgreed] = useState(false);
   const [hasReadTerms, setHasReadTerms] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [shakeTerms, setShakeTerms] = useState(false);
   const summaryRef = useRef(null);
+  const registryButtonRef = useRef(null);
+  const hasShakenRegistryButton = useRef(false);
+  const shouldShowAddOnHint =
+    canChooseAddOns &&
+    openBookingForm &&
+    startDate &&
+    endDate &&
+    selectedAddOns.length === 0 &&
+    !showModal &&
+    !hasDismissedAddOnHint;
 
   const [showProcessingPopup, setShowProcessingPopup] = useState(false);
   const [popupResolver, setPopupResolver] = useState(null);
+
+  const validateBookingForm = () => {
+    const errors = [];
+    const emailValue = email.trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!firstName.trim()) errors.push("First Name is required.");
+    if (!address1.trim()) errors.push("Address Line 1 is required.");
+    if (!phone.trim()) errors.push("Phone Number is required.");
+    if (!emailValue) {
+      errors.push("Email is required.");
+    } else if (!emailPattern.test(emailValue)) {
+      errors.push("Email must be a valid address, for example name@example.com.");
+    }
+    if (!idNumber.trim()) errors.push("IC No / Passport Verification Code is required.");
+    if (!startDate) errors.push("Start Date is required.");
+    if (!endDate) errors.push("End Date is required.");
+    if (startDate && endDate && numNights === 0) {
+      errors.push("End Date must be after Start Date.");
+    }
+    if (!campLocation.trim()) errors.push("Campsite Name is required.");
+    if (totalPrice === 0) errors.push("Please choose an official configuration package setup.");
+
+    return errors;
+  };
+
+  useEffect(() => {
+    const node = registryButtonRef.current;
+    if (!node || hasShakenRegistryButton.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || hasShakenRegistryButton.current) return;
+
+        hasShakenRegistryButton.current = true;
+        setShakeRegistryButton(true);
+
+        setTimeout(() => {
+          setShakeRegistryButton(false);
+        }, 700);
+
+        observer.disconnect();
+      },
+      { threshold: 0.65 }
+    );
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!shouldShowAddOnHint) return;
+
+    const timer = setTimeout(() => {
+      setHasDismissedAddOnHint(true);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [shouldShowAddOnHint]);
+
   return (
     <>
       <Navbar />
@@ -582,11 +658,13 @@ export default function Booking() {
 
           {/* Trigger Registration Form */}
           <button
+            ref={registryButtonRef}
             onClick={() => setOpenBookingForm(true)}
             className="mt-6 w-full text-white font-bold py-3.5 px-6 rounded-xl transition-all duration-200 text-center tracking-wider text-xs uppercase transform active:scale-98 shadow-md"
             style={{
               backgroundColor: "#43613D",
-              boxShadow: "0 6px 20px rgba(67, 97, 61, 0.3)"
+              boxShadow: "0 6px 20px rgba(67, 97, 61, 0.3)",
+              animation: shakeRegistryButton ? "registryButtonShake 0.7s ease-in-out" : "none",
             }}
             onMouseEnter={(e) => e.target.style.backgroundColor = "#32492D"}
             onMouseLeave={(e) => e.target.style.backgroundColor = "#43613D"}
@@ -696,7 +774,7 @@ export default function Booking() {
                 <p><span className="font-bold text-stone-500 mr-1">Email:</span> {submittedData.email}</p>
                 <p><span className="font-bold text-stone-500 mr-1">Identity No:</span> {formatNRIC(submittedData.idNumber)}</p>
                 <p><span className="font-bold text-stone-500 mr-1">Timeline:</span> {submittedData.startDate} ~ {submittedData.endDate}</p>
-                <p className="truncate max-w-full">
+                <p className="leading-relaxed break-words">
                   <span className="font-bold text-stone-500 mr-1">Address:</span>
                   {[submittedData.address1, submittedData.address2, submittedData.address3].filter(Boolean).join(', ')}
                 </p>
@@ -715,6 +793,11 @@ export default function Booking() {
                 RM{(Number(apiTotal) + 1.25).toFixed(2)}
               </span>
             </div>
+            {isBooking && (
+              <p className="mt-1 text-[11px] font-semibold leading-relaxed text-stone-500">
+                Booking deposit payment only. Final balance will be paid later.
+              </p>
+            )}
 
             {/* Signature Overview Display Box */}
             {savedSignature ? (
@@ -766,6 +849,15 @@ export default function Booking() {
                     if (!hasReadTerms) {
                       e.preventDefault();
                       setShowTooltip(true);
+                      setShakeTerms(false);
+
+                      setTimeout(() => {
+                        setShakeTerms(true);
+                      }, 0);
+
+                      setTimeout(() => {
+                        setShakeTerms(false);
+                      }, 450);
 
                       // Automatically hide the tooltip after 3 seconds
                       setTimeout(() => {
@@ -786,7 +878,10 @@ export default function Booking() {
                       setShowTooltip(false);
                     }}
                     className="underline font-bold ml-1 transition-colors hover:text-stone-900"
-                    style={{ color: "#43613D" }}
+                    style={{
+                      color: "#43613D",
+                      animation: shakeTerms ? "termsShake 0.45s ease-in-out" : "none",
+                    }}
                   >
                     Terms and System Policies
                   </button>
@@ -800,18 +895,15 @@ export default function Booking() {
                 onClick={async (e) => {
                   e.preventDefault();
 
-                  if (!firstName || !phone || !email || !idNumber) {
-                    alert("Please fill all mandatory parameters (*)");
+                  const validationErrors = validateBookingForm();
+
+                  if (validationErrors.length > 0) {
+                    setFormErrors(validationErrors);
+                    alert(`Please check these fields:\n\n- ${validationErrors.join("\n- ")}`);
                     return;
                   }
-                  if (!startDate || !endDate || numNights === 0) {
-                    alert("Please provide valid schedule timeline entries");
-                    return;
-                  }
-                  if (totalPrice === 0) {
-                    alert("Please choose an official configuration package setup");
-                    return;
-                  }
+
+                  setFormErrors([]);
 
                   setLoading(true);
                   // 2. SCREENSHOT CAPTURE BLOCK
@@ -906,6 +998,18 @@ if (summaryRef.current) {
                       const paymentUrl = bookingId && data.paymentUrl
                         ? data.paymentUrl.replace("bookingId=undefined", `bookingId=${bookingId}`)
                         : data.paymentUrl;
+                      const paidAmount = (Number(apiTotal) + 1.25).toFixed(2);
+
+                      if (bookingId) {
+                        sessionStorage.setItem(
+                          `qashcamp_payment:${bookingId}`,
+                          JSON.stringify({
+                            paidAmount,
+                            startDate,
+                            endDate,
+                          })
+                        );
+                      }
 
                       setSubmittedData({
                         firstName, lastName, phone, email, idNumber, startDate, endDate, campLocation, address1, address2, address3
@@ -994,7 +1098,17 @@ if (summaryRef.current) {
             </div>
 
             {/* Core Body Container Input Block */}
-            <form id="bookingForm" onSubmit={(e) => e.preventDefault()} className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+            <form id="bookingForm" noValidate onSubmit={(e) => e.preventDefault()} className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+              {formErrors.length > 0 && (
+                <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-700">
+                  <p className="mb-1 font-bold uppercase tracking-wider">Please check these fields</p>
+                  <ul className="list-disc space-y-1 pl-4">
+                    {formErrors.map((error) => (
+                      <li key={error}>{error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* Helper Function to handle Title Case Capitalization */}
               {(() => {
@@ -1060,7 +1174,7 @@ if (summaryRef.current) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {[
                         { id: "phone", label: "Phone Number *", type: "text", value: phone, setValue: setPhone },
-                        { id: "email", label: "Email *", type: "email", value: email, setValue: setEmail },
+                        { id: "email", label: "Email *", type: "text", value: email, setValue: setEmail },
                       ].map((field) => (
                         <div className="flex flex-col" key={field.id}>
                           <label className="text-xs font-bold mb-1.5" style={{ color: "#544E45" }}>
@@ -1170,14 +1284,39 @@ if (summaryRef.current) {
               {/* Modal Actions Footer Group */}
               <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t" style={{ borderColor: "#E5DCB9" }}>
                 {canChooseAddOns && (
+                  <div className="relative w-full sm:flex-1">
+                    {shouldShowAddOnHint && (
+                      <div
+                        className="absolute bottom-full left-0 right-0 mb-2 rounded-xl border px-3 py-2 text-[11px] font-bold shadow-lg"
+                        style={{
+                          backgroundColor: "#FFF8E8",
+                          borderColor: "#B39658",
+                          color: "#544E45",
+                          animation: "addOnHintPop 0.3s ease-out",
+                        }}
+                      >
+                        Wanna add-ons items ?
+                        <div
+                          className="absolute left-6 top-full h-3 w-3 rotate-45 border-b border-r"
+                          style={{ backgroundColor: "#FFF8E8", borderColor: "#B39658" }}
+                        />
+                      </div>
+                    )}
                   <button
                     type="button"
-                    onClick={() => setShowModal(true)}
-                    className="w-full sm:flex-1 text-white py-3 px-4 rounded-xl font-bold transition-all text-xs uppercase tracking-wider shadow-sm"
-                    style={{ backgroundColor: "#B39658" }}
+                    onClick={() => {
+                      setHasDismissedAddOnHint(true);
+                      setShowModal(true);
+                    }}
+                    className="w-full text-white py-3 px-4 rounded-xl font-bold transition-all text-xs uppercase tracking-wider shadow-sm"
+                    style={{
+                      backgroundColor: "#B39658",
+                      animation: shouldShowAddOnHint ? "addOnButtonPulse 1.4s ease-in-out infinite" : "none",
+                    }}
                   >
                     ⚙️ Add-ons Item
                   </button>
+                  </div>
                 )}
                 <button
                   type="button"
@@ -1203,6 +1342,7 @@ if (summaryRef.current) {
           onClose={() => { setShowModal(false); setOpenBookingForm(false); }}
           onSave={(data) => {
             setSelectedAddOns(data);
+            setHasDismissedAddOnHint(true);
             setSubmittedData({ firstName, lastName, phone, email, idNumber, startDate, endDate, campLocation, address1, address2, address3 });
             setShowModal(false); setOpenBookingForm(false);
           }}
@@ -1220,6 +1360,32 @@ if (summaryRef.current) {
           }}
         />
       )}
+
+      <style>
+        {`
+          @keyframes termsShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+          }
+
+          @keyframes registryButtonShake {
+            0%, 100% { transform: translateX(0); }
+            14%, 42%, 70% { transform: translateX(-8px); }
+            28%, 56%, 84% { transform: translateX(8px); }
+          }
+
+          @keyframes addOnHintPop {
+            0% { opacity: 0; transform: translateY(6px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+          }
+
+          @keyframes addOnButtonPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(179, 150, 88, 0.45); }
+            50% { box-shadow: 0 0 0 8px rgba(179, 150, 88, 0); }
+          }
+        `}
+      </style>
 
       {/* Premium Toast Pipeline Alerts Framework */}
       {successNotification && (

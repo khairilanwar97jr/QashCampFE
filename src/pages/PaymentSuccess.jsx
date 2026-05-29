@@ -16,6 +16,7 @@ export default function PaymentSuccess() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(null);
   const [booking, setBooking] = useState(null);
+  const [paymentDetails, setPaymentDetails] = useState(null);
   const [countdown, setCountdown] = useState(9);
 
   // High-End Premium Depth Box Shadows
@@ -101,6 +102,19 @@ export default function PaymentSuccess() {
   }, [bookingId]);
 
   useEffect(() => {
+    if (!bookingId) return;
+
+    const storedPayment = sessionStorage.getItem(`qashcamp_payment:${bookingId}`);
+    if (!storedPayment) return;
+
+    try {
+      setPaymentDetails(JSON.parse(storedPayment));
+    } catch (err) {
+      console.error("Failed to read payment details:", err);
+    }
+  }, [bookingId]);
+
+  useEffect(() => {
     if (!loading && status === "paid") {
       const interval = setInterval(() => {
         setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
@@ -121,8 +135,11 @@ export default function PaymentSuccess() {
     if (!booking) return;
 
     const liveReceiptUrl = `${window.location.origin}/receipt/${booking.bookingRef}`;
+    const whatsappStartDate = paymentDetails?.startDate || booking.start_date || "-";
+    const whatsappEndDate = paymentDetails?.endDate || booking.end_date || "-";
+    const whatsappTotal = paymentDetails?.paidAmount || booking.total || "-";
 
-    const message = `*NEW PAYMENT SUCCESS*\n\n👤 Name: ${booking.first_name || "-"} ${booking.last_name || ""}\n🆔 Booking ID: ${booking.bookingId || bookingId}\n📅 Start: ${booking.start_date || "-"}\n📅 End: ${booking.end_date || "-"}\n📍 Location: ${booking.camp_place || "-"}\n🔖 Ref: ${booking.bookingRef || "-"}\n📦 Package: ${booking.package?.name || "N/A"}\n💰 Total: RM${booking.total || "-"}\n\n🧾 Receipt:\n${liveReceiptUrl}\n`;
+    const message = `*NEW PAYMENT SUCCESS*\n\n👤 Name: ${booking.first_name || "-"} ${booking.last_name || ""}\n🆔 Booking ID: ${booking.bookingId || bookingId}\n📅 Start: ${whatsappStartDate}\n📅 End: ${whatsappEndDate}\n📍 Location: ${booking.camp_place || "-"}\n🔖 Ref: ${booking.bookingRef || "-"}\n📦 Package: ${booking.package?.name || "N/A"}\n💰 Total: RM${whatsappTotal}\n\n🧾 Receipt:\n${liveReceiptUrl}\n`;
 
     const phone = "60173469335";
     window.open(
@@ -281,13 +298,20 @@ export default function PaymentSuccess() {
 
           {/* High-End Clean UI Buttons with WhatsApp Priority Highlight */}
           <div className="space-y-3 pt-1">
-            <button
+            <motion.button
+              animate={{ x: [0, -6, 6, -6, 6, 0] }}
+              transition={{
+                duration: 0.45,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatDelay: 2.2,
+              }}
               className="w-full text-white py-4 rounded-xl text-sm font-bold tracking-wide transition active:scale-[0.99] flex items-center justify-center gap-2 shadow-md hover:opacity-95"
               onClick={sendWhatsAppToAdmin}
               style={{ backgroundColor: "#597E52" }}
             >
               <span className="text-base leading-none">💬</span> Send WhatsApp Receipt
-            </button>
+            </motion.button>
 
             <button
               className="w-full bg-white text-stone-700 border border-stone-200 py-3.5 rounded-xl text-sm font-semibold hover:bg-stone-50 transition tracking-wide active:scale-[0.99]"
