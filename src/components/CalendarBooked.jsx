@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import {
+  CalendarDays,
+  Info,
+} from 'lucide-react';
 
 // Official Qashcamp Package Name Mapping from DB IDs
 const PACKAGE_NAMES = {
@@ -26,6 +30,19 @@ const addDays = (dateStr, days) => {
   const date = new Date(dateStr);
   date.setDate(date.getDate() + days);
   return date.toISOString().split('T')[0];
+};
+
+const getLocalDateString = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+};
+
+const getCurrentMonthStart = () => {
+  const today = new Date();
+  return new Date(today.getFullYear(), today.getMonth(), 1);
 };
 
 export default function QashcampLogisticsDashboard() {
@@ -63,7 +80,7 @@ export default function QashcampLogisticsDashboard() {
   // =========================
   // STATE
   // =========================
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 1));
+  const [currentDate, setCurrentDate] = useState(getCurrentMonthStart);
   const [selectedDate, setSelectedDate] = useState(null);
   const [liveBookings, setLiveBookings] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -73,7 +90,7 @@ export default function QashcampLogisticsDashboard() {
 
   // Get exact string for today's date (YYYY-MM-DD)
   const todayString = useMemo(() => {
-    return new Date().toISOString().split('T')[0];
+    return getLocalDateString(new Date());
   }, []);
 
   // =========================
@@ -232,78 +249,105 @@ export default function QashcampLogisticsDashboard() {
   return (
     <div
       ref={dashboardRef}
-      className={`w-full py-12 transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] transform
+      className={`w-full px-4 py-12 transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] transform
       ${
         isVisible
           ? 'opacity-100 translate-y-0 scale-100'
           : 'opacity-0 translate-y-20 scale-95'
       }`}
     >
-      <div className="w-full max-w-6xl mx-auto bg-white border border-neutral-100 rounded-2xl shadow-sm p-4 md:p-6 text-black font-sans">
+      <div className="w-full max-w-6xl mx-auto overflow-hidden rounded-2xl border border-[#e8e1cd] bg-white text-black shadow-[0_18px_55px_rgba(25,28,26,0.12)] font-sans">
 
         {/* HEADER */}
         <header
-          className="px-6 pt-8 pb-6 border-b border-[#e8e1cd] mb-6"
+          className="relative overflow-hidden px-6 py-7 md:px-8 md:py-8"
           style={{
-            backgroundColor: '#f9f3e3',
-            backgroundImage: 'radial-gradient(#e5dcb8 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
+            backgroundColor: '#191C1A',
+            backgroundImage: 'linear-gradient(135deg, rgba(89,126,82,0.24), rgba(198,169,105,0.12))',
             fontFamily: "'Fredoka One', cursive",
-            color: "#597E52"
+            color: "#ffffff"
           }}
         >
-          <h1 className="text-2xl md:text-3xl font-black tracking-[0.1em] uppercase">
-            Booked Package
-          </h1>
+          <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-[#C6A969]">
+                Overview & Schedule
+              </p>
+              <h1 className="text-2xl font-black uppercase tracking-[0.1em] md:text-3xl">
+                Booked Package
+              </h1>
+            </div>
 
-          <p className="text-[#b8951d] text-xs mt-1 font-black uppercase tracking-[0.2em]">
-            Overview & Schedule
-          </p>
+            <div className="inline-flex items-center gap-2 self-start rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-bold text-white backdrop-blur">
+              <CalendarDays className="h-4 w-4 text-[#C6A969]" />
+              Live booking calendar
+            </div>
+          </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 gap-6 p-4 md:grid-cols-12 md:p-6">
           
           {/* LEFT COMPONENT: Calendar Interface */}
-          <div className="md:col-span-7 lg:col-span-8 w-full p-6 md:p-8 rounded-3xl bg-[#F9F3E3] border border-[#E8E1CD] shadow-sm">
-            <div className="flex items-center justify-between mb-6">
+          <div className="md:col-span-7 lg:col-span-8 w-full rounded-2xl border border-[#E8E1CD] bg-[#F9F3E3] p-4 shadow-sm md:p-6">
+            <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-lg md:text-xl font-black tracking-tight text-black flex items-center gap-3">
-                  {monthNames[month]} {year}
+                <p className="mb-1 text-[10px] font-black uppercase tracking-[0.24em] text-[#b8951d]">
+                  Current View
+                </p>
+                <h2 className="flex items-center gap-3 text-2xl font-black tracking-tight text-[#191C1A] md:text-3xl">
+                  <span>{monthNames[month]} {year}</span>
                   
                   <span
-                    className={`inline-flex items-center gap-1.5 text-[10px] uppercase font-mono tracking-widest px-2 py-0.5 rounded transition-all duration-700
+                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] uppercase tracking-widest transition-all duration-700
                     ${
                       isSyncing
-                        ? 'opacity-100 translate-y-0 bg-yellow-400 text-black'
-                        : 'opacity-0 -translate-y-2 pointer-events-none bg-yellow-400 text-black'
+                        ? 'opacity-100 translate-y-0 bg-[#C6A969] text-black'
+                        : 'opacity-0 -translate-y-2 pointer-events-none bg-[#C6A969] text-black'
                     }`}
                   >
-                    <div className="w-2.5 h-2.5 border-[2px] border-black/20 border-t-black rounded-full animate-spin"></div>
+                    <div className="h-2.5 w-2.5 animate-spin rounded-full border-[2px] border-black/20 border-t-black"></div>
                     Syncing
                   </span>
                 </h2>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 self-end sm:self-auto">
                 <button 
                   onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
-                  className="w-9 h-9 flex items-center justify-center rounded-lg border border-neutral-200 text-sm font-bold hover:bg-neutral-50 active:bg-neutral-100 transition"
+                  aria-label="Previous month"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#d8caa8] bg-white text-[0px] text-transparent shadow-sm transition before:text-xl before:font-black before:text-[#597E52] before:content-['‹'] hover:bg-[#fff7ed] active:scale-95"
                 >
                   ←
                 </button>
                 <button 
                   onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
-                  className="w-9 h-9 flex items-center justify-center rounded-lg border border-neutral-200 text-sm font-bold hover:bg-neutral-50 active:bg-neutral-100 transition"
+                  aria-label="Next month"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#d8caa8] bg-white text-[0px] text-transparent shadow-sm transition before:text-xl before:font-black before:text-[#597E52] before:content-['›'] hover:bg-[#fff7ed] active:scale-95"
                 >
                   →
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 md:gap-2 text-center font-bold text-[11px] md:text-xs uppercase tracking-wider text-neutral-400 mb-4">
+            <div className="mb-5 flex flex-wrap gap-2 rounded-xl border border-[#e8e1cd] bg-white/70 p-3 text-[10px] font-black uppercase tracking-wider text-[#5e5847]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 ring-1 ring-[#e8e1cd]">
+                <span className="h-2 w-2 rounded-full border-2 border-[#C6A969] bg-white" />
+                Booked
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 ring-1 ring-[#e8e1cd]">
+                <span className="h-2 w-2 rounded-full bg-black" />
+                Heavy Booking
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 ring-1 ring-[#e8e1cd]">
+                <span className="h-2 w-2 rounded-full border border-dashed border-neutral-500" />
+                Buffer
+              </span>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 md:gap-2 text-center font-black text-[10px] md:text-xs uppercase tracking-wider text-[#8f846a] mb-3">
               <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
             </div>
 
-            <div className="grid grid-cols-7 gap-y-3 gap-x-1 md:gap-2">
+            <div className="grid grid-cols-7 gap-1.5 md:gap-2">
               {emptySpaces.map((space) => (
                 <div key={`empty-${space}`} className="aspect-square"></div>
               ))}
@@ -319,41 +363,41 @@ export default function QashcampLogisticsDashboard() {
                 const isToday = dayString === todayString;
 
                 // Border Ring Customization
-                let ringStyle = 'border-transparent';
+                let ringStyle = 'border border-transparent';
                 if (!isSelected) {
                   if (isToday) {
-                    ringStyle = 'ring-2 ring-neutral-900 ring-offset-2 ring-offset-[#F9F3E3]';
+                    ringStyle = 'ring-2 ring-[#597E52] ring-offset-2 ring-offset-[#F9F3E3]';
                   } else if (activeCount > 0 && activeCount <= 3) {
-                    ringStyle = 'border-2 border-yellow-400'; 
+                    ringStyle = 'border-2 border-[#C6A969]'; 
                   } else if (activeCount > 3) {
-                    ringStyle = 'border-2 border-black'; 
+                    ringStyle = 'border-2 border-[#191C1A]'; 
                   } else if (hasBuffer) {
-                    ringStyle = 'border border-dashed border-neutral-300'; 
+                    ringStyle = 'border border-dashed border-[#a89d80]'; 
                   }
                 }
 
                 // Background Customization
                 let bgStyle = 'bg-white';
-                let textStyle = 'text-black font-medium'; 
+                let textStyle = 'text-[#191C1A] font-semibold'; 
 
                 if (isSelected) {
                   if (activeCount > 0) {
-                    bgStyle = 'bg-neutral-900 scale-105 shadow-md'; 
-                    textStyle = activeCount > 3 ? 'text-yellow-400 font-black' : 'text-white font-bold';
+                    bgStyle = 'bg-[#191C1A] scale-105 shadow-lg'; 
+                    textStyle = activeCount > 3 ? 'text-[#C6A969] font-black' : 'text-white font-bold';
                   } else if (hasBuffer) {
-                    bgStyle = 'bg-neutral-200 scale-105'; 
-                    textStyle = 'text-neutral-900 font-bold';
+                    bgStyle = 'bg-[#e8e1cd] scale-105'; 
+                    textStyle = 'text-[#191C1A] font-bold';
                   } else {
-                    bgStyle = 'bg-yellow-400 scale-105 shadow-sm';
-                    textStyle = 'text-black font-black';
+                    bgStyle = 'bg-[#C6A969] scale-105 shadow-sm';
+                    textStyle = 'text-[#191C1A] font-black';
                   }
                 } else {
                   if (hasActivity) {
-                    bgStyle = isToday ? 'bg-amber-50 cursor-pointer shadow-sm' : 'bg-neutral-50 group-hover:bg-neutral-100 cursor-pointer shadow-sm';
-                    textStyle = activeCount > 3 ? 'text-black font-black' : 'text-neutral-700 font-bold';
+                    bgStyle = isToday ? 'bg-white cursor-pointer shadow-sm' : 'bg-white/90 group-hover:bg-white cursor-pointer shadow-sm';
+                    textStyle = activeCount > 3 ? 'text-[#191C1A] font-black' : 'text-[#4c4638] font-bold';
                   } else {
-                    bgStyle = isToday ? 'bg-yellow-100/70 hover:bg-yellow-100 border border-neutral-300 cursor-pointer' : 'bg-white hover:bg-yellow-50 border border-neutral-100 cursor-pointer';
-                    textStyle = isToday ? 'text-black font-black' : 'text-black font-medium';
+                    bgStyle = isToday ? 'bg-[#dce9d8] hover:bg-[#d2e2cd] cursor-pointer' : 'bg-white hover:bg-[#fff7ed] cursor-pointer';
+                    textStyle = isToday ? 'text-[#191C1A] font-black' : 'text-[#191C1A] font-semibold';
                   }
                 }
 
@@ -361,13 +405,13 @@ export default function QashcampLogisticsDashboard() {
                   <button
                     key={day}
                     onClick={() => setSelectedDate({ date: dayString, ...dayData })}
-                    className="aspect-square relative flex flex-col items-center justify-center rounded-xl transition group w-full"
+                    className="aspect-square relative flex w-full flex-col items-center justify-center rounded-xl transition group"
                   >
-                    <div className={`w-10 h-10 md:w-12 md:h-12 flex flex-col items-center justify-center rounded-full md:rounded-xl transition-all relative ${ringStyle} ${bgStyle}`}>
+                    <div className={`relative flex h-full min-h-[42px] w-full flex-col items-center justify-center rounded-xl transition-all group-hover:-translate-y-0.5 ${ringStyle} ${bgStyle}`}>
                       
                       {/* Visual marker label for Today when not selected */}
                       {isToday && !isSelected && (
-                        <span className="absolute -top-1.5 bg-neutral-950 text-white font-mono text-[7px] font-bold px-1 py-0.2 rounded uppercase tracking-tight scale-90 md:scale-100 z-10">
+                        <span className="absolute -top-2 z-10 rounded-full bg-[#597E52] px-1.5 py-0.5 text-[7px] font-black uppercase tracking-tight text-white shadow-sm md:text-[8px]">
                           Today
                         </span>
                       )}
@@ -377,17 +421,17 @@ export default function QashcampLogisticsDashboard() {
                       </span>
                       
                       {!isSelected && (
-                        <div className="flex gap-0.5 mt-0.5 justify-center items-center h-1 max-w-full overflow-hidden px-0.5">
+                        <div className="mt-1 flex h-1.5 max-w-full items-center justify-center gap-0.5 overflow-hidden px-0.5">
                           {dayData.active.map((id) => (
                             <span 
                               key={`dot-a-${id}`} 
-                              className={`w-1 h-1 rounded-full ${PACKAGE_COLORS[id] || 'bg-neutral-400'}`} 
+                              className={`h-1.5 w-1.5 rounded-full ${PACKAGE_COLORS[id] || 'bg-neutral-400'}`} 
                             />
                           ))}
                           {dayData.buffer.map((id) => (
                             <span 
                               key={`dot-b-${id}`} 
-                              className={`w-1 h-1 rounded-full ${PACKAGE_COLORS[id] || 'bg-neutral-400'} opacity-35 ring-[0.5px] ring-black/10`} 
+                              className={`h-1.5 w-1.5 rounded-full ${PACKAGE_COLORS[id] || 'bg-neutral-400'} opacity-35 ring-[0.5px] ring-black/10`} 
                             />
                           ))}
                         </div>
@@ -400,10 +444,10 @@ export default function QashcampLogisticsDashboard() {
           </div>
 
           {/* RIGHT COMPONENT: Logistics Inspector Panel */}
-          <div className="md:col-span-5 lg:col-span-4 w-full md:mt-14">
+          <div className="md:col-span-5 lg:col-span-4 w-full">
             {selectedDate ? (
-              <div className="p-5 bg-[#fcfaf5] text-[#5e5847] rounded-xl shadow-sm border border-[#e8e1cd] animate-fadeIn w-full">
-                <div className="flex justify-between items-center mb-5 border-b border-[#e8e1cd] pb-4">
+              <div className="w-full rounded-2xl border border-[#e8e1cd] bg-[#fcfaf5] p-5 text-[#5e5847] shadow-sm animate-fadeIn">
+                <div className="mb-5 flex items-center justify-between border-b border-[#e8e1cd] pb-4">
                   <div>
                     <h4 className="text-xs font-black tracking-widest text-[#b8951d] uppercase">
                       Fleet Status Summary {selectedDate.date === todayString && " (Today)"}
@@ -412,7 +456,8 @@ export default function QashcampLogisticsDashboard() {
                   </div>
                   <button 
                     onClick={() => setSelectedDate(null)}
-                    className="w-7 h-7 flex items-center justify-center bg-[#e8e1cd] rounded-full text-xs text-[#5e5847] hover:bg-[#dcd3bc] transition"
+                    aria-label="Close selected date details"
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e8e1cd] text-[0px] text-transparent transition before:text-sm before:font-black before:text-[#5e5847] before:content-['×'] hover:bg-[#dcd3bc]"
                   >
                     ✕
                   </button>
@@ -477,10 +522,14 @@ export default function QashcampLogisticsDashboard() {
                 </div>
               </div>
             ) : (
-              <div className="hidden md:flex flex-col items-center justify-center p-8 bg-[#f9f3e3]/50 border border-dashed border-[#e8e1cd] rounded-xl min-h-[220px] text-center">
+              <div className="hidden min-h-[260px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#d8caa8] bg-[#f9f3e3]/70 p-8 text-center md:flex">
                 <span className="text-3xl mb-3 opacity-50">📅</span>
                 <p className="text-[10px] font-black text-[#a89d80] uppercase tracking-[0.2em]">Logistics Inspector</p>
-                <p className="text-xs text-[#877e68] mt-2 max-w-[180px]">Select a date on the calendar to view current operational status.</p>
+                <p className="mt-2 max-w-[210px] text-xs leading-relaxed text-[#877e68]">Select a date on the calendar to view current operational status.</p>
+                <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-[#5e5847] ring-1 ring-[#e8e1cd]">
+                  <Info className="h-3.5 w-3.5 text-[#C6A969]" />
+                  Booking dots match package colors
+                </div>
               </div>
             )}
           </div>

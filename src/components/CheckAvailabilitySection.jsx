@@ -1,5 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import {
+  CalendarDays,
+  CheckCircle2,
+  RefreshCcw,
+  Search,
+  XCircle,
+} from "lucide-react";
 
 export default function CheckAvailabilitySection() {
   const [fromDate, setFromDate] = useState("");
@@ -27,7 +34,8 @@ export default function CheckAvailabilitySection() {
   };
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const handleCheck = async () => {
+  const handleCheck = async (e) => {
+    e?.preventDefault();
     if (!fromDate || !toDate) return;
 
     setLoading(true);
@@ -58,15 +66,14 @@ export default function CheckAvailabilitySection() {
   };
 
   return (
-    <section className="bg-[#fdf6ee] py-14 px-4 overflow-hidden">
-      <div className="max-w-4xl mx-auto">
-        {/* Animated Title Header */}
+    <section className="overflow-hidden bg-[#fdf6ee] px-4 py-14">
+      <div className="mx-auto max-w-4xl">
         <motion.h2
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-3xl md:text-6xl font-bold text-center mb-10"
+          className="mb-10 text-center text-3xl font-bold md:text-6xl"
           style={{
             fontFamily: "'Fredoka One', cursive",
             color: "#597E52",
@@ -75,126 +82,138 @@ export default function CheckAvailabilitySection() {
           Check Availability
         </motion.h2>
 
-        {/* Animated Form Entry Card */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="bg-[#C6A969] rounded-2xl p-6 md:p-8 space-y-5
-                     transition-transform duration-300 hover:-translate-y-4"
+          className="overflow-hidden rounded-2xl bg-[#C6A969]"
           style={{
             boxShadow: `
-              0 4px 6px rgba(0,0,0,0.2),
-              0 10px 20px rgba(0,0,50,0.1),
-              0 20px 40px rgba(0,0,50,0.08)
+              0 18px 45px rgba(25, 28, 26, 0.16),
+              0 5px 0 rgba(89, 126, 82, 0.28)
             `,
           }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.boxShadow = `
-                0 6px 12px rgba(0,0,0,0.25),
-                0 12px 24px rgba(0,0,50,0.18),
-                0 24px 48px rgba(0,0,50,0.15),
-                0 36px 72px rgba(0,0,50,0.12),
-                0 48px 96px rgba(0,0,50,0.1)
-              `)
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.boxShadow = `
-                0 4px 6px rgba(0,0,0,0.2),
-                0 10px 20px rgba(0,0,50,0.1),
-                0 20px 40px rgba(0,0,50,0.08)
-              `)
-          }
         >
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* From Date */}
-            <div>
-              <label className="block text-sm font-semibold mb-1 text-white text-left">
-                From Date
-              </label>
-              <input
-                type="date"
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-                min={today}
-                max={toDate || undefined}
-                className="w-full bg-[#fff7ed] border border-[#e2c8aa] rounded-lg p-3 text-base text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#FF6D1F]"
-              />
-            </div>
-
-            {/* To Date */}
-            <div>
-              <label className="block text-sm font-semibold mb-1 text-white text-left">
-                To Date
-              </label>
-              <input
-                type="date"
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-                min={fromDate || today}
-                className="w-full bg-[#fff7ed] border border-[#e2c8aa] rounded-lg p-3 text-base text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#FF6D1F]"
-              />
+          <div className="bg-[#191C1A] px-5 py-4 text-left md:px-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#597E52] text-white">
+                <CalendarDays className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C6A969]">
+                  Live Date Check
+                </p>
+                <p className="text-sm font-semibold text-white">
+                  Pick your rental period to view package availability.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Availability Check Button with Loader */}
-          <button
-            onClick={handleCheck}
-            disabled={loading || !fromDate || !toDate}
-            className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold
-               hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                <span>Checking...</span>
-              </>
-            ) : (
-              "Check Availability"
-            )}
-          </button>
+          <form onSubmit={handleCheck} className="space-y-5 p-5 md:p-8">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-xl bg-[#fff7ed] p-4 text-left shadow-sm ring-1 ring-[#e2c8aa]">
+                <label className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#597E52]">
+                  <CalendarDays className="h-4 w-4" />
+                  From Date
+                </label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  min={today}
+                  max={toDate || undefined}
+                  className="w-full rounded-lg border border-[#e2c8aa] bg-white px-3 py-3 text-base font-semibold text-gray-800 outline-none transition focus:border-[#597E52] focus:ring-2 focus:ring-[#597E52]/25"
+                />
+              </div>
 
-          {/* Reset button */}
-          <button
-            onClick={handleReset}
-            disabled={!fromDate && !toDate}
-            className={`w-full mt-2 py-3 rounded-xl font-semibold transition 
-            ${fromDate || toDate
-                ? "bg-green-500 text-white hover:bg-green-600"
-                : "bg-gray-300 text-gray-600 cursor-not-allowed"
-            }`}
-          >
-            Reset Dates
-          </button>
+              <div className="rounded-xl bg-[#fff7ed] p-4 text-left shadow-sm ring-1 ring-[#e2c8aa]">
+                <label className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#597E52]">
+                  <CalendarDays className="h-4 w-4" />
+                  To Date
+                </label>
+                <input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  min={fromDate || today}
+                  className="w-full rounded-lg border border-[#e2c8aa] bg-white px-3 py-3 text-base font-semibold text-gray-800 outline-none transition focus:border-[#597E52] focus:ring-2 focus:ring-[#597E52]/25"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+              <button
+                type="submit"
+                disabled={loading || !fromDate || !toDate}
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[#597E52] px-5 py-3 font-black uppercase tracking-wide text-white shadow-[0_4px_0_#3b5435] transition hover:bg-[#4f7249] active:translate-y-0.5 active:shadow-[0_2px_0_#3b5435] disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600 disabled:shadow-none"
+              >
+                {loading ? (
+                  <>
+                    <svg className="h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>Checking...</span>
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-5 w-5" />
+                    <span>Check Availability</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleReset}
+                disabled={!fromDate && !toDate}
+                className={`flex min-h-[52px] items-center justify-center gap-2 rounded-xl px-5 py-3 font-black uppercase tracking-wide transition ${
+                  fromDate || toDate
+                    ? "bg-[#fff7ed] text-[#597E52] ring-2 ring-[#e2c8aa] hover:bg-white"
+                    : "cursor-not-allowed bg-gray-200 text-gray-500"
+                }`}
+              >
+                <RefreshCcw className="h-4 w-4" />
+                <span>Reset</span>
+              </button>
+            </div>
+          </form>
         </motion.div>
 
-        {/* Results output section - Renders with smooth slide-in entry */}
         {showResult && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
             className="mt-10"
           >
             <div
-              className="inline-block min-w-full rounded-xl overflow-hidden bg-white"
+              className="inline-block min-w-full overflow-hidden rounded-2xl bg-white text-left"
               style={{
                 boxShadow: `
-                0 4px 6px rgba(0,0,0,0.2),
-                0 10px 20px rgba(0,0,50,0.1),
-                0 20px 40px rgba(0,0,50,0.08)
-              `,
+                  0 16px 40px rgba(25, 28, 26, 0.12),
+                  0 4px 0 rgba(198, 169, 105, 0.28)
+                `,
               }}
             >
-              <table className="w-full rounded-xl overflow-hidden">
+              <div className="border-b border-[#e2c8aa] bg-[#191C1A] px-5 py-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C6A969]">
+                  Availability Result
+                </p>
+                <p className="text-sm font-semibold text-white">
+                  {fromDate} to {toDate}
+                </p>
+              </div>
+
+              <table className="w-full overflow-hidden">
                 <thead>
-                  <tr className="bg-[#ffe5cc]">
-                    <th className="text-left p-4 font-semibold text-gray-800">Package</th>
-                    <th className="text-left p-4 font-semibold text-gray-800">
+                  <tr className="bg-[#fff7ed]">
+                    <th className="p-4 text-left text-xs font-black uppercase tracking-wider text-[#597E52]">
+                      Package
+                    </th>
+                    <th className="p-4 text-left text-xs font-black uppercase tracking-wider text-[#597E52]">
                       Availability
                     </th>
                   </tr>
@@ -202,16 +221,33 @@ export default function CheckAvailabilitySection() {
 
                 <tbody>
                   {availabilityResult.map((pkg) => (
-                    <tr key={pkg.name} className="border-t">
-                      <td className="p-4 font-medium text-left text-gray-800">{pkg.name}</td>
+                    <tr
+                      key={pkg.name}
+                      className={`border-t border-[#f0dfcb] ${
+                        pkg.status === "available"
+                          ? "bg-emerald-50/45"
+                          : "bg-red-200"
+                      }`}
+                    >
+                      <td
+                        className={`p-4 text-left font-bold ${
+                          pkg.status === "available"
+                            ? "text-emerald-900"
+                            : "text-red-950"
+                        }`}
+                      >
+                        {pkg.name}
+                      </td>
                       <td className="p-4 text-left">
                         {pkg.status === "available" ? (
-                          <span className="text-green-600 font-semibold">
-                            ✅ Available
+                          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-3 py-1.5 text-sm font-black text-white ring-1 ring-emerald-700/20">
+                            <CheckCircle2 className="h-4 w-4" />
+                            Available
                           </span>
                         ) : (
-                          <span className="text-red-600 font-semibold">
-                            ❌ Not Available
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-red-700 bg-white px-3 py-1.5 text-sm font-black text-red-700 shadow-sm">
+                            <XCircle className="h-4 w-4" />
+                            Not Available
                           </span>
                         )}
                       </td>

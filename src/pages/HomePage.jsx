@@ -17,6 +17,7 @@ import LatestBookingsTable from "../components/LatestBookingsTable";
 import BookingChecker from "../components/BookingChecker";
 import CalendarBooked from "../components/CalendarBooked";
 import { motion } from "framer-motion";
+import { MessageCircle, X } from "lucide-react";
 
 export default function HomePage() {
   const bookings = [
@@ -54,6 +55,9 @@ export default function HomePage() {
 
   const [showModal, setShowModal] = useState(false);
   const [authMode, setAuthMode] = useState("login"); // or "register"
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [whatsAppMessage, setWhatsAppMessage] = useState("");
+  const [showWhatsAppHint, setShowWhatsAppHint] = useState(false);
 
   useEffect(() => {
     const hasSeenAuth = localStorage.getItem("hasSeenAuth");
@@ -62,9 +66,40 @@ export default function HomePage() {
     }
   }, []);
 
+  useEffect(() => {
+    const hasSeenWhatsAppHint = localStorage.getItem("hasSeenWhatsAppHint");
+    if (hasSeenWhatsAppHint) return;
+
+    setShowWhatsAppHint(true);
+
+    const timer = setTimeout(() => {
+      localStorage.setItem("hasSeenWhatsAppHint", "true");
+      setShowWhatsAppHint(false);
+    }, 4500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleClose = () => {
     localStorage.setItem("hasSeenAuth", "true"); // mark as seen
     setShowModal(false);
+  };
+
+  const handleWhatsAppSubmit = (e) => {
+    e.preventDefault();
+
+    const trimmedMessage = whatsAppMessage.trim();
+    if (!trimmedMessage) return;
+
+    const phoneNumber = "60173469335";
+    const message = `sender from web : ${trimmedMessage}`;
+    window.open(
+      `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
+      "_blank"
+    );
+
+    setShowWhatsAppModal(false);
+    setWhatsAppMessage("");
   };
 
   return (
@@ -283,6 +318,65 @@ export default function HomePage() {
 
       </div>
     </footer>
+
+      <div className="group fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-[80] flex flex-col items-end gap-2 sm:bottom-5 sm:right-5">
+        <div
+          className={`relative whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-xs font-bold text-[#597E52] shadow-lg ring-1 ring-black/5 transition-all duration-200 sm:opacity-0 sm:translate-y-1 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 ${
+            showWhatsAppHint
+              ? "opacity-100 translate-y-0 animate-whatsapp-hint-shake"
+              : "pointer-events-none opacity-0 translate-y-1"
+          }`}
+        >
+          chat me !
+          <span className="absolute -bottom-1 right-5 h-2 w-2 rotate-45 bg-white" />
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowWhatsAppModal(true)}
+          aria-label="Open WhatsApp message"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_24px_rgba(0,0,0,0.22)] transition hover:bg-[#1ebe5d] focus:outline-none focus:ring-4 focus:ring-[#25D366]/30 sm:h-14 sm:w-14"
+        >
+          <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.6} />
+        </button>
+      </div>
+
+      {showWhatsAppModal && (
+        <div className="fixed inset-0 z-[90] flex items-end justify-center bg-black/45 px-3 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-16 sm:items-center sm:px-4 sm:py-6">
+          <div className="w-full max-w-md rounded-2xl bg-white p-4 text-left shadow-2xl sm:p-5">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h3 className="text-base font-bold text-[#597E52] sm:text-lg">
+                Message us on WhatsApp
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowWhatsAppModal(false)}
+                aria-label="Close WhatsApp modal"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#597E52]/30"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleWhatsAppSubmit} className="space-y-4">
+              <textarea
+                value={whatsAppMessage}
+                onChange={(e) => setWhatsAppMessage(e.target.value)}
+                rows={4}
+                placeholder="Enter your message..."
+                className="max-h-[38vh] w-full resize-none rounded-xl border border-[#e2c8aa] bg-[#fff7ed] p-3 text-base text-gray-800 outline-none transition focus:border-[#597E52] focus:ring-2 focus:ring-[#597E52]/20 sm:text-sm"
+                autoFocus
+              />
+              <button
+                type="submit"
+                disabled={!whatsAppMessage.trim()}
+                className="w-full rounded-xl bg-[#25D366] px-4 py-3 font-bold text-white shadow-md transition hover:bg-[#1ebe5d] disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );

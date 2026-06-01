@@ -2,4 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  @keyframes whatsappHintShake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-3px);
+    }
+    40% {
+      transform: translateX(3px);
+    }
+    60% {
+      transform: translateX(-2px);
+    }
+    80% {
+      transform: translateX(2px);
+    }
+  }
+
+  .animate-whatsapp-hint-shake {
+    animation: whatsappHintShake 0.65s ease-in-out 3;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-whatsapp-hint-shake {
+      animation: none;
+    }
+  }
+}
 
