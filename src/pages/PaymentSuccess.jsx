@@ -36,7 +36,7 @@ export default function PaymentSuccess() {
     let timeout;
     let initialCheck;
 
-    const MIN_LOADING_TIME = 2500; 
+    const MIN_LOADING_TIME = 2500;
     const INITIAL_CHECK_DELAY = 1000;
     const STATUS_TIMEOUT = 60000;
     const startTime = Date.now();
@@ -62,7 +62,7 @@ export default function PaymentSuccess() {
               setBooking({
                 ...result.data,
                 bookingRef: result.data.booking_ref
-              }); 
+              });
             } catch (err) {
               console.error("Failed to fetch full booking:", err);
             }
@@ -137,8 +137,12 @@ export default function PaymentSuccess() {
     const liveReceiptUrl = `${window.location.origin}/receipt/${booking.bookingRef}`;
     const whatsappStartDate = paymentDetails?.startDate || booking.start_date || "-";
     const whatsappEndDate = paymentDetails?.endDate || booking.end_date || "-";
-    const whatsappTotal = paymentDetails?.paidAmount || booking.total || "-";
-
+    const whatsappTotal =
+      paymentDetails?.paidAmount != null
+        ? paymentDetails.paidAmount
+        : booking.total != null
+          ? (Number(booking.total) + 1.25).toFixed(2)
+          : "-";
     const message = `*NEW PAYMENT SUCCESS*\n\n👤 Name: ${booking.first_name || "-"} ${booking.last_name || ""}\n🆔 Booking ID: ${booking.bookingId || bookingId}\n📅 Start: ${whatsappStartDate}\n📅 End: ${whatsappEndDate}\n📍 Location: ${booking.camp_place || "-"}\n🔖 Ref: ${booking.bookingRef || "-"}\n📦 Package: ${booking.package?.name || "N/A"}\n💰 Total: RM${whatsappTotal}\n\n🧾 Receipt:\n${liveReceiptUrl}\n`;
 
     const phone = "60173469335";
@@ -208,7 +212,7 @@ export default function PaymentSuccess() {
               >
                 Dispatch Manual WhatsApp Log
               </button>
-              
+
               <button
                 className="w-full border border-stone-200 text-stone-700 bg-white py-3.5 rounded-xl text-sm font-medium hover:bg-stone-50 transition tracking-wide active:scale-[0.99]"
                 onClick={() => navigate("/")}
@@ -225,7 +229,7 @@ export default function PaymentSuccess() {
   // 3. MAIN PRESTIGE EXECUTIVE SUCCESS STATE
   return (
     <section className="bg-[#fdf6ee] min-h-screen py-12 px-4 flex flex-col items-center justify-center">
-      
+
       {/* Playful Responsive Display Title */}
       <motion.h2
         initial={{ opacity: 0, y: -15 }}
@@ -281,7 +285,7 @@ export default function PaymentSuccess() {
               <span>Overview Detail</span>
               <span className="text-[#597E52]">System State</span>
             </div>
-            
+
             <div className="p-3.5 flex justify-between items-center text-base font-medium">
               <span className="text-stone-500">Booking Identifier</span>
               <span className="font-semibold text-stone-800 text-right">
