@@ -7,7 +7,8 @@ import img2 from "../assets/sewa_2.png";
 import img3 from "../assets/sewa_3.png"; // Price list board asset
 import img4 from "../assets/add_on1.png";
 import img5 from "../assets/add_on2.png";
-import img6 from "../assets/term.png";
+import img6 from "../assets/add_on3.png";
+import img7 from "../assets/term.png";
 
 export default function GalleryPage() {
   const navigate = useNavigate(); 
@@ -41,6 +42,12 @@ export default function GalleryPage() {
     },
     { 
       img: img6, 
+      tag: "Sleep Well", 
+      title: "Add-On Sleeping Comfort",
+      description: "Sometimes the night gets chilly. Upgrade your sleeping setup with extra blankets, sleeping pads, and cozy bedding for a warm and restful sleep under the stars."
+    },
+    { 
+      img: img7, 
       tag: "Guidelines", 
       title: "Terms & Safety Regulations",
       description: "Sila baca panduan dan peraturan keselamatan kami demi memastikan pengalaman perkhemahan yang selamat, harmoni, dan menyeronokkan."
