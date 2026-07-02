@@ -11,6 +11,7 @@ import PackagesSection from "../components/PackagesSection";
 import CheckAvailabilitySection from "../components/CheckAvailabilitySection";
 import AuthModal from "../components/AuthModal";
 import LoginForm from "../components/LoginForm";
+import WelcomeAdsCard from "../components/WelcomeAdsCard";
 import React, { useState, useEffect } from "react";
 import Register from "../components/Register";
 import LatestBookingsTable from "../components/LatestBookingsTable";
@@ -18,6 +19,7 @@ import BookingChecker from "../components/BookingChecker";
 import CalendarBooked from "../components/CalendarBooked";
 import { motion } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
+import { FaTiktok } from "react-icons/fa";
 
 export default function HomePage() {
   const bookings = [
@@ -108,7 +110,7 @@ export default function HomePage() {
 
       <AuthModal isOpen={showModal} onClose={handleClose}>
         {authMode === "login" ? (
-          <LoginForm onClose={handleClose} setAuthMode={setAuthMode} />
+          <WelcomeAdsCard onContinue={handleClose} />
         ) : (
           <Register onClose={handleClose} setAuthMode={setAuthMode} />
         )}
@@ -289,6 +291,19 @@ export default function HomePage() {
               <span className="text-gray-300 font-semibold">Selangor, MY</span>
               <span className="text-gray-300 font-semibold">Terms & Deposit</span>
             </div>
+<div className="flex flex-col gap-3">
+      <span className="font-bold text-xs uppercase tracking-wider text-[#C6A969]">Social</span>
+      <a
+        href="https://www.tiktok.com/@qashcamp"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 text-gray-300 hover:text-[#597E52] transition-colors font-bold"
+      >
+        {/* 2. Use the component directly */}
+        <FaTiktok className="h-4 w-4" /> 
+        @qashcamp
+      </a>
+    </div>
           </div>
 
         </div>
@@ -302,16 +317,18 @@ export default function HomePage() {
           </p>
 
           {/* BINAIDEA ATTRIBUTION */}
-          <div className="flex items-center gap-1.5 text-xs tracking-wide text-gray-500 font-bold">
-            <span>Powered by</span>
-            <a
-              href="https://binaidea.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white hover:text-[#597E52] font-extrabold transition-all duration-200 underline decoration-[#C6A969] decoration-2 underline-offset-4 hover:scale-105 inline-block"
-            >
-              BinaIdea
-            </a>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-xs tracking-wide text-gray-500 font-bold">
+            <div className="flex items-center gap-1.5">
+              <span>Powered by</span>
+              <a
+                href="https://binaidea.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-[#597E52] font-extrabold transition-all duration-200 underline decoration-[#C6A969] decoration-2 underline-offset-4 hover:scale-105 inline-block"
+              >
+                BinaIdea
+              </a>
+            </div>
           </div>
 
         </div>
