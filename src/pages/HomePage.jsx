@@ -280,30 +280,29 @@ export default function HomePage() {
           </div>
 
           {/* QUICK UTILITY LINKS */}
-          <div className="flex gap-16 text-left text-sm">
-            <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap gap-8 sm:gap-16 text-left text-sm">
+            <div className="flex flex-col gap-3 min-w-[120px]">
               <span className="font-bold text-xs uppercase tracking-wider text-[#C6A969]">Navigation</span>
               <a href="#choosePackage" className="text-gray-300 hover:text-[#597E52] transition-colors font-bold">Our Packages</a>
               <a href="#why-us" className="text-gray-300 hover:text-[#597E52] transition-colors font-bold">Why Kaiso</a>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 min-w-[120px]">
               <span className="font-bold text-xs uppercase tracking-wider text-[#C6A969]">Support</span>
               <span className="text-gray-300 font-semibold">Selangor, MY</span>
               <span className="text-gray-300 font-semibold">Terms & Deposit</span>
             </div>
-<div className="flex flex-col gap-3">
-      <span className="font-bold text-xs uppercase tracking-wider text-[#C6A969]">Social</span>
-      <a
-        href="https://www.tiktok.com/@qashcamp"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 text-gray-300 hover:text-[#597E52] transition-colors font-bold"
-      >
-        {/* 2. Use the component directly */}
-        <FaTiktok className="h-4 w-4" /> 
-        @qashcamp
-      </a>
-    </div>
+            <div className="flex flex-col gap-3 min-w-[120px]">
+              <span className="font-bold text-xs uppercase tracking-wider text-[#C6A969]">Social</span>
+              <a
+                href="https://www.tiktok.com/@qashcamp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 truncate text-gray-300 hover:text-[#597E52] transition-colors font-bold"
+              >
+                <FaTiktok className="h-4 w-4 shrink-0" />
+                <span className="truncate">@qashcamp</span>
+              </a>
+            </div>
           </div>
 
         </div>
