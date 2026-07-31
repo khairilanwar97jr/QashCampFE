@@ -41,71 +41,63 @@ export default function ExistingBookingSection() {
   };
 
   return (
-    <section className="bg-[#fdf6ee] py-14 px-4 overflow-hidden">
-      <div className="max-w-3xl mx-auto">
+    <section className="bg-[#fdf6ee] px-4 py-12 sm:py-16">
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-7 text-center sm:mb-9">
+          <span className="inline-flex rounded-full border border-[#D9CAA1] bg-[#FFF9EB] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#806B3A]">
+            Existing reservation
+          </span>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#43613D] sm:text-4xl">
+            Already have a booking?
+          </h2>
+          <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-[#6B665A]">
+            Enter your reference number to view your reservation and complete any remaining payment.
+          </p>
+        </div>
 
-        {/* Header Title */}
-        <h2
-          className="text-3xl md:text-5xl font-bold text-center mb-10"
-          style={{
-            fontFamily: "'Fredoka One', cursive",
-            color: "#597E52",
-          }}
-        >
-          Already Have Booking?
-        </h2>
-
-        {/* Shaker Card Container */}
         <motion.div
-          initial={{ x: 0 }}
-          whileInView={{
-            // Keyframe sequence mimicking a realistic snappy shake effect
-            x: [0, -12, 12, -12, 12, -6, 6, 0]
-          }}
-          viewport={{ once: true, margin: "-120px" }}
-          transition={{
-            duration: 0.6,
-            ease: "easeInOut",
-            delay: 0.1 // Tiny buffer delay so it shakes right as they lock eyes with it
-          }}
-          className="bg-[#C6A969] rounded-2xl p-6 md:p-8 space-y-5 text-left"
-          style={{
-            boxShadow: `
-              0 4px 6px rgba(0,0,0,0.2),
-              0 10px 20px rgba(0,0,50,0.1),
-              0 20px 40px rgba(0,0,50,0.08)
-            `,
-          }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="overflow-hidden rounded-3xl border border-[#E5DCB9] bg-white shadow-[0_18px_45px_rgba(67,97,61,0.12)]"
         >
-
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-white">
-              Booking Reference
-            </label>
-
-            <input
-              type="text"
-              value={bookingRef}
-              onChange={(e) => setBookingRef(e.target.value)}
-              placeholder="Example: QC-20260514-HK8F1"
-              className="w-full bg-[#fff7ed] border border-[#e2c8aa]
-              rounded-lg p-4 text-base text-gray-800
-              focus:outline-none focus:ring-2 focus:ring-[#FF6D1F]"
-            />
+          <div className="border-b border-[#EDE5CF] bg-[#F7F3E8] px-5 py-4 sm:px-7">
+            <p className="text-sm font-bold text-[#544E45]">Find your reservation</p>
+            <p className="mt-0.5 text-xs text-[#756F63]">Your reference was sent with your booking confirmation.</p>
           </div>
 
-          <button
-            onClick={handleCheckBooking}
-            disabled={!bookingRef || loading}
-            className="w-full bg-green-600 text-white py-4 rounded-xl
-            font-semibold hover:bg-green-700 transition
-            disabled:opacity-50"
+          <form
+            className="space-y-5 p-5 sm:p-7"
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleCheckBooking();
+            }}
           >
-            {loading ? "Checking..." : "Check Booking"}
-          </button>
+            <div>
+              <label htmlFor="booking-reference" className="mb-2 block text-sm font-bold text-[#544E45]">
+                Booking reference
+              </label>
+              <input
+                id="booking-reference"
+                type="text"
+                value={bookingRef}
+                onChange={(e) => setBookingRef(e.target.value)}
+                placeholder="e.g. QC-20260514-HK8F1"
+                autoComplete="off"
+                className="w-full rounded-xl border border-[#D9CFB2] bg-[#FFFCF5] px-4 py-3.5 text-base font-semibold text-[#3F3A32] outline-none transition placeholder:font-normal placeholder:text-stone-400 focus:border-[#43613D] focus:bg-white focus:ring-4 focus:ring-[#43613D]/10"
+              />
+            </div>
 
+            <button
+              type="submit"
+              disabled={!bookingRef || loading}
+              className="flex w-full items-center justify-center rounded-xl bg-[#43613D] px-5 py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#365033] focus:outline-none focus:ring-4 focus:ring-[#43613D]/20 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? "Checking reservation..." : "View booking details"}
+            </button>
+          </form>
         </motion.div>
-
       </div>
     </section>
   );

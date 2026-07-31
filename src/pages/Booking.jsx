@@ -140,6 +140,15 @@ export default function Booking() {
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [blockedRanges, setBlockedRanges] = useState([]);
+  const [blockedDatesLoading, setBlockedDatesLoading] = useState(false);
+  const [dateAvailabilityMessage, setDateAvailabilityMessage] = useState("");
+  const [activeDatePicker, setActiveDatePicker] = useState(null);
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+  });
+  const datePickerRef = useRef(null);
   // Calculate number of nights safely. Example: Apr 10 -> Apr 11 = 1 night.
   let numNights = 0;
   if (startDate && endDate) {
@@ -198,6 +207,19 @@ export default function Booking() {
   }, []);
 
   useEffect(() => {
+    if (!activeDatePicker) return;
+
+    const closeDatePickerOnOutsideClick = (event) => {
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target)) {
+        setActiveDatePicker(null);
+      }
+    };
+
+    document.addEventListener("pointerdown", closeDatePickerOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeDatePickerOnOutsideClick);
+  }, [activeDatePicker]);
+
+  useEffect(() => {
     if (!canChooseAddOns) {
       setSelectedAddOns([]);
       setShowModal(false);
@@ -229,6 +251,54 @@ export default function Booking() {
 
     fetchBooking();
   }, [bookingRef]);
+
+  useEffect(() => {
+    const packageId = selectedPackageId || packageIdMapping[selectedPackage];
+
+    if (!packageId) {
+      setBlockedRanges([]);
+      return;
+    }
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const today = new Date();
+    const oneYearFromToday = new Date(today);
+    oneYearFromToday.setFullYear(today.getFullYear() + 1);
+    const controller = new AbortController();
+
+    const fetchBlockedDates = async () => {
+      setBlockedDatesLoading(true);
+      setDateAvailabilityMessage("");
+
+      try {
+        const res = await fetch(
+          `${API_URL}/api/packages/${packageId}/blocked-dates?startDate=${formatDate(today)}&endDate=${formatDate(oneYearFromToday)}`,
+          { signal: controller.signal }
+        );
+        if (!res.ok) throw new Error("Unable to load booked dates.");
+
+        const data = await res.json();
+        setBlockedRanges(Array.isArray(data.blockedRanges) ? data.blockedRanges : []);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Failed to fetch blocked dates:", err);
+          setBlockedRanges([]);
+          setDateAvailabilityMessage("Booked dates could not be loaded. Please try again.");
+        }
+      } finally {
+        if (!controller.signal.aborted) setBlockedDatesLoading(false);
+      }
+    };
+
+    fetchBlockedDates();
+    return () => controller.abort();
+  }, [selectedPackageId, selectedPackage]);
 
   useEffect(() => {
     if (!bookingData) return;
@@ -457,6 +527,144 @@ export default function Booking() {
   const [showProcessingPopup, setShowProcessingPopup] = useState(false);
   const [popupResolver, setPopupResolver] = useState(null);
 
+  const selectionOverlapsBlockedRange = (selectionStart, selectionEnd) => {
+    if (!selectionStart || !selectionEnd) return false;
+
+    return blockedRanges.some(({ startDate: blockedStart, endDate: blockedEnd }) => (
+      selectionStart <= blockedEnd && selectionEnd >= blockedStart
+    ));
+  };
+
+  const handleStartDateChange = (nextStartDate) => {
+    if (selectionOverlapsBlockedRange(nextStartDate, nextStartDate)) {
+      setDateAvailabilityMessage("That start date is already booked. Please choose another date.");
+      return;
+    }
+
+    setStartDate(nextStartDate);
+    if (endDate && selectionOverlapsBlockedRange(nextStartDate, endDate)) {
+      setEndDate("");
+      setDateAvailabilityMessage("Your selected stay includes booked dates. Please choose a different end date.");
+      return;
+    }
+    setDateAvailabilityMessage("");
+  };
+
+  const handleEndDateChange = (nextEndDate) => {
+    if (!startDate || nextEndDate <= startDate) {
+      setEndDate(nextEndDate);
+      setDateAvailabilityMessage("");
+      return;
+    }
+
+    if (selectionOverlapsBlockedRange(startDate, nextEndDate)) {
+      setDateAvailabilityMessage("Those dates are already booked. Please choose a stay that does not overlap a booked range.");
+      return;
+    }
+
+    setEndDate(nextEndDate);
+    setDateAvailabilityMessage("");
+  };
+
+  const formatLocalDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const isCalendarDateDisabled = (dateValue, pickerType) => {
+    const today = formatLocalDate(new Date());
+    if (blockedDatesLoading || dateValue < today) return true;
+    if (selectionOverlapsBlockedRange(dateValue, dateValue)) return true;
+
+    return pickerType === "end" && (!startDate || dateValue <= startDate || selectionOverlapsBlockedRange(startDate, dateValue));
+  };
+
+  const selectCalendarDate = (dateValue, pickerType) => {
+    if (isCalendarDateDisabled(dateValue, pickerType)) return;
+
+    if (pickerType === "start") {
+      handleStartDateChange(dateValue);
+      setActiveDatePicker("end");
+      return;
+    }
+
+    handleEndDateChange(dateValue);
+    setActiveDatePicker(null);
+  };
+
+  const renderCalendar = (pickerType) => {
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const firstWeekday = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const monthLabel = calendarMonth.toLocaleDateString("en-MY", { month: "long", year: "numeric" });
+
+    return (
+      <div className="absolute right-0 z-30 mt-2 w-full max-w-[calc(100vw-2rem)] rounded-2xl border border-[#E5DCB9] bg-white p-3 shadow-xl sm:w-[20rem] sm:p-4 md:left-0 md:right-auto">
+        <div className="mb-3 flex items-center justify-between">
+          <button
+            type="button"
+            aria-label="Previous month"
+            className="rounded-lg px-2 py-1 font-bold text-[#43613D] hover:bg-stone-100"
+            onClick={() => setCalendarMonth(new Date(year, month - 1, 1))}
+          >
+            ‹
+          </button>
+          <p className="text-sm font-bold text-[#544E45]">{monthLabel}</p>
+          <button
+            type="button"
+            aria-label="Next month"
+            className="rounded-lg px-2 py-1 font-bold text-[#43613D] hover:bg-stone-100"
+            onClick={() => setCalendarMonth(new Date(year, month + 1, 1))}
+          >
+            ›
+          </button>
+        </div>
+        <div className="grid grid-cols-7 gap-0.5 text-center text-[10px] font-bold uppercase text-stone-400 sm:gap-1">
+          {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => <span key={day}>{day}</span>)}
+        </div>
+        <div className="mt-1 grid grid-cols-7 gap-0.5 sm:gap-1">
+          {Array.from({ length: firstWeekday }, (_, index) => <span key={`blank-${index}`} />)}
+          {Array.from({ length: daysInMonth }, (_, index) => {
+            const dateValue = formatLocalDate(new Date(year, month, index + 1));
+            const disabled = isCalendarDateDisabled(dateValue, pickerType);
+            const isPastDate = dateValue < formatLocalDate(new Date());
+            const isBookedDate = selectionOverlapsBlockedRange(dateValue, dateValue);
+            const selected = pickerType === "start" ? startDate === dateValue : endDate === dateValue;
+
+            return (
+              <button
+                key={dateValue}
+                type="button"
+                disabled={disabled}
+                onClick={() => selectCalendarDate(dateValue, pickerType)}
+                className={`h-8 rounded-lg text-xs font-bold transition-colors sm:h-9 ${
+                  selected
+                    ? "bg-[#43613D] text-white"
+                    : isBookedDate
+                      ? "cursor-not-allowed bg-red-100 text-red-400 line-through"
+                      : isPastDate
+                      ? "cursor-not-allowed bg-stone-100 text-stone-300 line-through"
+                      : disabled
+                        ? "cursor-not-allowed bg-amber-50 text-amber-300"
+                        : "text-[#544E45] hover:bg-[#E9F0E3] hover:text-[#43613D]"
+                }`}
+                title={isBookedDate ? "Booked — unavailable" : isPastDate ? "Past date — unavailable" : disabled ? "Unavailable" : dateValue}
+              >
+                {index + 1}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-[10px] font-semibold text-stone-500">
+          <span className="text-stone-400">Grey</span> = past, <span className="text-red-500">red</span> = booked.
+        </p>
+      </div>
+    );
+  };
+
   const validateBookingForm = () => {
     const errors = [];
     const emailValue = email.trim();
@@ -475,6 +683,9 @@ export default function Booking() {
     if (!endDate) errors.push("End Date is required.");
     if (startDate && endDate && numNights === 0) {
       errors.push("End Date must be after Start Date.");
+    }
+    if (selectionOverlapsBlockedRange(startDate, endDate)) {
+      errors.push("Selected dates overlap a booked date range.");
     }
     if (!campLocation.trim()) errors.push("Campsite Name is required.");
     if (totalPrice === 0) errors.push("Please choose an official configuration package setup.");
@@ -1216,7 +1427,7 @@ if (summaryRef.current) {
                     </div>
 
                     {/* Schedule Window Metrics */}
-<div className="flex flex-col">
+<div className="flex flex-col" ref={datePickerRef}>
   <label
     className="text-xs md:text-sm font-bold mb-2"
     style={{ color: "#544E45" }}
@@ -1231,15 +1442,25 @@ if (summaryRef.current) {
       <span className="text-[10px] md:text-xs font-bold mb-1 text-[#6b665a] uppercase tracking-wider">
         Start Date
       </span>
-      <input
-        type="date"
-        className="p-3 md:p-3.5 text-sm rounded-xl border outline-none bg-stone-50 transition-all font-semibold w-full"
-        style={{ borderColor: "#E5DCB9", color: "#43613D" }}
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-        min={new Date().toISOString().split("T")[0]}
-        required
-      />
+      <div className="relative">
+        <button
+          type="button"
+          disabled={blockedDatesLoading}
+          onClick={() => {
+            if (startDate) {
+              const [year, month] = startDate.split("-").map(Number);
+              setCalendarMonth(new Date(year, month - 1, 1));
+            }
+            setActiveDatePicker(activeDatePicker === "start" ? null : "start");
+          }}
+          className="flex w-full items-center justify-between rounded-xl border bg-stone-50 p-3 text-left text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60 md:p-3.5"
+          style={{ borderColor: "#E5DCB9", color: startDate ? "#43613D" : "#78716C" }}
+        >
+          <span>{blockedDatesLoading ? "Loading dates…" : startDate || "Select start date"}</span>
+          <span aria-hidden="true">📅</span>
+        </button>
+        {activeDatePicker === "start" && renderCalendar("start")}
+      </div>
     </div>
 
     {/* END DATE */}
@@ -1247,18 +1468,49 @@ if (summaryRef.current) {
       <span className="text-[10px] md:text-xs font-bold mb-1 text-[#6b665a] uppercase tracking-wider">
         End Date
       </span>
-      <input
-        type="date"
-        className="p-3 md:p-3.5 text-sm rounded-xl border outline-none bg-stone-50 transition-all font-semibold w-full"
-        style={{ borderColor: "#E5DCB9", color: "#43613D" }}
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-        min={startDate || new Date().toISOString().split("T")[0]}
-        required
-      />
+      <div className="relative">
+        <button
+          type="button"
+          disabled={blockedDatesLoading}
+          onClick={() => {
+            if (endDate) {
+              const [year, month] = endDate.split("-").map(Number);
+              setCalendarMonth(new Date(year, month - 1, 1));
+            }
+            setActiveDatePicker(activeDatePicker === "end" ? null : "end");
+          }}
+          className="flex w-full items-center justify-between rounded-xl border bg-stone-50 p-3 text-left text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60 md:p-3.5"
+          style={{ borderColor: "#E5DCB9", color: endDate ? "#43613D" : "#78716C" }}
+        >
+          <span>{blockedDatesLoading ? "Loading dates…" : endDate || "Select end date"}</span>
+          <span aria-hidden="true">📅</span>
+        </button>
+        {activeDatePicker === "end" && renderCalendar("end")}
+      </div>
     </div>
 
   </div>
+
+  {blockedDatesLoading ? (
+    <p className="mt-2 text-xs font-semibold text-[#6b665a]">Loading booked dates…</p>
+  ) : blockedRanges.length > 0 ? (
+    <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-900">
+      <p className="font-bold">Booked dates — unavailable for selection</p>
+      <ul className="mt-1 list-disc space-y-0.5 pl-4 font-semibold">
+        {blockedRanges.map((range) => (
+          <li key={`${range.startDate}-${range.endDate}`}>
+            {range.startDate} to {range.endDate}
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : null}
+
+  {dateAvailabilityMessage && (
+    <p className="mt-2 text-xs font-bold text-red-600" role="alert">
+      {dateAvailabilityMessage}
+    </p>
+  )}
 </div>
 
                     {/* Target Location Allocation Point with Auto-Capitalization */}

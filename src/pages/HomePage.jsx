@@ -145,8 +145,8 @@ export default function HomePage() {
 
         {/* Check Availability Section */}
         <CalendarBooked/>
-        <CheckAvailabilitySection />
         <BookingChecker/>
+        <CheckAvailabilitySection />
 
       {/* Timeline Section */}
       <div className="bg-[#8b5a2b] mt-10 px-4 py-10">
