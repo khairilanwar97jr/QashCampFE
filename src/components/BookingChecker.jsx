@@ -42,15 +42,35 @@ export default function ExistingBookingSection() {
 
   return (
     <section className="bg-[#fdf6ee] px-4 py-12 sm:py-16">
-      <div className="mx-auto max-w-3xl">
-        <div className="mb-7 text-center sm:mb-9">
-          <span className="inline-flex rounded-full border border-[#D9CAA1] bg-[#FFF9EB] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#806B3A]">
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-8 text-center sm:mb-10">
+          <span className="mb-4 inline-flex rounded-full border border-[#D9CAA1] bg-[#FFF9EB] px-5 py-1 text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#806B3A] shadow-sm">
             Existing reservation
           </span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#43613D] sm:text-4xl">
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+              x: [0, -6, 6, -3, 3, 0],
+              rotate: [0, -1.4, 1.4, -0.8, 0.8, 0],
+            }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{
+              duration: 1.1,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatDelay: 3.9,
+            }}
+            className="mb-4 text-center text-3xl font-black tracking-tight md:text-5xl"
+            style={{
+              fontFamily: "'Fredoka One', cursive",
+              color: "#597E52",
+            }}
+          >
             Already have a booking?
-          </h2>
-          <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-[#6B665A]">
+          </motion.h2>
+          <p className="mx-auto max-w-2xl text-sm leading-6 text-[#6B665A] sm:text-[15px]">
             Enter your reference number to view your reservation and complete any remaining payment.
           </p>
         </div>
@@ -60,11 +80,16 @@ export default function ExistingBookingSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="overflow-hidden rounded-3xl border border-[#E5DCB9] bg-white shadow-[0_18px_45px_rgba(67,97,61,0.12)]"
+          className="overflow-hidden rounded-[28px] border border-[#C9AF71] bg-[#FFF9EE] shadow-[0_20px_60px_rgba(67,97,61,0.18)] backdrop-blur"
         >
-          <div className="border-b border-[#EDE5CF] bg-[#F7F3E8] px-5 py-4 sm:px-7">
-            <p className="text-sm font-bold text-[#544E45]">Find your reservation</p>
-            <p className="mt-0.5 text-xs text-[#756F63]">Your reference was sent with your booking confirmation.</p>
+          <div className="flex flex-col gap-3 border-b border-[#D6C28F] bg-[#F1E7CD] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+            <div>
+              <p className="text-sm font-extrabold tracking-[0.02em] text-[#2F3D2D]">Find your reservation</p>
+              <p className="mt-0.5 text-xs text-[#5B5447]">Your reference was sent with your booking confirmation.</p>
+            </div>
+            <div className="inline-flex w-fit items-center rounded-full border border-[#B59143] bg-[#FFF4CF] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#6F5523]">
+              Secure lookup
+            </div>
           </div>
 
           <form
@@ -75,24 +100,26 @@ export default function ExistingBookingSection() {
             }}
           >
             <div>
-              <label htmlFor="booking-reference" className="mb-2 block text-sm font-bold text-[#544E45]">
+              <label htmlFor="booking-reference" className="mb-2 block text-sm font-bold text-[#3A362D]">
                 Booking reference
               </label>
-              <input
-                id="booking-reference"
-                type="text"
-                value={bookingRef}
-                onChange={(e) => setBookingRef(e.target.value)}
-                placeholder="e.g. QC-20260514-HK8F1"
-                autoComplete="off"
-                className="w-full rounded-xl border border-[#D9CFB2] bg-[#FFFCF5] px-4 py-3.5 text-base font-semibold text-[#3F3A32] outline-none transition placeholder:font-normal placeholder:text-stone-400 focus:border-[#43613D] focus:bg-white focus:ring-4 focus:ring-[#43613D]/10"
-              />
+              <div className="rounded-2xl border border-[#B89553] bg-[#FFF9ED] p-[1px] shadow-[0_10px_28px_rgba(67,97,61,0.08)] transition focus-within:border-[#31502E] focus-within:ring-4 focus-within:ring-[#31502E]/14">
+                <input
+                  id="booking-reference"
+                  type="text"
+                  value={bookingRef}
+                  onChange={(e) => setBookingRef(e.target.value)}
+                  placeholder="e.g. QC-20260514-HK8F1"
+                  autoComplete="off"
+                  className="w-full rounded-[15px] bg-[#FFF9ED] px-4 py-3.5 text-base font-semibold text-[#2F312C] outline-none transition placeholder:font-normal placeholder:text-stone-500"
+                />
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={!bookingRef || loading}
-              className="flex w-full items-center justify-center rounded-xl bg-[#43613D] px-5 py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#365033] focus:outline-none focus:ring-4 focus:ring-[#43613D]/20 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full items-center justify-center rounded-2xl bg-[#31502E] px-5 py-3.5 text-sm font-bold text-white shadow-[0_12px_30px_rgba(49,80,46,0.28)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#284326] hover:shadow-[0_16px_36px_rgba(49,80,46,0.34)] focus:outline-none focus:ring-4 focus:ring-[#31502E]/20 disabled:cursor-not-allowed disabled:opacity-55"
             >
               {loading ? "Checking reservation..." : "View booking details"}
             </button>
