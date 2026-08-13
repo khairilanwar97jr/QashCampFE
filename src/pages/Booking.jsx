@@ -284,7 +284,12 @@ export default function Booking() {
         if (!res.ok) throw new Error("Unable to load booked dates.");
 
         const data = await res.json();
-        setBlockedRanges(Array.isArray(data.blockedRanges) ? data.blockedRanges : []);
+        const rawBlocked = Array.isArray(data.blockedRanges) ? data.blockedRanges : [];
+        // If viewing an existing booking, allow its own bookingRef dates to remain selectable
+        const filteredBlocked = bookingRef
+          ? rawBlocked.filter((r) => (r.bookingRef || r.booking_ref) !== bookingRef)
+          : rawBlocked;
+        setBlockedRanges(filteredBlocked);
       } catch (err) {
         if (err.name !== "AbortError") {
           console.error("Failed to fetch blocked dates:", err);
