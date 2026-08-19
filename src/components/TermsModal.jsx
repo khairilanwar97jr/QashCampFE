@@ -60,19 +60,21 @@ const handleAgree = () => {
 
         {/* Terms Box */}
         <div 
-          className="mx-4 mt-4 p-4 text-xs space-y-2 rounded-xl border overflow-y-auto font-medium shadow-inner leading-relaxed text-stone-800"
+          className="mx-4 mt-4 max-h-[42vh] p-4 text-xs space-y-3 rounded-xl border overflow-y-auto font-medium shadow-inner leading-relaxed text-stone-800"
           style={{ backgroundColor: "#EBE2CD", borderColor: "#D3C6A2" }}
         >
-          <p>1. The renter is responsible for all equipment during the rental period.</p>
-          <p>2. Any loss, damage, or theft of items will require full compensation.</p>
-          <p>3. A security deposit must be paid before the start of the camping period.</p>
-          <p>4. Return can be done after the camping day, preferably after the activity ends.</p>
-          <p>5. The tent must be returned in its original condition to get the deposit refund.</p>
-          <p>6. Deposit will be refunded one day after camping (inspection period for the tent condition).</p>
-          <p>7. No smoking or any fire-related activities inside or near the tent.</p>
-          <p>8. Setup order: sunshade first, then ground sheet, then the tent on top.</p>
-          <p>9. Qash Camp is not liable for personal injuries or accidents during the camping activity.</p>
-          <p>10. All renters must follow camp rules and safety guidelines.</p>
+          <div><strong>1. Equipment Responsibility</strong><p>Renters are responsible for all equipment during the rental period.</p></div>
+          <div><strong>2. Loss &amp; Damage</strong><p>Lost, damaged, or stolen items must be fully compensated.</p></div>
+          <div><strong>3. Security Deposit</strong><p>A security deposit is required before the camping period begins.</p></div>
+          <div><strong>4. Equipment Return</strong><p>Equipment can be returned after the camping activity ends, preferably on the day after camping. Late returns may be subject to additional charges.</p></div>
+          <div><strong>5. Return Condition</strong><p>All equipment must be returned in its original condition for a full deposit refund.</p></div>
+          <div><strong>6. Deposit Refund</strong><p>Deposits will be refunded within 1 day after camping, subject to equipment inspection.</p></div>
+          <div><strong>7. No Smoking &amp; Fire</strong><p>Smoking and any fire-related activities are prohibited inside or near the tent.</p></div>
+          <div><strong>8. Tent Setup</strong><p>Setup order: sunshade → ground sheet → tent.</p></div>
+          <div><strong>9. Personal Safety</strong><p>QashCamp is not responsible for personal injuries or accidents during camping activities.</p></div>
+          <div><strong>10. Camp Rules</strong><p>Renters must follow all campsite rules and safety guidelines.</p></div>
+          <div><strong>11. Cancellation &amp; Refund</strong><p>Cancellation must be informed at least 2 days (48 hours) before camping to receive a refund. Otherwise, the booking is non-refundable.</p></div>
+          <div><strong>12. Last-Minute Booking</strong><p>For bookings made less than 2 days before camping, cancellation must be informed at least 12 hours before camping to receive a refund. Otherwise, the booking is non-refundable.</p></div>
         </div>
 
         {/* Signature Box */}
