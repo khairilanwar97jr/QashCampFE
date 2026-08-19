@@ -84,9 +84,35 @@ export default function QashcampLogisticsDashboard() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [liveBookings, setLiveBookings] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showPreviousMonthAuth, setShowPreviousMonthAuth] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [authError, setAuthError] = useState(false);
+
+  const ADMIN_PASSCODE = 'CAMP97';
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
+
+  const handlePreviousMonthRequest = () => {
+    setPasswordInput('');
+    setAuthError(false);
+    setShowPreviousMonthAuth(true);
+  };
+
+  const handlePreviousMonthUnlock = (event) => {
+    event.preventDefault();
+
+    if (passwordInput !== ADMIN_PASSCODE) {
+      setAuthError(true);
+      return;
+    }
+
+    setCurrentDate(new Date(year, month - 1, 1));
+    setSelectedDate(null);
+    setShowPreviousMonthAuth(false);
+    setPasswordInput('');
+    setAuthError(false);
+  };
 
   // Get exact string for today's date (YYYY-MM-DD)
   const todayString = useMemo(() => {
@@ -312,7 +338,7 @@ export default function QashcampLogisticsDashboard() {
               </div>
               <div className="flex gap-2 self-end sm:self-auto">
                 <button 
-                  onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
+                  onClick={handlePreviousMonthRequest}
                   aria-label="Previous month"
                   className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#d8caa8] bg-white text-[0px] text-transparent shadow-sm transition before:text-xl before:font-black before:text-[#597E52] before:content-['‹'] hover:bg-[#fff7ed] active:scale-95"
                 >
@@ -536,6 +562,63 @@ export default function QashcampLogisticsDashboard() {
 
         </div>
       </div>
+
+      {showPreviousMonthAuth && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-xs">
+          <div
+            className="w-full max-w-sm rounded-2xl border-2 border-[#bfa363] bg-[#C6A969] p-4"
+            style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}
+          >
+            <div className="rounded-xl border border-[#e2c8aa] bg-[#fff7ed] p-6 text-center">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full border-2 border-black bg-[#C6A969]">
+                <span className="text-2xl" aria-hidden="true">🔒</span>
+              </div>
+              <h3 className="mb-1 text-lg font-bold text-black">Passcode Required</h3>
+              <p className="mb-6 text-xs text-gray-500">
+                Enter the terminal key to view a previous month.
+              </p>
+
+              <form onSubmit={handlePreviousMonthUnlock} className="space-y-4">
+                <input
+                  type="password"
+                  autoFocus
+                  placeholder="Enter passcode..."
+                  value={passwordInput}
+                  onChange={(event) => {
+                    setPasswordInput(event.target.value);
+                    setAuthError(false);
+                  }}
+                  className="w-full rounded-xl border-2 border-black bg-white px-4 py-3 text-center font-mono text-sm text-black focus:outline-none focus:ring-2 focus:ring-[#C6A969]"
+                />
+
+                {authError && (
+                  <p className="text-xs font-semibold text-rose-600">⚠️ Invalid passcode token.</p>
+                )}
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPreviousMonthAuth(false);
+                      setPasswordInput('');
+                      setAuthError(false);
+                    }}
+                    className="flex-1 rounded-xl border border-gray-300 bg-white py-3 text-xs font-bold text-gray-600"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 rounded-xl border border-black bg-black py-3 text-xs font-bold text-white active:translate-y-0.5"
+                  >
+                    Unlock
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

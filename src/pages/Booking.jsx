@@ -164,9 +164,14 @@ export default function Booking() {
   const additionalNightCharge = additionalNights * 50;
   const packagePrice = basePackagePrice + additionalNightCharge;
   const addOnsTotal = selectedAddOns.reduce(
-    (sum, a) => sum + Number(a.price || 0),
+    (sum, a) => sum + Number(a.price || 0) * Number(a.selectedQuantity || 1),
     0
   );
+
+  const selectedAddOnsPayload = selectedAddOns.map((addOn) => ({
+    addonId: addOn.id,
+    quantity: Number(addOn.selectedQuantity || 1),
+  }));
   const totalPrice = packagePrice + addOnsTotal + depositAmount;
   const apiTotal = isExistingBooking
     ? basePackagePrice + additionalNightCharge + addOnsTotal
@@ -547,6 +552,7 @@ export default function Booking() {
     }
 
     setStartDate(nextStartDate);
+    setSelectedAddOns([]);
     if (endDate && selectionOverlapsBlockedRange(nextStartDate, endDate)) {
       setEndDate("");
       setDateAvailabilityMessage("Your selected stay includes booked dates. Please choose a different end date.");
@@ -558,6 +564,7 @@ export default function Booking() {
   const handleEndDateChange = (nextEndDate) => {
     if (!startDate || nextEndDate <= startDate) {
       setEndDate(nextEndDate);
+      setSelectedAddOns([]);
       setDateAvailabilityMessage("");
       return;
     }
@@ -568,6 +575,7 @@ export default function Booking() {
     }
 
     setEndDate(nextEndDate);
+    setSelectedAddOns([]);
     setDateAvailabilityMessage("");
   };
 
@@ -872,11 +880,112 @@ export default function Booking() {
             </div>
           )}
 
+          {/* Booking actions kept outside the customer-information form */}
+          <div
+            className="mt-6 w-full space-y-4 rounded-2xl border p-4 sm:p-5"
+            style={{ backgroundColor: "#FDFBF7", borderColor: "#E5DCB9" }}
+          >
+            <div className="flex flex-col" ref={datePickerRef}>
+              <label className="mb-2 text-xs font-bold sm:text-sm" style={{ color: "#544E45" }}>
+                1. Choose Your Date <span className="text-red-500">*</span>
+              </label>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="flex w-full flex-col sm:w-1/2">
+                  <span className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#6b665a]">
+                    Start Date
+                  </span>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      disabled={blockedDatesLoading}
+                      onClick={() => {
+                        if (startDate) {
+                          const [year, month] = startDate.split("-").map(Number);
+                          setCalendarMonth(new Date(year, month - 1, 1));
+                        }
+                        setActiveDatePicker(activeDatePicker === "start" ? null : "start");
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl border bg-stone-50 p-3 text-left text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                      style={{ borderColor: "#E5DCB9", color: startDate ? "#43613D" : "#78716C" }}
+                    >
+                      <span>{blockedDatesLoading ? "Loading dates…" : startDate || "Select start date"}</span>
+                      <span aria-hidden="true">📅</span>
+                    </button>
+                    {activeDatePicker === "start" && renderCalendar("start")}
+                  </div>
+                </div>
+
+                <div className="flex w-full flex-col sm:w-1/2">
+                  <span className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#6b665a]">
+                    End Date
+                  </span>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      disabled={blockedDatesLoading}
+                      onClick={() => {
+                        if (endDate) {
+                          const [year, month] = endDate.split("-").map(Number);
+                          setCalendarMonth(new Date(year, month - 1, 1));
+                        }
+                        setActiveDatePicker(activeDatePicker === "end" ? null : "end");
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl border bg-stone-50 p-3 text-left text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                      style={{ borderColor: "#E5DCB9", color: endDate ? "#43613D" : "#78716C" }}
+                    >
+                      <span>{blockedDatesLoading ? "Loading dates…" : endDate || "Select end date"}</span>
+                      <span aria-hidden="true">📅</span>
+                    </button>
+                    {activeDatePicker === "end" && renderCalendar("end")}
+                  </div>
+                </div>
+              </div>
+
+              {dateAvailabilityMessage && (
+                <p className="mt-2 text-xs font-bold text-red-600" role="alert">
+                  {dateAvailabilityMessage}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs font-bold sm:text-sm" style={{ color: "#544E45" }}>
+                2. Choose Add-ons
+              </p>
+              <button
+                type="button"
+                disabled={!startDate || !endDate}
+                onClick={() => {
+                  setHasDismissedAddOnHint(true);
+                  setShowModal(true);
+                }}
+                className="w-full rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                style={{ backgroundColor: "#B39658" }}
+              >
+                ⚙️ {canChooseAddOns && selectedAddOns.length > 0 ? `Edit Add-ons (${selectedAddOns.length})` : "Choose Add-ons"}
+              </button>
+              {!canChooseAddOns && (
+                <p className="mt-1.5 text-[11px] font-semibold text-amber-800">
+                  Preview only. To select add-ons, use Walk In or complete Final Payment.
+                </p>
+              )}
+              {(!startDate || !endDate) && (
+                <p className="mt-1.5 text-[11px] font-semibold text-stone-500">
+                  Select both dates to check add-on availability.
+                </p>
+              )}
+            </div>
+          </div>
+
           {/* Trigger Registration Form */}
+          <p className="mt-4 w-full text-xs font-bold sm:text-sm" style={{ color: "#544E45" }}>
+            3. Customer Information
+          </p>
           <button
             ref={registryButtonRef}
             onClick={() => setOpenBookingForm(true)}
-            className="mt-6 w-full text-white font-bold py-3.5 px-6 rounded-xl transition-all duration-200 text-center tracking-wider text-xs uppercase transform active:scale-98 shadow-md"
+            className="mt-2 w-full text-white font-bold py-3.5 px-6 rounded-xl transition-all duration-200 text-center tracking-wider text-xs uppercase transform active:scale-98 shadow-md"
             style={{
               backgroundColor: "#43613D",
               boxShadow: "0 6px 20px rgba(67, 97, 61, 0.3)",
@@ -948,8 +1057,12 @@ export default function Booking() {
                   <ul className="list-none space-y-1.5 text-xs">
                     {selectedAddOns.map((a) => (
                       <li key={a.id} className="flex justify-between items-center bg-stone-100/60 px-2.5 py-2 rounded-lg border" style={{ borderColor: "#D3C6A2" }}>
-                        <span className="font-semibold text-stone-700">{a.name}</span>
-                        <span className="font-bold" style={{ color: "#43613D" }}>+RM{a.price}</span>
+                        <span className="font-semibold text-stone-700">
+                          {a.name}{(a.selectedQuantity || 1) > 1 ? ` × ${a.selectedQuantity}` : ""}
+                        </span>
+                        <span className="font-bold" style={{ color: "#43613D" }}>
+                          +RM{Number(a.price || 0) * Number(a.selectedQuantity || 1)}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -1168,7 +1281,7 @@ if (summaryRef.current) {
                     payload = {
                       bookingId: bookingData?.id,
                       bookingRef: bookingRef,
-                      addOnIds: selectedAddOns.map((a) => a.id),
+                      addOns: selectedAddOnsPayload,
                       extraNightCount: additionalNights,
                       summarySnapshot: summaryScreenshotBase64, // 👇 INJECTED HERE
                     };
@@ -1184,7 +1297,7 @@ if (summaryRef.current) {
                       startDate,
                       endDate,
                       packageId: selectedPackageId ?? packageIdMapping[selectedPackage],
-                      addOnIds: selectedAddOns.map((a) => a.id),
+                      addOns: selectedAddOnsPayload,
                       phoneNo: rawPhone,
                       emailAddr: email,
                       campPlace: campLocation,
@@ -1432,7 +1545,7 @@ if (summaryRef.current) {
                     </div>
 
                     {/* Schedule Window Metrics */}
-<div className="flex flex-col" ref={datePickerRef}>
+<div className="hidden">
   <label
     className="text-xs md:text-sm font-bold mb-2"
     style={{ color: "#544E45" }}
@@ -1540,7 +1653,7 @@ if (summaryRef.current) {
 
               {/* Modal Actions Footer Group */}
               <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t" style={{ borderColor: "#E5DCB9" }}>
-                {canChooseAddOns && (
+                {false && canChooseAddOns && (
                   <div className="relative w-full sm:flex-1">
                     {shouldShowAddOnHint && (
                       <div
@@ -1593,9 +1706,12 @@ if (summaryRef.current) {
       )}
 
       {/* Auxiliary Modals Subtrees */}
-      {canChooseAddOns && showModal && (
+      {showModal && (
         <AddOnModal
           selected={selectedAddOns}
+          startDate={startDate}
+          endDate={endDate}
+          readOnly={!canChooseAddOns}
           onClose={() => { setShowModal(false); setOpenBookingForm(false); }}
           onSave={(data) => {
             setSelectedAddOns(data);

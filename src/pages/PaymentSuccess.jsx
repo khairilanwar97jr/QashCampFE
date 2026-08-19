@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FaWhatsapp } from "react-icons/fa";
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export default function PaymentSuccess() {
   const [status, setStatus] = useState(null);
   const [booking, setBooking] = useState(null);
   const [paymentDetails, setPaymentDetails] = useState(null);
-  const [countdown, setCountdown] = useState(9);
+  const [countdown, setCountdown] = useState(30);
 
   // High-End Premium Depth Box Shadows
   const professionalShadow = `
@@ -122,7 +123,7 @@ export default function PaymentSuccess() {
 
       const redirect = setTimeout(() => {
         navigate("/");
-      }, 9000);
+      }, 30000);
 
       return () => {
         clearInterval(interval);
@@ -303,18 +304,24 @@ export default function PaymentSuccess() {
           {/* High-End Clean UI Buttons with WhatsApp Priority Highlight */}
           <div className="space-y-3 pt-1">
             <motion.button
-              animate={{ x: [0, -6, 6, -6, 6, 0] }}
+              animate={{
+                x: [0, -7, 7, -6, 6, -3, 3, 0],
+                rotate: [0, -1.5, 1.5, -1, 1, 0, 0, 0],
+              }}
               transition={{
-                duration: 0.45,
+                duration: 0.65,
                 ease: "easeInOut",
                 repeat: Infinity,
-                repeatDelay: 2.2,
+                repeatDelay: 1.8,
               }}
-              className="w-full text-white py-4 rounded-xl text-sm font-bold tracking-wide transition active:scale-[0.99] flex items-center justify-center gap-2 shadow-md hover:opacity-95"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full text-white py-4 rounded-xl text-sm font-bold tracking-wide transition flex items-center justify-center gap-2.5 shadow-lg hover:brightness-105"
               onClick={sendWhatsAppToAdmin}
-              style={{ backgroundColor: "#597E52" }}
+              style={{ backgroundColor: "#25D366", boxShadow: "0 8px 22px rgba(37, 211, 102, 0.3)" }}
             >
-              <span className="text-base leading-none">💬</span> Send WhatsApp Receipt
+              <FaWhatsapp className="h-6 w-6" aria-hidden="true" />
+              Send WhatsApp Receipt
             </motion.button>
 
             <button
