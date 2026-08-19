@@ -213,6 +213,30 @@ export default function PackageSection() {
         <p className="text-sm md:text-base text-neutral-600 mt-4 max-w-xl mx-auto leading-relaxed">
           High-performance premium rental systems configured for rugged weekend explorations and optimal outdoor luxury.
         </p>
+
+        <div className="mt-7 overflow-hidden rounded-xl border-2 border-[#C6A969] bg-[#fffaf0] text-left shadow-[0_8px_24px_rgba(89,126,82,0.12)]">
+          <div className="border-b border-[#C6A969] bg-[#597E52] px-4 py-2.5">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+              Before you choose
+            </p>
+          </div>
+
+          <div className="divide-y divide-[#e2cda3] px-4">
+            <div className="grid gap-1 py-3.5 sm:grid-cols-[90px_1fr] sm:items-start sm:gap-4">
+              <span className="w-fit rounded-md bg-[#dce8d9] px-2 py-1 text-[11px] font-black uppercase tracking-wider text-[#365132]">Booking</span>
+              <p className="text-xs font-semibold leading-relaxed text-[#5e5847]">
+                Tent only, without add-ons. Cancel at least 2 days before your camping date to receive a refund.
+              </p>
+            </div>
+
+            <div className="grid gap-1 py-3.5 sm:grid-cols-[90px_1fr] sm:items-start sm:gap-4">
+              <span className="w-fit rounded-md bg-[#f3e4bd] px-2 py-1 text-[11px] font-black uppercase tracking-wider text-[#765e24]">Walk In</span>
+              <p className="text-xs font-semibold leading-relaxed text-[#5e5847]">
+                For a confirmed trip. You can select available add-ons together with your tent. No cancellation or refund.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* PACKAGES GRID CONTAINER */}

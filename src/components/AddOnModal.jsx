@@ -150,7 +150,7 @@ export default function AddOnModal({ onClose, onSave, selected, startDate, endDa
           ) : addons.length === 0 ? (
             <p className="text-center py-8 text-xs font-semibold italic text-stone-500">No auxiliary customizations available.</p>
           ) : (
-            <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[40vh] md:max-h-[55vh]">
+            <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 max-h-[40vh] md:max-h-[55vh]">
               {addons.map((addon) => {
                 const isSelected = selectedItems.some((i) => i.id === addon.id);
                 const selectedItem = selectedItems.find((i) => i.id === addon.id);
@@ -160,7 +160,7 @@ export default function AddOnModal({ onClose, onSave, selected, startDate, endDa
                   <div
                     key={addon.id}
                     onClick={() => toggleAddOn(addon)}
-                    className={`border rounded-xl p-3 flex flex-col items-center text-center transition-all duration-200 relative group
+                    className={`border rounded-xl p-2 sm:p-3 flex flex-col items-center text-center transition-all duration-200 relative group
                       ${readOnly || !isAvailable ? "cursor-not-allowed" : "cursor-pointer hover:shadow-md transform active:scale-[0.99]"}
                       ${!isAvailable ? "opacity-50" : ""}
                       ${readOnly ? "shadow-[0_5px_14px_rgba(75,85,99,0.22)] grayscale-[20%]" : ""}
@@ -182,24 +182,23 @@ export default function AddOnModal({ onClose, onSave, selected, startDate, endDa
                       {isAvailable ? (readOnly ? "View Only" : "Ready") : "Sold Out"}
                     </span>
 
-                    {isAvailable && (
-                      <span
-                        className="absolute top-9 right-2 rounded-md border bg-white/90 px-2 py-0.5 text-[10px] font-bold text-stone-700"
-                        style={{ borderColor: "#D3C6A2" }}
-                      >
-                        {quantity} available
-                      </span>
-                    )}
-
                     <img
                       src={addon.imageUrl || "https://via.placeholder.com/150"}
                       alt={addon.name}
-                      className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-lg mb-2 shadow-xs border bg-white"
+                      className="w-20 h-20 sm:w-28 sm:h-28 object-cover rounded-lg mb-2 shadow-xs border bg-white"
                       style={{ borderColor: "#D3C6A2" }}
                     />
                     
                     <h3 className="text-sm font-bold text-stone-800 tracking-tight">{addon.name}</h3>
                     <p className="text-xs font-bold mt-0.5" style={{ color: "#43613D" }}>RM {addon.price}</p>
+                    {isAvailable && (
+                      <span
+                        className="mt-1 rounded-md border bg-white/90 px-2 py-0.5 text-[10px] font-bold text-stone-700"
+                        style={{ borderColor: "#D3C6A2" }}
+                      >
+                        {quantity} available
+                      </span>
+                    )}
                     
                     <input 
                       type="checkbox" 

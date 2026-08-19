@@ -886,7 +886,7 @@ export default function Booking() {
             style={{ backgroundColor: "#FDFBF7", borderColor: "#E5DCB9" }}
           >
             <div className="flex flex-col" ref={datePickerRef}>
-              <label className="mb-2 text-xs font-bold sm:text-sm" style={{ color: "#544E45" }}>
+              <label className="mb-2 text-xs font-black sm:text-sm" style={{ color: "#B91C1C" }}>
                 1. Choose Your Date <span className="text-red-500">*</span>
               </label>
 
@@ -950,7 +950,7 @@ export default function Booking() {
             </div>
 
             <div>
-              <p className="mb-2 text-xs font-bold sm:text-sm" style={{ color: "#544E45" }}>
+              <p className="mb-2 text-xs font-black sm:text-sm" style={{ color: "#B91C1C" }}>
                 2. Choose Add-ons
               </p>
               <button
@@ -979,7 +979,7 @@ export default function Booking() {
           </div>
 
           {/* Trigger Registration Form */}
-          <p className="mt-4 w-full text-xs font-bold sm:text-sm" style={{ color: "#544E45" }}>
+          <p className="mt-4 w-full text-xs font-black sm:text-sm" style={{ color: "#B91C1C" }}>
             3. Customer Information
           </p>
           <button
