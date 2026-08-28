@@ -15,6 +15,7 @@ export default function LatestBookingsTable() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [authError, setAuthError] = useState(false);
+  const [detailsError, setDetailsError] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
   const ADMIN_PASSCODE = "CAMP97"; 
@@ -39,6 +40,7 @@ export default function LatestBookingsTable() {
     setSelectedBooking(booking);
     setSnapshots({ initial: null, final: null }); // ◄ Reset snapshot object values
     setAuthError(false);
+    setDetailsError("");
     setPasswordInput(""); 
   };
 
@@ -47,29 +49,49 @@ const handleVerifyPasscode = async (e) => {
   e.preventDefault();
 
   if (passwordInput === ADMIN_PASSCODE) {
-    setIsAuthenticated(true);
     setAuthError(false);
-
+    setDetailsError("");
     setLoadingSnapshot(true);
 
     try {
-      const res = await fetch(
-        `${API_URL}/api/bookings/${selectedBooking.booking_ref}/attachment`
+      // The public latest endpoint only returns summary data. Fetch the full
+      // booking after the existing details passcode has been entered.
+      const detailsRes = await fetch(
+        `${API_URL}/api/bookings/latest/details/${selectedBooking.id}`
       );
 
-      const result = await res.json();
-
-      if (result.success) {
-        setSnapshots({
-          initial: result.summarySnapshot,
-          final: result.summarySnapshotFinal
-        });
-      } else {
-        console.log("No snapshot found");
+      if (!detailsRes.ok) {
+        throw new Error(`Unable to load booking details (${detailsRes.status})`);
       }
 
+      const fullBooking = await detailsRes.json();
+      setSelectedBooking(fullBooking);
+
+      if (fullBooking.booking_attch?.id && fullBooking.booking_ref) {
+        try {
+          const attachmentRes = await fetch(
+            `${API_URL}/api/bookings/${fullBooking.booking_ref}/attachment`
+          );
+
+          if (attachmentRes.ok) {
+            const result = await attachmentRes.json();
+
+            if (result.success) {
+              setSnapshots({
+                initial: result.summarySnapshot,
+                final: result.summarySnapshotFinal
+              });
+            }
+          }
+        } catch (attachmentError) {
+          console.error("Error fetching layout snapshots:", attachmentError);
+        }
+      }
+
+      setIsAuthenticated(true);
     } catch (err) {
-      console.error("Error fetching layout snapshots:", err);
+      console.error("Error fetching booking details:", err);
+      setDetailsError("Unable to load booking details. Please try again.");
     } finally {
       setLoadingSnapshot(false);
     }
@@ -113,9 +135,14 @@ const handleVerifyPasscode = async (e) => {
     }
   };
 
+  const getTotalSettlement = (booking) => {
+    const paidAmount = Number(booking?.total_paid ?? booking?.total ?? 0);
+    return (paidAmount + 1.25).toFixed(2);
+  };
+
   const sendWhatsApp = (b) => {
     const liveReceiptUrl = `${window.location.origin}/receipt/${b.booking_ref}`;
-    const message = `*Receipt Request*\n\n👤 *Name:* ${b.first_name} ${b.last_name}\n🆔 *Booking ID:* ${b.id}\n📅 *Start:* ${b.start_date}\n📅 *End:* ${b.end_date}\n📍 *Location:* ${b.camp_place}\n🔖 *Ref:* ${b.booking_ref}\n📦 *Package:* ${b.package?.name || "N/A"}\n💰 *Total:* RM${b.total_paid}\n\n🗺️ *View Layout Blueprint & Receipt:* \n${liveReceiptUrl}`;
+    const message = `*Receipt Request*\n\n👤 *Name:* ${b.first_name} ${b.last_name}\n🆔 *Booking ID:* ${b.id}\n📅 *Start:* ${b.start_date}\n📅 *End:* ${b.end_date}\n📍 *Location:* ${b.camp_place}\n🔖 *Ref:* ${b.booking_ref}\n📦 *Package:* ${b.package?.name || "N/A"}\n💰 *Total:* RM${getTotalSettlement(b)}\n\n🗺️ *View Layout Blueprint & Receipt:* \n${liveReceiptUrl}`;
     const phone = "60173469335";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   };
@@ -205,13 +232,13 @@ const handleVerifyPasscode = async (e) => {
                   bookings.map((b) => (
                     <tr key={b.id} className="hover:bg-[#fbf1e3] transition-colors duration-150">
                       <td className="py-4 px-6 font-bold text-gray-900 whitespace-nowrap" style={cellBorderStyle}>
-                        {b.first_name} {b.last_name}
-                        {b.booking_attch && b.booking_attch.id && (
+                        {b.first_name}
+                        {b.has_layout && (
                           <span className="ml-2 text-[10px] text-[#C6A969] bg-[#fff7ed] px-1.5 py-0.5 rounded border border-[#e2c8aa]">📸 Layout</span>
                         )}
                       </td>
                       <td className="py-4 px-5 text-gray-500 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>
-                        {new Date(b.createddate).toISOString().split("T")[0]}
+                        {b.created_date}
                       </td>
                       <td className="py-4 px-5 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>{b.start_date}</td>
                       <td className="py-4 px-5 font-mono text-xs whitespace-nowrap" style={cellBorderStyle}>{b.end_date}</td>
@@ -270,8 +297,8 @@ const handleVerifyPasscode = async (e) => {
                 <div className="bg-[#fff7ed] rounded-xl p-4 space-y-3 border border-[#e2c8aa]">
                   <div className="flex items-center justify-between gap-3 border-b-2 border-[#e2c8aa] pb-3">
                     <h3 className="font-bold text-base text-gray-900 tracking-tight flex items-center">
-                      {b.first_name} {b.last_name}
-                      {b.booking_attch && b.booking_attch.id && (
+                      {b.first_name}
+                      {b.has_layout && (
                         <span className="ml-1.5 text-[9px] text-[#C6A969] bg-[#fff7ed] px-1 py-0.2 rounded border border-[#e2c8aa]">📸</span>
                       )}
                     </h3>
@@ -283,7 +310,7 @@ const handleVerifyPasscode = async (e) => {
                   <div className="space-y-2 text-xs text-gray-600">
                     <div className="flex justify-between">
                       <span className="text-gray-400 font-medium">Created:</span>
-                      <span className="font-mono">{new Date(b.createddate).toISOString().split("T")[0]}</span>
+                      <span className="font-mono">{b.created_date}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400 font-medium">Timeline:</span>
@@ -351,6 +378,10 @@ const handleVerifyPasscode = async (e) => {
                       <p className="text-xs text-rose-600 font-semibold">⚠️ Invalid passcode token.</p>
                     )}
 
+                    {detailsError && (
+                      <p className="text-xs text-rose-600 font-semibold">⚠️ {detailsError}</p>
+                    )}
+
                     <div className="flex gap-2">
                       <button
                         type="button"
@@ -361,9 +392,10 @@ const handleVerifyPasscode = async (e) => {
                       </button>
                       <button
                         type="submit"
+                        disabled={loadingSnapshot}
                         className="flex-1 bg-black text-white font-bold text-xs py-3 rounded-xl border border-black active:translate-y-0.5"
                       >
-                        Unlock
+                        {loadingSnapshot ? "Loading..." : "Unlock"}
                       </button>
                     </div>
                   </form>
@@ -502,7 +534,7 @@ const handleVerifyPasscode = async (e) => {
                   <div className="bg-[#fdf6ee] rounded-xl p-4 flex justify-between items-center mt-5 border border-[#bfa363]">
                     <span className="text-xs font-bold text-[#C6A969] uppercase tracking-wider">Total Settlement</span>
                     <span className="font-bold text-xl text-gray-900">
-                      RM {selectedBooking.total_paid ?? selectedBooking.total}
+                      RM {getTotalSettlement(selectedBooking)}
                     </span>
                   </div>
 
