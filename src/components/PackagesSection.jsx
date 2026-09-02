@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/Card";
 import { Button } from "./ui/Button";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import packageAwanImg from "@/assets/package_A_awan.png";
 import packagePurnamaImg from "@/assets/package_B_purnama.png";
 import packageSenjaImg from "@/assets/package_C_senja.png";
 import packageLestariImg from "@/assets/package_D_lestari.png";
+import lestariAds1 from "@/assets/lestari_ads1.png";
+import lestariAds2 from "@/assets/lestari_ads2.png";
+import lestariAds3 from "@/assets/lestari_ads3.png";
+import lestariAds4 from "@/assets/lestari_ads4.png";
 import packageEmbunImg from "@/assets/package_E_embun.png";
+import embunAds1 from "@/assets/embun_ads1.png";
+import embunAds2 from "@/assets/embun_ads2.png";
+import embunAds3 from "@/assets/embun_ads3.png";
+import embunAds4 from "@/assets/embun_ads4.png";
 import packageAuroraImg from "@/assets/package_F_aurora.png";
+import auroraAds1 from "@/assets/aurora_ads1.png";
+import auroraAds2 from "@/assets/aurora_ads2.png";
+import auroraAds3 from "@/assets/aurora_ads3.png";
+import auroraAds4 from "@/assets/aurora_ads4.png";
 import packageRimbayuImg from "@/assets/package_G_rimbayu.png";
+import rimbayuAds1 from "@/assets/rimbayu_ads1.png";
+import rimbayuAds2 from "@/assets/rimbayu_ads2.png";
+import rimbayuAds3 from "@/assets/rimbayu_ads3.png";
+import rimbayuAds4 from "@/assets/rimbayu_ads4.png";
 import packageVoucher from "@/assets/voucher.png";
 
 import { useNavigate } from "react-router-dom";
@@ -16,6 +32,15 @@ import { useNavigate } from "react-router-dom";
 export default function PackageSection() {
   const navigate = useNavigate();
   const [loadingTarget, setLoadingTarget] = useState(null);
+  const [packageSlide, setPackageSlide] = useState(0);
+
+  useEffect(() => {
+    const slideTimer = window.setInterval(() => {
+      setPackageSlide((currentSlide) => (currentSlide + 1) % 5);
+    }, 3000);
+
+    return () => window.clearInterval(slideTimer);
+  }, []);
 
   const getApiPrice = (pkg, fallback) =>
     Number(
@@ -93,6 +118,13 @@ export default function PackageSection() {
       displayName: "Package Lestari",
       name: "Lestari",
       img: packageLestariImg,
+      images: [
+        packageLestariImg,
+        lestariAds1,
+        lestariAds2,
+        lestariAds3,
+        lestariAds4
+      ],
       price: "RM120",
       packagePrice: 120,
       depositAmount: 50,
@@ -110,6 +142,13 @@ export default function PackageSection() {
       displayName: "Package Embun",
       name: "Embun",
       img: packageEmbunImg,
+      images: [
+        packageEmbunImg,
+        embunAds1,
+        embunAds2,
+        embunAds3,
+        embunAds4
+      ],
       price: "RM140",
       packagePrice: 140,
       depositAmount: 50,
@@ -127,6 +166,13 @@ export default function PackageSection() {
       displayName: "Package Aurora",
       name: "Aurora",
       img: packageAuroraImg,
+      images: [
+        packageAuroraImg,
+        auroraAds1,
+        auroraAds2,
+        auroraAds3,
+        auroraAds4
+      ],
       price: "RM160",
       packagePrice: 160,
       depositAmount: 50,
@@ -144,6 +190,13 @@ export default function PackageSection() {
       displayName: "Package Rimbayu",
       name: "Rimbayu",
       img: packageRimbayuImg,
+      images: [
+        packageRimbayuImg,
+        rimbayuAds1,
+        rimbayuAds2,
+        rimbayuAds3,
+        rimbayuAds4
+      ],
       price: "RM210",
       packagePrice: 210,
       depositAmount: 100,
@@ -261,16 +314,31 @@ export default function PackageSection() {
               >
                 
                 {/* IMAGE WRAPPER */}
-                <div className="w-full h-72 overflow-hidden bg-neutral-100 relative">
-                  <motion.img
-                    src={item.img}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                    variants={{
-                      hover: { scale: 1.05 }
-                    }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                  />
+                <div className="w-full h-80 overflow-hidden bg-neutral-100 relative">
+                  {item.images ? (
+                    <AnimatePresence initial={false}>
+                      <motion.img
+                        key={`${item.packageId}-${packageSlide}`}
+                        src={item.images[packageSlide]}
+                        alt={`${item.name} package view ${packageSlide + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        initial={{ x: "100%" }}
+                        animate={{ x: 0 }}
+                        exit={{ x: "-100%" }}
+                        transition={{ duration: 0.65, ease: "easeInOut" }}
+                      />
+                    </AnimatePresence>
+                  ) : (
+                    <motion.img
+                      src={item.img}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                      variants={{
+                        hover: { scale: 1.05 }
+                      }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                    />
+                  )}
                   
                   <div className="absolute top-4 left-4 z-10">
                     <span className="text-[9px] font-mono font-bold tracking-wider uppercase bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md text-neutral-800 shadow-sm border border-black/5">

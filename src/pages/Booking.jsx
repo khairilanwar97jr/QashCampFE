@@ -38,29 +38,46 @@ import packageD1 from "../assets/packageD1.jpg";
 import packageD2 from "../assets/packageD2.jpg";
 import packageD3 from "../assets/packageD3.jpg";
 import packageD4 from "../assets/packageD4.jpg";
+import lestariAds1 from "../assets/lestari_ads1.png";
+import lestariAds2 from "../assets/lestari_ads2.png";
+import lestariAds3 from "../assets/lestari_ads3.png";
+import lestariAds4 from "../assets/lestari_ads4.png";
 
 import packageE from "../assets/packageE.jpg";
 import packageE1 from "../assets/packageE1.jpg";
 import packageE2 from "../assets/packageE2.jpg";
 import packageE3 from "../assets/packageE3.jpg";
 import packageE4 from "../assets/packageE4.jpg";
+import embunAds1 from "../assets/embun_ads1.png";
+import embunAds2 from "../assets/embun_ads2.png";
+import embunAds3 from "../assets/embun_ads3.png";
+import embunAds4 from "../assets/embun_ads4.png";
 
 import packageF from "../assets/packageF.jpg";
 import packageF1 from "../assets/packageF1.png";
 import packageF2 from "../assets/packageF2.png";
 import packageF3 from "../assets/packageF3.png";
 import packageF4 from "../assets/packageF4.png";
+import auroraAds1 from "../assets/aurora_ads1.png";
+import auroraAds2 from "../assets/aurora_ads2.png";
+import auroraAds3 from "../assets/aurora_ads3.png";
+import auroraAds4 from "../assets/aurora_ads4.png";
 
 import packageG from "../assets/packageG.jpg";
 import packageG1 from "../assets/packageG1.jpg";
 import packageG2 from "../assets/packageG2.jpg";
 import packageG3 from "../assets/packageG3.jpg";
 import packageG4 from "../assets/packageG4.jpg";
+import rimbayuAds1 from "../assets/rimbayu_ads1.png";
+import rimbayuAds2 from "../assets/rimbayu_ads2.png";
+import rimbayuAds3 from "../assets/rimbayu_ads3.png";
+import rimbayuAds4 from "../assets/rimbayu_ads4.png";
 
 import voucher from "../assets/voucher.png";
 
 import { useRef } from 'react'; // Add this if you don't have useRef imported yet
 import html2canvas from 'html2canvas'; // Add this line
+import { AnimatePresence, motion } from "framer-motion";
 
 import ZoomOnHover from "../components/ZoomOnHover"; // import the new component
 const API_URL = import.meta.env.VITE_API_URL;
@@ -122,6 +139,13 @@ export default function Booking() {
     Voucher: [voucher, voucher, voucher, voucher, voucher],
   };
 
+  const latestPackagePhotos = {
+    Lestari: [lestariAds1, lestariAds2, lestariAds3, lestariAds4],
+    Embun: [embunAds1, embunAds2, embunAds3, embunAds4],
+    Aurora: [auroraAds1, auroraAds2, auroraAds3, auroraAds4],
+    Rimbayu: [rimbayuAds1, rimbayuAds2, rimbayuAds3, rimbayuAds4],
+  };
+
   const packageImages = {
     Awan: packageAwanImg,
     Purnama: packagePurnamaImg,
@@ -134,6 +158,7 @@ export default function Booking() {
   };
 
   const thumbnails = packageThumbnails[selectedPackage] || [];
+  const latestPhotos = latestPackagePhotos[selectedPackage] || [];
   const packageImg = packageImages[selectedPackage] || null;
 
   const [showModal, setShowModal] = useState(false);
@@ -365,6 +390,21 @@ export default function Booking() {
   };
 
   const [enlargedImg, setEnlargedImg] = useState(null);
+  const [currentPhotoSlide, setCurrentPhotoSlide] = useState(0);
+
+  useEffect(() => {
+    setCurrentPhotoSlide(0);
+
+    if (latestPhotos.length < 2) return undefined;
+
+    const slideTimer = window.setInterval(() => {
+      setCurrentPhotoSlide((currentSlide) =>
+        (currentSlide + 1) % latestPhotos.length
+      );
+    }, 3000);
+
+    return () => window.clearInterval(slideTimer);
+  }, [selectedPackage, latestPhotos.length]);
   const [openBookingForm, setOpenBookingForm] = useState(false);
   const [shakeRegistryButton, setShakeRegistryButton] = useState(false);
   const [hasDismissedAddOnHint, setHasDismissedAddOnHint] = useState(false);
@@ -818,29 +858,81 @@ export default function Booking() {
   }}
 >
   <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZHRoPSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9Ii4zIi8+Cjwvc3ZnPg==')" }}></div>
-  {packageImg && (
+  {latestPhotos.length > 0 ? (
+    <AnimatePresence initial={false}>
+      <motion.img
+        key={`${selectedPackage}-${currentPhotoSlide}`}
+        src={latestPhotos[currentPhotoSlide]}
+        alt={`${selectedPackage} current view ${currentPhotoSlide + 1}`}
+        className="absolute inset-4 w-[calc(100%-2rem)] h-[calc(100%-2rem)] rounded-xl shadow-md object-contain cursor-pointer"
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "-100%" }}
+        transition={{ duration: 0.65, ease: "easeInOut" }}
+        onClick={() => setEnlargedImg(latestPhotos[currentPhotoSlide])}
+      />
+    </AnimatePresence>
+  ) : packageImg ? (
     <img
       src={packageImg}
       alt={selectedPackage}
       className="w-full max-w-[260px] sm:max-w-[320px] h-auto rounded-xl shadow-md transition-transform duration-300 object-contain"
     />
-  )}
+  ) : null}
 </div>
 
-          {/* Thumbnails Portfolio Section */}
-          <div className="flex flex-wrap gap-3 mt-6 justify-center w-full">
-            {thumbnails.map((img, idx) => (
-              <div key={idx} className="relative p-0.5 rounded-xl border transition-all" style={{ borderColor: "#D3C6A2" }}>
-                <img
-                  src={img}
-                  alt={`Portfolio Element ${idx + 1}`}
-                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-xs"
-                  onClick={() => setEnlargedImg(img)}
-                  onMouseEnter={(e) => e.target.parentElement.style.borderColor = "#43613D"}
-                  onMouseLeave={(e) => e.target.parentElement.style.borderColor = "#D3C6A2"}
-                />
+          {/* Latest Package Photos */}
+          {latestPhotos.length > 0 && (
+            <div className="mt-6 w-full">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-px flex-1 bg-[#D3C6A2]" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#43613D]">
+                  Current Package Photos
+                </p>
+                <div className="h-px flex-1 bg-[#D3C6A2]" />
               </div>
-            ))}
+              <div className="flex flex-wrap gap-3 justify-center">
+                {latestPhotos.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className="relative p-0.5 rounded-xl border transition-all"
+                    style={{ borderColor: currentPhotoSlide === idx ? "#43613D" : "#B39658" }}
+                  >
+                    <img
+                      src={img}
+                      alt={`${selectedPackage} current view ${idx + 1}`}
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-xs"
+                      onClick={() => setCurrentPhotoSlide(idx)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tent Company Photos */}
+          <div className="mt-6 w-full">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-px flex-1 bg-[#D3C6A2]" />
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500 text-center">
+                Photos Provided by the Tent Company
+              </p>
+              <div className="h-px flex-1 bg-[#D3C6A2]" />
+            </div>
+            <div className="flex flex-wrap gap-3 justify-center">
+              {thumbnails.map((img, idx) => (
+                <div key={idx} className="relative p-0.5 rounded-xl border transition-all" style={{ borderColor: "#D3C6A2" }}>
+                  <img
+                    src={img}
+                    alt={`Company-provided ${selectedPackage} view ${idx + 1}`}
+                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-xs"
+                    onClick={() => setEnlargedImg(img)}
+                    onMouseEnter={(e) => e.target.parentElement.style.borderColor = "#43613D"}
+                    onMouseLeave={(e) => e.target.parentElement.style.borderColor = "#D3C6A2"}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Technical Specification Checklist with Roasted Tone Layout */}
