@@ -38,40 +38,40 @@ import packageD1 from "../assets/packageD1.jpg";
 import packageD2 from "../assets/packageD2.jpg";
 import packageD3 from "../assets/packageD3.jpg";
 import packageD4 from "../assets/packageD4.jpg";
-import lestariAds1 from "../assets/lestari_ads1.png";
-import lestariAds2 from "../assets/lestari_ads2.png";
-import lestariAds3 from "../assets/lestari_ads3.png";
-import lestariAds4 from "../assets/lestari_ads4.png";
+import lestariAds1 from "../assets/lestari_ads1.webp";
+import lestariAds2 from "../assets/lestari_ads2.webp";
+import lestariAds3 from "../assets/lestari_ads3.webp";
+import lestariAds4 from "../assets/lestari_ads4.webp";
 
 import packageE from "../assets/packageE.jpg";
 import packageE1 from "../assets/packageE1.jpg";
 import packageE2 from "../assets/packageE2.jpg";
 import packageE3 from "../assets/packageE3.jpg";
 import packageE4 from "../assets/packageE4.jpg";
-import embunAds1 from "../assets/embun_ads1.png";
-import embunAds2 from "../assets/embun_ads2.png";
-import embunAds3 from "../assets/embun_ads3.png";
-import embunAds4 from "../assets/embun_ads4.png";
+import embunAds1 from "../assets/embun_ads1.webp";
+import embunAds2 from "../assets/embun_ads2.webp";
+import embunAds3 from "../assets/embun_ads3.webp";
+import embunAds4 from "../assets/embun_ads4.webp";
 
 import packageF from "../assets/packageF.jpg";
 import packageF1 from "../assets/packageF1.png";
 import packageF2 from "../assets/packageF2.png";
 import packageF3 from "../assets/packageF3.png";
 import packageF4 from "../assets/packageF4.png";
-import auroraAds1 from "../assets/aurora_ads1.png";
-import auroraAds2 from "../assets/aurora_ads2.png";
-import auroraAds3 from "../assets/aurora_ads3.png";
-import auroraAds4 from "../assets/aurora_ads4.png";
+import auroraAds1 from "../assets/aurora_ads1.webp";
+import auroraAds2 from "../assets/aurora_ads2.webp";
+import auroraAds3 from "../assets/aurora_ads3.webp";
+import auroraAds4 from "../assets/aurora_ads4.webp";
 
 import packageG from "../assets/packageG.jpg";
 import packageG1 from "../assets/packageG1.jpg";
 import packageG2 from "../assets/packageG2.jpg";
 import packageG3 from "../assets/packageG3.jpg";
 import packageG4 from "../assets/packageG4.jpg";
-import rimbayuAds1 from "../assets/rimbayu_ads1.png";
-import rimbayuAds2 from "../assets/rimbayu_ads2.png";
-import rimbayuAds3 from "../assets/rimbayu_ads3.png";
-import rimbayuAds4 from "../assets/rimbayu_ads4.png";
+import rimbayuAds1 from "../assets/rimbayu_ads1.webp";
+import rimbayuAds2 from "../assets/rimbayu_ads2.webp";
+import rimbayuAds3 from "../assets/rimbayu_ads3.webp";
+import rimbayuAds4 from "../assets/rimbayu_ads4.webp";
 
 import voucher from "../assets/voucher.png";
 
