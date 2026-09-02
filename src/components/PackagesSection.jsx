@@ -35,6 +35,19 @@ export default function PackageSection() {
   const [packageSlide, setPackageSlide] = useState(0);
 
   useEffect(() => {
+    const sliderImages = [
+      lestariAds1, lestariAds2, lestariAds3, lestariAds4,
+      embunAds1, embunAds2, embunAds3, embunAds4,
+      auroraAds1, auroraAds2, auroraAds3, auroraAds4,
+      rimbayuAds1, rimbayuAds2, rimbayuAds3, rimbayuAds4,
+    ];
+
+    sliderImages.forEach((src) => {
+      const image = new Image();
+      image.src = src;
+      image.decode?.().catch(() => {});
+    });
+
     const slideTimer = window.setInterval(() => {
       setPackageSlide((currentSlide) => (currentSlide + 1) % 5);
     }, 3000);
@@ -321,11 +334,12 @@ export default function PackageSection() {
                         key={`${item.packageId}-${packageSlide}`}
                         src={item.images[packageSlide]}
                         alt={`${item.name} package view ${packageSlide + 1}`}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        initial={{ x: "100%" }}
-                        animate={{ x: 0 }}
-                        exit={{ x: "-100%" }}
-                        transition={{ duration: 0.65, ease: "easeInOut" }}
+                        className="absolute inset-0 w-full h-full object-cover will-change-transform"
+                        initial={{ x: "18%", opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: "-18%", opacity: 0 }}
+                        transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
+                        style={{ backfaceVisibility: "hidden" }}
                       />
                     </AnimatePresence>
                   ) : (
