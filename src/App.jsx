@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
+import CheckAvailabilityPage from "./pages/CheckAvailabilityPage";
 import Booking from "./pages/Booking";
 import AddOn from "./pages/AddOn";
 import ContactPage from "./pages/ContactPage";
@@ -16,6 +17,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/check-availability" element={<CheckAvailabilityPage />} />
       <Route path="/booking/:bookingRef?" element={<Booking />} />
       <Route path="/addon" element={<AddOn />} />
       <Route path="/contact" element={<ContactPage />} />

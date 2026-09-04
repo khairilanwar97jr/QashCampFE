@@ -1,6 +1,6 @@
 import Navbar from "../components/Navbar";
 import "../index.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Banner from "../components/Banner";
 import packageAImg from "../assets/packageA.jpg";
 import packageBImg from "../assets/packageB.jpg";
@@ -19,9 +19,10 @@ import BookingChecker from "../components/BookingChecker";
 import CalendarBooked from "../components/CalendarBooked";
 import { motion } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
-import { FaTiktok } from "react-icons/fa";
+import { FaFacebook, FaTiktok } from "react-icons/fa";
 
 export default function HomePage() {
+  const location = useLocation();
   const bookings = [
     {
       name: "Ali Bin Ahmad",
@@ -81,6 +82,33 @@ export default function HomePage() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (location.hash !== "#choosePackage") return undefined;
+
+    const scrollToPackages = (behavior = "auto") => {
+      const packageSection = document.getElementById("choosePackage");
+      if (!packageSection) return;
+
+      const navbarOffset = 110;
+      const top =
+        packageSection.getBoundingClientRect().top +
+        window.scrollY -
+        navbarOffset;
+
+      window.scrollTo({ top, behavior });
+    };
+
+    window.scrollTo({ top: 0, behavior: "auto" });
+    const settleTimer = window.setTimeout(
+      () => scrollToPackages("smooth"),
+      120
+    );
+
+    return () => {
+      window.clearTimeout(settleTimer);
+    };
+  }, [location.hash]);
 
   const handleClose = () => {
     localStorage.setItem("hasSeenAuth", "true"); // mark as seen
@@ -301,6 +329,15 @@ export default function HomePage() {
               >
                 <FaTiktok className="h-4 w-4 shrink-0" />
                 <span className="truncate">@qashcamp</span>
+              </a>
+              <a
+                href="https://www.facebook.com/profile.php?id=61589566700509"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 truncate text-gray-300 hover:text-[#597E52] transition-colors font-bold"
+              >
+                <FaFacebook className="h-4 w-4 shrink-0" />
+                <span className="truncate">QashCamp Facebook</span>
               </a>
             </div>
           </div>
