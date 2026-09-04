@@ -82,12 +82,12 @@ export default function ExistingBookingSection() {
           transition={{ duration: 0.35, ease: "easeOut" }}
           className="overflow-hidden rounded-[28px] border border-[#C9AF71] bg-[#FFF9EE] shadow-[0_20px_60px_rgba(67,97,61,0.18)] backdrop-blur"
         >
-          <div className="flex flex-col gap-3 border-b border-[#D6C28F] bg-[#F1E7CD] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+          <div className="flex flex-col gap-3 border-b-2 border-[#C6A969] bg-[#365132] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
             <div>
-              <p className="text-sm font-extrabold tracking-[0.02em] text-[#2F3D2D]">Find your reservation</p>
-              <p className="mt-0.5 text-xs text-[#5B5447]">Your reference was sent with your booking confirmation.</p>
+              <p className="text-base font-extrabold tracking-[0.02em] text-white">Find your reservation</p>
+              <p className="mt-1 text-xs font-medium text-[#E9E2D0]">Your reference was sent with your booking confirmation.</p>
             </div>
-            <div className="inline-flex w-fit items-center rounded-full border border-[#B59143] bg-[#FFF4CF] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#6F5523]">
+            <div className="inline-flex w-fit items-center rounded-full border border-[#E5CF91] bg-[#C6A969] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#191C1A] shadow-sm">
               Secure lookup
             </div>
           </div>
