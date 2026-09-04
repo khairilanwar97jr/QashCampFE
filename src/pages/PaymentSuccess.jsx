@@ -146,7 +146,7 @@ export default function PaymentSuccess() {
           : "-";
     const message = `*NEW PAYMENT SUCCESS*\n\n👤 Name: ${booking.first_name || "-"} ${booking.last_name || ""}\n🆔 Booking ID: ${booking.bookingId || bookingId}\n📅 Start: ${whatsappStartDate}\n📅 End: ${whatsappEndDate}\n📍 Location: ${booking.camp_place || "-"}\n🔖 Ref: ${booking.bookingRef || "-"}\n📦 Package: ${booking.package?.name || "N/A"}\n💰 Total: RM${whatsappTotal}\n\n🧾 Receipt:\n${liveReceiptUrl}\n`;
 
-    const phone = "60173469335";
+    const phone = "601116113722";
     window.open(
       `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
       "_blank"

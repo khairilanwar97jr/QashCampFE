@@ -16,7 +16,7 @@ export default function ContactPage() {
     }
 
     // Target Phone Number (Malaysia Country Code prefixed without '+')
-    const phoneNumber = "60173469335";
+    const phoneNumber = "601116113722";
 
     // Format a clean text layout for your WhatsApp chat window
     const text = `*New Contact Form Submission*\n\n` +

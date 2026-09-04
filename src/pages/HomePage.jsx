@@ -93,7 +93,7 @@ export default function HomePage() {
     const trimmedMessage = whatsAppMessage.trim();
     if (!trimmedMessage) return;
 
-    const phoneNumber = "60173469335";
+    const phoneNumber = "601116113722";
     const message = `sender from web : ${trimmedMessage}`;
     window.open(
       `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
