@@ -26,6 +26,16 @@ import packageLestariImg from "../assets/package_D_lestari.png";
 import packageEmbunImg from "../assets/package_E_embun.png";
 import packageAuroraImg from "../assets/package_F_aurora.png";
 import packageRimbayuImg from "../assets/package_G_rimbayu.png";
+import packageGeloraImg from "../assets/package_H_gelora.png";
+import geloraAds1 from "../assets/gelora_ads1.webp";
+import geloraAds2 from "../assets/gelora_ads2.webp";
+import geloraAds3 from "../assets/gelora_ads3.webp";
+import geloraAds4 from "../assets/gelora_ads4.webp";
+import packageH from "../assets/packageH.png";
+import packageH1 from "../assets/packageH1.png";
+import packageH2 from "../assets/packageH2.png";
+import packageH3 from "../assets/packageH3.png";
+import packageH4 from "../assets/packageH4.png";
 //pic
 import packageA from "../assets/packageA.jpg";
 import packageA1 from "../assets/packageA1.jpg";
@@ -147,11 +157,13 @@ export default function Booking() {
     Aurora: [packageF, packageF1, packageF2, packageF3, packageF4],
 
     Rimbayu: [packageG, packageG1, packageG2, packageG3, packageG4],
+    Gelora: [packageH, packageH1, packageH2, packageH3, packageH4],
 
     Voucher: [voucher, voucher, voucher, voucher, voucher],
   };
 
   const latestPackagePhotos = {
+    Gelora: [geloraAds1, geloraAds2, geloraAds3, geloraAds4],
     Awan: [awanAds1, awanAds2, awanAds3, awanAds4],
     Purnama: [purnamaAds1, purnamaAds2, purnamaAds3, purnamaAds4],
     Senja: [senjaAds1, senjaAds2, senjaAds3, senjaAds4],
@@ -169,6 +181,7 @@ export default function Booking() {
     Embun: packageEmbunImg,
     Aurora: packageAuroraImg,
     Rimbayu: packageRimbayuImg,
+    Gelora: packageGeloraImg,
     Voucher: voucher,
   };
 
@@ -445,6 +458,7 @@ export default function Booking() {
     Aurora: 6,
     Rimbayu: 7,
     Voucher: 8,
+    Gelora: 9,
   };
 
   const tentPackages = {
@@ -521,6 +535,17 @@ export default function Booking() {
         size: "395 × 270 × 183 cm",
         weight: "22.0 kg",
         type: "2 Bed 1 Living",
+        setup: "Automatic",
+      },
+    },
+
+    Gelora: {
+      name: "Package Gelora",
+      criteria: {
+        brand: "Blackdog Cinema V2",
+        size: "420 × 310 × 190 cm",
+        weight: "20.9 kg",
+        type: "Cinema Tent V2.0 with projector screen",
         setup: "Automatic",
       },
     },

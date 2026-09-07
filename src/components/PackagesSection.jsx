@@ -38,6 +38,11 @@ import rimbayuAds2 from "@/assets/rimbayu_ads2.webp";
 import rimbayuAds3 from "@/assets/rimbayu_ads3.webp";
 import rimbayuAds4 from "@/assets/rimbayu_ads4.webp";
 import packageVoucher from "@/assets/voucher.png";
+import packageGeloraImg from "@/assets/package_H_gelora.png";
+import geloraAds1 from "@/assets/gelora_ads1.webp";
+import geloraAds2 from "@/assets/gelora_ads2.webp";
+import geloraAds3 from "@/assets/gelora_ads3.webp";
+import geloraAds4 from "@/assets/gelora_ads4.webp";
 
 import { useNavigate } from "react-router-dom";
 
@@ -48,6 +53,7 @@ export default function PackageSection() {
 
   useEffect(() => {
     const sliderImages = [
+      geloraAds1, geloraAds2, geloraAds3, geloraAds4,
       awanAds1, awanAds2, awanAds3, awanAds4,
       purnamaAds1, purnamaAds2, purnamaAds3, purnamaAds4,
       senjaAds1, senjaAds2, senjaAds3, senjaAds4,
@@ -217,6 +223,24 @@ export default function PackageSection() {
       ]
     },
     {
+      packageId: 9,
+      displayName: "Package Gelora",
+      name: "Gelora",
+      img: packageGeloraImg,
+      images: [packageGeloraImg, geloraAds1, geloraAds2, geloraAds3, geloraAds4],
+      price: "RM200",
+      packagePrice: 200,
+      depositAmount: 100,
+      available: true,
+      specs: [
+        { label: "Brand", value: "Blackdog Cinema V2" },
+        { label: "Size", value: "420 × 310 × 190 cm" },
+        { label: "Weight", value: "20.9 kg" },
+        { label: "Type", value: "Cinema Tent V2.0 with projector screen" },
+        { label: "Setup", value: "Automatic" }
+      ]
+    },
+    {
       packageId: 7,
       displayName: "Package Rimbayu",
       name: "Rimbayu",
@@ -240,7 +264,7 @@ export default function PackageSection() {
         { label: "Setup", value: "Automatic" }
       ]
     },
-        {
+    {
       packageId: 8,
       displayName: "Voucher Cookies",
       name: "Voucher",

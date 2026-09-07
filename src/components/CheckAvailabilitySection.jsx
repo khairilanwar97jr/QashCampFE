@@ -26,6 +26,7 @@ export default function CheckAvailabilitySection({ showBookNow = false, standalo
     { key: "Embun", label: "Embun" },
     { key: "Aurora", label: "Aurora" },
     { key: "Rimbayu", label: "Rimbayu" },
+    { key: "Gelora", label: "Gelora" },
   ];
 
   const handleReset = () => {
