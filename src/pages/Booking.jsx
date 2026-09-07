@@ -1,3 +1,15 @@
+import awanAds1 from "../assets/awan_ads1.webp";
+import awanAds2 from "../assets/awan_ads2.webp";
+import awanAds3 from "../assets/awan_ads3.webp";
+import awanAds4 from "../assets/awan_ads4.webp";
+import purnamaAds1 from "../assets/purnama_ads1.webp";
+import purnamaAds2 from "../assets/purnama_ads2.webp";
+import purnamaAds3 from "../assets/purnama_ads3.webp";
+import purnamaAds4 from "../assets/purnama_ads4.webp";
+import senjaAds1 from "../assets/senja_ads1.webp";
+import senjaAds2 from "../assets/senja_ads2.webp";
+import senjaAds3 from "../assets/senja_ads3.webp";
+import senjaAds4 from "../assets/senja_ads4.webp";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -140,6 +152,9 @@ export default function Booking() {
   };
 
   const latestPackagePhotos = {
+    Awan: [awanAds1, awanAds2, awanAds3, awanAds4],
+    Purnama: [purnamaAds1, purnamaAds2, purnamaAds3, purnamaAds4],
+    Senja: [senjaAds1, senjaAds2, senjaAds3, senjaAds4],
     Lestari: [lestariAds1, lestariAds2, lestariAds3, lestariAds4],
     Embun: [embunAds1, embunAds2, embunAds3, embunAds4],
     Aurora: [auroraAds1, auroraAds2, auroraAds3, auroraAds4],

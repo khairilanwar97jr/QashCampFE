@@ -1,3 +1,15 @@
+import awanAds1 from "@/assets/awan_ads1.webp";
+import awanAds2 from "@/assets/awan_ads2.webp";
+import awanAds3 from "@/assets/awan_ads3.webp";
+import awanAds4 from "@/assets/awan_ads4.webp";
+import purnamaAds1 from "@/assets/purnama_ads1.webp";
+import purnamaAds2 from "@/assets/purnama_ads2.webp";
+import purnamaAds3 from "@/assets/purnama_ads3.webp";
+import purnamaAds4 from "@/assets/purnama_ads4.webp";
+import senjaAds1 from "@/assets/senja_ads1.webp";
+import senjaAds2 from "@/assets/senja_ads2.webp";
+import senjaAds3 from "@/assets/senja_ads3.webp";
+import senjaAds4 from "@/assets/senja_ads4.webp";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/Card";
 import { Button } from "./ui/Button";
@@ -36,6 +48,9 @@ export default function PackageSection() {
 
   useEffect(() => {
     const sliderImages = [
+      awanAds1, awanAds2, awanAds3, awanAds4,
+      purnamaAds1, purnamaAds2, purnamaAds3, purnamaAds4,
+      senjaAds1, senjaAds2, senjaAds3, senjaAds4,
       lestariAds1, lestariAds2, lestariAds3, lestariAds4,
       embunAds1, embunAds2, embunAds3, embunAds4,
       auroraAds1, auroraAds2, auroraAds3, auroraAds4,
@@ -80,6 +95,7 @@ export default function PackageSection() {
       displayName: "Package Awan",
       name: "Awan",
       img: packageAwanImg,
+      images: [packageAwanImg, awanAds1, awanAds2, awanAds3, awanAds4],
       price: "RM70",
       packagePrice: 70,
       depositAmount: 50,
@@ -97,6 +113,7 @@ export default function PackageSection() {
       displayName: "Package Purnama",
       name: "Purnama",
       img: packagePurnamaImg,
+      images: [packagePurnamaImg, purnamaAds1, purnamaAds2, purnamaAds3, purnamaAds4],
       price: "RM90",
       packagePrice: 90,
       depositAmount: 50,
@@ -114,6 +131,7 @@ export default function PackageSection() {
       displayName: "Package Senja",
       name: "Senja",
       img: packageSenjaImg,
+      images: [packageSenjaImg, senjaAds1, senjaAds2, senjaAds3, senjaAds4],
       price: "RM100",
       packagePrice: 100,
       depositAmount: 50,
