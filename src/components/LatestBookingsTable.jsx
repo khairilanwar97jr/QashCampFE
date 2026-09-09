@@ -142,7 +142,7 @@ const handleVerifyPasscode = async (e) => {
 
   const sendWhatsApp = (b) => {
     const liveReceiptUrl = `${window.location.origin}/receipt/${b.booking_ref}`;
-    const message = `*Receipt Request*\n\n👤 *Name:* ${b.first_name} ${b.last_name}\n🆔 *Booking ID:* ${b.id}\n📅 *Start:* ${b.start_date}\n📅 *End:* ${b.end_date}\n📍 *Location:* ${b.camp_place}\n🔖 *Ref:* ${b.booking_ref}\n📦 *Package:* ${b.package?.name || "N/A"}\n💰 *Total:* RM${getTotalSettlement(b)}\n\n🗺️ *View Layout Blueprint & Receipt:* \n${liveReceiptUrl}`;
+    const message = `*Receipt Request*\n\n👤 *Name:* ${b.first_name} ${b.last_name}\n🆔 *Booking ID:* ${b.id}\n📅 *Start:* ${b.start_date}\n📅 *End:* ${b.end_date}\n📍 *Location:* ${b.camp_place}\n🔖 *Ref:* ${b.booking_ref}\n📦 *Package:* ${b.package?.name || "N/A"}\n💰 *Total:* RM${getTotalSettlement(b)}\n\n*Continue remaining payment:*\nClick link > Copy receipt ID > Click Go to Homepage > Scroll to Already have a booking? > Paste > Continue Payment\n\n🧾 *Receipt, Tent Checklist & Feedback:* \n${liveReceiptUrl}`;
     const phone = "601116113722";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   };

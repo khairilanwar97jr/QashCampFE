@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./AvailabilityDateFields.css";
 import { motion } from "framer-motion";
 import { HashLink } from "react-router-hash-link";
 import {
@@ -109,9 +110,10 @@ export default function CheckAvailabilitySection({ showBookNow = false, standalo
             className="animate-availability-card-sync rounded-[28px] border-2 border-[#C6A969] bg-[#597E52] p-5 shadow-[0_20px_60px_rgba(54,81,50,0.28)] sm:p-8"
           >
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="block rounded-2xl border-2 border-[#C6A969] bg-[#FFF9EF] p-4">
-                <span className="mb-2 flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-[#365132]">
-                  <CalendarDays className="h-4 w-4" /> Start Date
+              <label className={`availability-date-field ${fromDate ? "has-date" : ""}`}>
+                <span className="availability-date-heading">
+                  <span className="availability-date-icon"><CalendarDays size={21} aria-hidden="true" /></span>
+                  <span><span className="availability-date-label">Start date</span><span className="availability-date-hint">Let the adventure begin</span></span>
                 </span>
                 <input
                   type="date"
@@ -119,21 +121,26 @@ export default function CheckAvailabilitySection({ showBookNow = false, standalo
                   onChange={(e) => setFromDate(e.target.value)}
                   min={today}
                   max={toDate || undefined}
-                  className="w-full bg-transparent py-2 text-base font-bold text-[#191C1A] outline-none"
+                  className="availability-date-input"
+                  aria-label="Start date"
                 />
+                <span className="availability-date-footer">{fromDate ? "Your first day of camping" : "Choose your first day"}</span>
               </label>
 
-              <label className="block rounded-2xl border-2 border-[#C6A969] bg-[#FFF9EF] p-4">
-                <span className="mb-2 flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-[#365132]">
-                  <CalendarDays className="h-4 w-4" /> End Date
+              <label className={`availability-date-field ${toDate ? "has-date" : ""}`}>
+                <span className="availability-date-heading">
+                  <span className="availability-date-icon"><CalendarDays size={21} aria-hidden="true" /></span>
+                  <span><span className="availability-date-label">End date</span><span className="availability-date-hint">Until the next adventure</span></span>
                 </span>
                 <input
                   type="date"
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
                   min={fromDate || today}
-                  className="w-full bg-transparent py-2 text-base font-bold text-[#191C1A] outline-none"
+                  className="availability-date-input"
+                  aria-label="End date"
                 />
+                <span className="availability-date-footer">{toDate ? "Your last day of camping" : "Choose your last day"}</span>
               </label>
             </div>
 

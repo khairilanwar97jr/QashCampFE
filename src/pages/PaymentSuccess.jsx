@@ -145,7 +145,7 @@ export default function PaymentSuccess() {
         : booking.total != null
           ? (Number(booking.total) + 1.25).toFixed(2)
           : "-";
-    const message = `*NEW PAYMENT SUCCESS*\n\n👤 Name: ${booking.first_name || "-"} ${booking.last_name || ""}\n🆔 Booking ID: ${booking.bookingId || bookingId}\n📅 Start: ${whatsappStartDate}\n📅 End: ${whatsappEndDate}\n📍 Location: ${booking.camp_place || "-"}\n🔖 Ref: ${booking.bookingRef || "-"}\n📦 Package: ${booking.package?.name || "N/A"}\n💰 Total: RM${whatsappTotal}\n\n🧾 Receipt:\n${liveReceiptUrl}\n`;
+    const message = `*NEW PAYMENT SUCCESS*\n\n👤 Name: ${booking.first_name || "-"} ${booking.last_name || ""}\n🆔 Booking ID: ${booking.bookingId || bookingId}\n📅 Start: ${whatsappStartDate}\n📅 End: ${whatsappEndDate}\n📍 Location: ${booking.camp_place || "-"}\n🔖 Ref: ${booking.bookingRef || "-"}\n📦 Package: ${booking.package?.name || "N/A"}\n💰 Total: RM${whatsappTotal}\n\n*Continue remaining payment:*\nClick link > Copy receipt ID > Click Go to Homepage > Scroll to Already have a booking? > Paste > Continue Payment\n\n🧾 *Receipt, Tent Checklist & Feedback:*\n${liveReceiptUrl}\n`;
 
     const phone = "601116113722";
     window.open(

@@ -1,0 +1,40 @@
+.booking-flow { padding: 48px 24px 64px; background: #eeeadd; color: #344b30; }
+.booking-flow-layout { display: grid; grid-template-columns: .85fr 1.15fr; align-items: start; gap: clamp(32px, 6vw, 90px); max-width: 1150px; margin: auto; }
+.booking-flow-heading { position: sticky; top: 48px; padding: 12px 0 24px; }
+.booking-flow-brand { display: inline-block; margin-bottom: 60px; color: #3e5734; font-size: 13px; font-weight: 900; letter-spacing: 1.5px; }
+.booking-flow-brand span { font-size: 9px; color: #737563; letter-spacing: 1px; }
+.booking-flow-eyebrow { margin: 0 0 15px; color: #75805d; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.7px; }
+.booking-flow-heading h2 { margin: 0; font-family: Georgia, serif; font-size: clamp(34px, 4vw, 54px); line-height: 1.12; font-weight: 700; letter-spacing: -1.6px; }
+.booking-flow-heading h2 em { color: #768153; font-weight: 400; }
+.booking-flow-heading > p:not(.booking-flow-eyebrow) { max-width: 320px; margin: 22px 0; color: #69705c; font-size: 15px; line-height: 1.75; }
+.booking-flow-shortcut { display: inline-flex; align-items: center; justify-content: center; gap: 22px; padding: 14px 20px; border-radius: 10px; background: #476440; color: #fff; font-size: 13px; font-weight: 800; box-shadow: 0 3px 0 #2d4328; }
+.booking-flow-shortcut:hover { background: #365430; }
+.booking-flow a:focus-visible { outline: 3px solid #597e52; outline-offset: 5px; }
+.booking-flow-scroll { display: flex; align-items: center; gap: 9px; margin-top: 32px; color: #747c67; font-size: 12px; }
+.booking-flow-stack { list-style: none; padding: 0 0 20px; margin: 0; }
+.booking-flow-card { position: sticky; top: calc(28px + var(--step) * 12px); z-index: calc(1 + var(--step)); margin-bottom: 64px; border: 1px solid #d0cbb7; border-radius: 18px; background: #fffdf5; padding: 12px; box-shadow: 0 12px 30px #3e45251f; }
+.booking-flow-card:last-child { margin-bottom: 0; }
+.booking-flow-photo { position: relative; height: clamp(220px, 28vw, 340px); overflow: hidden; border-radius: 10px; background: #d9ddcd; }
+.booking-flow-photo::after { content: ""; position: absolute; inset: 45% 0 0; background: linear-gradient(transparent, #18201480); pointer-events: none; }
+.booking-flow-photo img { width: 100%; height: 100%; object-fit: cover; }
+.booking-flow-number { position: absolute; top: 14px; left: 14px; display: flex; align-items: baseline; gap: 4px; padding: 8px 12px; border-radius: 8px; background: #fffdf5f0; font-size: 23px; font-weight: 900; }
+.booking-flow-number span { font-size: 10px; color: #7b806e; }
+.booking-flow-photo-label { position: absolute; bottom: 17px; left: 17px; z-index: 1; display: flex; align-items: center; gap: 8px; color: #fffdf5; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.booking-flow-caption { padding: 20px 12px 14px; }
+.booking-flow-caption h3 { margin: 0 0 8px; font-size: clamp(21px, 2.3vw, 28px); font-weight: 800; letter-spacing: -.5px; line-height: 1.2; }
+.booking-flow-caption p { margin: 0; color: #69705c; font-size: 14px; line-height: 1.6; }
+#availability-checker { scroll-margin-top: 16px; }
+@media (max-width: 760px) {
+  .booking-flow { padding: 24px 18px 36px; }
+  .booking-flow-layout { grid-template-columns: 1fr; gap: 28px; }
+  .booking-flow-heading { position: static; padding: 0; }
+  .booking-flow-brand { margin-bottom: 30px; }
+  .booking-flow-heading > p:not(.booking-flow-eyebrow) { max-width: 100%; margin: 16px 0; }
+  .booking-flow-scroll { margin-top: 20px; }
+  .booking-flow-card { top: calc(14px + var(--step) * 9px); margin-bottom: 46px; }
+  .booking-flow-photo { height: clamp(190px, 55vw, 280px); }
+  .booking-flow-caption { padding: 16px 8px 12px; }
+}
+@media (max-height: 600px), (prefers-reduced-motion: reduce) {
+  .booking-flow-heading, .booking-flow-card { position: static; }
+}

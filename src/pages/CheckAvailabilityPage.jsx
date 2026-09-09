@@ -1,11 +1,15 @@
 import CheckAvailabilitySection from "../components/CheckAvailabilitySection";
+import BookingFlowGuide from "../components/BookingFlowGuide";
 import { FaFacebook, FaTiktok } from "react-icons/fa";
 
 export default function CheckAvailabilityPage() {
   return (
     <div className="min-h-screen bg-[#fdf6ee]">
       <main>
+        <BookingFlowGuide />
+        <div id="availability-checker" tabIndex={-1}>
         <CheckAvailabilitySection showBookNow standalone />
+        </div>
       </main>
 
       <footer
