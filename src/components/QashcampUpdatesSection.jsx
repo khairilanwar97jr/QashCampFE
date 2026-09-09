@@ -61,6 +61,7 @@ export default function QashcampUpdatesSection() {
   const [direction, setDirection] = useState(1);
   const [openedStory, setOpenedStory] = useState(null);
   const dragged = useRef(false);
+  const timeline = useRef(null);
   const activeIndex = updates.length ? index % updates.length : 0;
   const active = updates[activeIndex];
   const move = (step) => {
@@ -69,6 +70,16 @@ export default function QashcampUpdatesSection() {
     setIndex((current) => (current + step + updates.length) % updates.length);
   };
   const autoPlaying = !openedStory && !touching && !pageHidden && !reducedMotion;
+
+  useEffect(() => {
+    const strip = timeline.current;
+    const selected = strip?.querySelector('[aria-current="step"]');
+    if (!strip || !selected) return;
+    strip.scrollTo({
+      left: strip.scrollLeft + selected.getBoundingClientRect().left - strip.getBoundingClientRect().left - strip.clientWidth / 2 + selected.offsetWidth / 2,
+      behavior: reducedMotion ? "instant" : "smooth",
+    });
+  }, [activeIndex, updates, reducedMotion]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -83,7 +94,7 @@ export default function QashcampUpdatesSection() {
         }
         const slides = [...result.buletin]
           .filter((post) => post && typeof post === "object")
-          .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
+          .sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")))
           .map((post) => {
             const images = [post.image_url, post.image_url_2].filter((url) => typeof url === "string" && url.trim());
             return {
@@ -163,6 +174,20 @@ export default function QashcampUpdatesSection() {
               move(event.key === "ArrowLeft" ? -1 : 1);
             }
           }}>
+          <nav ref={timeline} className="bulletin-timeline" aria-label="Event timeline">
+            <ol>
+              {updates.map((story, storyIndex) => (
+                <li key={story.id}>
+                  <button type="button" aria-current={storyIndex === activeIndex ? "step" : undefined}
+                    aria-label={`${story.date || "Undated event"}: ${story.title}`}
+                    onClick={() => { setDirection(storyIndex > activeIndex ? 1 : -1); setIndex(storyIndex); }}>
+                    {story.date && !Number.isNaN(Date.parse(story.date)) ? <time dateTime={story.date}>{new Date(story.date).toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kuala_Lumpur" })}</time> : <span>Undated event</span>}
+                    <span className="bulletin-timeline-dot" aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </nav>
           <div className="bulletin-stage" style={{ touchAction: "pan-y" }}>
             <AnimatePresence initial={false} custom={direction}>
               <motion.div key={active.id} custom={direction}
