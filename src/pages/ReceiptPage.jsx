@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import BookingReview from "../components/BookingReview";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -157,6 +158,8 @@ export default function ReceiptPage() {
           🏠 Go to Homepage
         </button>
       </div>
+
+      <BookingReview key={bookingRef} bookingRef={bookingRef} />
 
       {/* Receipt and package checklist tabs */}
       <div style={styles.tabs} role="tablist" aria-label="Booking details">

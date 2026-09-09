@@ -5,7 +5,7 @@ import Banner from "../components/Banner";
 import packageAImg from "../assets/packageA.jpg";
 import packageBImg from "../assets/packageB.jpg";
 import packageCImg from "../assets/packageC.jpg";
-import TimelineSection from "../components/TimelineSection";
+import QashcampUpdatesSection from "../components/QashcampUpdatesSection";
 import WhyUsPreviewSection from "../components/WhyUsPreviewSection";
 import PackagesSection from "../components/PackagesSection";
 import CheckAvailabilitySection from "../components/CheckAvailabilitySection";
@@ -176,10 +176,7 @@ export default function HomePage() {
         <BookingChecker/>
         <CheckAvailabilitySection />
 
-      {/* Timeline Section */}
-      <div className="bg-[#8b5a2b] mt-10 px-4 py-10">
-        <TimelineSection />
-      </div>
+      <QashcampUpdatesSection />
 
 
       <h2
