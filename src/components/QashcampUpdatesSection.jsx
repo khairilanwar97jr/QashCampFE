@@ -1,26 +1,66 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import "./QashcampUpdatesSection.css";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Megaphone, Tent, Camera, ArrowUpRight } from "lucide-react";
 import { FaTiktok, FaFacebook } from "react-icons/fa";
-import awanPoster from "../assets/awan_ads1.webp";
-import auroraPoster from "../assets/aurora_ads1.webp";
-import lestariPoster from "../assets/lestari_ads1.webp";
+const API_URL = import.meta.env.VITE_API_URL;
 
-// Existing package posters provide initial slides. Replace with published news artwork.
-const defaultUpdates = [
-  { id: "awan", title: "Awan", imageUrl: awanPoster, imageAlt: "Qashcamp Awan package poster" },
-  { id: "aurora", title: "Aurora", imageUrl: auroraPoster, imageAlt: "Qashcamp Aurora package poster" },
-  { id: "lestari", title: "Lestari", imageUrl: lestariPoster, imageAlt: "Qashcamp Lestari package poster" },
-];
+function BulletinImage({ src, alt }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) return <p className="text-sm text-[#636252]">Photo unavailable</p>;
+  return <img src={src} alt={alt} draggable={false} onError={() => setFailed(true)}
+    className="pointer-events-none block h-auto max-h-full max-w-full select-none rounded-xl" />;
+}
 
-export default function QashcampUpdatesSection({ updates = defaultUpdates }) {
+function StoryDialog({ story, onClose }) {
+  const dialog = useRef(null);
+  useEffect(() => {
+    const element = dialog.current;
+    const previousFocus = document.activeElement;
+    const overflow = document.body.style.overflow;
+    element.showModal();
+    document.body.style.overflow = "hidden";
+    return () => {
+      element.close();
+      document.body.style.overflow = overflow;
+      previousFocus?.focus();
+    };
+  }, []);
+  return <dialog ref={dialog} className="bulletin-dialog" aria-labelledby="bulletin-story-title" onCancel={onClose}
+    onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+    <div className="bulletin-dialog-inner">
+      <button type="button" className="bulletin-close" onClick={onClose} autoFocus aria-label="Close story">×</button>
+      <p className="bulletin-kicker">The Qashcamp journal</p>
+      <h2 id="bulletin-story-title">{story.title}</h2>
+      <StoryDate date={story.date} />
+      <p className="bulletin-full-text">{story.body}</p>
+      <div className="bulletin-gallery">
+        {story.images.map((src, i) => <figure key={src}>
+          <BulletinImage src={src} alt={`${story.title} — photo ${i + 1}`} />
+          <figcaption>Photo {i + 1} of {story.images.length}</figcaption>
+        </figure>)}
+      </div>
+    </div>
+  </dialog>;
+}
+
+function StoryDate({ date }) {
+  if (!date || Number.isNaN(Date.parse(date))) return null;
+  return <time className="bulletin-date" dateTime={date}>{new Date(date).toLocaleDateString("en-MY", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Kuala_Lumpur" })}</time>;
+}
+
+export default function QashcampUpdatesSection() {
+  const [updates, setUpdates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
   const [index, setIndex] = useState(0);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
   const [touching, setTouching] = useState(false);
   const [pageHidden, setPageHidden] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [direction, setDirection] = useState(1);
+  const [openedStory, setOpenedStory] = useState(null);
+  const dragged = useRef(false);
   const activeIndex = updates.length ? index % updates.length : 0;
   const active = updates[activeIndex];
   const move = (step) => {
@@ -28,7 +68,45 @@ export default function QashcampUpdatesSection({ updates = defaultUpdates }) {
     setDirection(step > 0 ? 1 : -1);
     setIndex((current) => (current + step + updates.length) % updates.length);
   };
-  const autoPlaying = !hovered && !focused && !touching && !pageHidden && !reducedMotion;
+  const autoPlaying = !openedStory && !touching && !pageHidden && !reducedMotion;
+
+  useEffect(() => {
+    const controller = new AbortController();
+    async function fetchBulletin() {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await fetch(`${API_URL}/api/buletin`, { signal: controller.signal });
+        const result = await response.json();
+        if (!response.ok || result.success !== true || !Array.isArray(result.buletin)) {
+          throw new Error(result.message || "Unable to load Qashcamp updates. Please try again.");
+        }
+        const slides = [...result.buletin]
+          .filter((post) => post && typeof post === "object")
+          .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
+          .map((post) => {
+            const images = [post.image_url, post.image_url_2].filter((url) => typeof url === "string" && url.trim());
+            return {
+              id: post.id,
+              title: post.topic,
+              body: post.content,
+              date: post.date,
+              images,
+            };
+          });
+        if (!controller.signal.aborted) {
+          setUpdates(slides);
+          setIndex(0);
+        }
+      } catch (err) {
+        if (!controller.signal.aborted) setError(err.message || "Unable to load Qashcamp updates. Please try again.");
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+    fetchBulletin();
+    return () => controller.abort();
+  }, [retry]);
 
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -70,14 +148,13 @@ export default function QashcampUpdatesSection({ updates = defaultUpdates }) {
       </div>
 
       <div className="mx-5 mb-4 sm:mx-8 sm:mb-5">
-      {active ? (
+      {loading ? <p className="py-8 text-[#636252]" role="status">Loading Qashcamp updates…</p> : error ? (
+        <div className="py-6">
+          <p className="text-[#923c25]" role="alert">{error}</p>
+          <button type="button" onClick={() => setRetry((current) => current + 1)} className="mt-3 rounded-lg bg-[#476440] px-4 py-2 font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#476440]">Try again</button>
+        </div>
+      ) : active ? (
         <div role="region" aria-roledescription="carousel" aria-label="Qashcamp announcements" tabIndex={0}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          onFocusCapture={() => setFocused(true)}
-          onBlurCapture={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
-          }}
           className="overflow-hidden outline-offset-[-3px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#476440]"
           onKeyDown={(event) => {
             if (event.target !== event.currentTarget || updates.length < 2) return;
@@ -86,31 +163,42 @@ export default function QashcampUpdatesSection({ updates = defaultUpdates }) {
               move(event.key === "ArrowLeft" ? -1 : 1);
             }
           }}>
-          <div className="relative h-[260px] w-full overflow-hidden sm:h-[320px] lg:h-[360px]" style={{ touchAction: "pan-y" }}>
+          <div className="bulletin-stage" style={{ touchAction: "pan-y" }}>
             <AnimatePresence initial={false} custom={direction}>
               <motion.div key={active.id} custom={direction}
                 variants={{ enter: (way) => ({ x: reducedMotion ? 0 : `${way * 100}%` }), center: { x: 0 }, exit: (way) => ({ x: reducedMotion ? 0 : `${way * -100}%` }) }}
                 initial="enter" animate="center" exit="exit"
                 transition={{ duration: reducedMotion ? 0 : 0.6, ease: [0.22, 1, 0.36, 1] }}
                 drag={updates.length > 1 ? "x" : false} dragConstraints={{ left: 0, right: 0 }} dragElastic={0.8} dragMomentum={false}
-                onDragStart={() => setTouching(true)}
+                onPointerDownCapture={() => { dragged.current = false; }}
+                onDragStart={() => { dragged.current = true; setTouching(true); }}
                 onDragEnd={(_, info) => {
                   setTouching(false);
                   if (Math.abs(info.offset.x) > 50 || Math.abs(info.velocity.x) > 400) move(info.offset.x < 0 ? 1 : -1);
                 }}
-                className="absolute inset-0 flex cursor-grab items-center justify-center active:cursor-grabbing"
+                className="bulletin-feature absolute inset-0 cursor-grab active:cursor-grabbing"
                 style={{ touchAction: "pan-y" }}
                 role="group" aria-roledescription="slide" aria-label={`${activeIndex + 1} of ${updates.length}: ${active.title || "Announcement"}`}>
-                <img src={active.imageUrl} alt={active.imageAlt || active.title || "Qashcamp announcement"} draggable={false}
-                  className="pointer-events-none block h-auto max-h-full max-w-full select-none rounded-xl" />
+                <button type="button" className={`bulletin-photo-stack ${active.images.length > 1 ? "has-two" : ""}`}
+                  onClick={() => { if (!dragged.current) setOpenedStory(active); }} aria-label={`Open story and photos: ${active.title}`}>
+                  {active.images.length > 1 && <span className="bulletin-photo-back" aria-hidden="true"><BulletinImage key={active.images[1]} src={active.images[1]} alt="" /></span>}
+                  <span className="bulletin-photo-front"><BulletinImage key={active.images[0] || active.id} src={active.images[0]} alt={active.title || "Qashcamp story"} />
+                    <span className="bulletin-photo-note"><Camera size={14} aria-hidden="true" /> {active.images.length > 1 ? "2 photos · Open the story" : "Take a closer look"}</span>
+                  </span>
+                </button>
+                <div className="bulletin-story-copy">
+                  <p className="bulletin-kicker">The latest from camp</p>
+                  <StoryDate date={active.date} />
+                  <h3>{active.title}</h3>
+                  <p className="bulletin-excerpt">{active.body}</p>
+                  <button type="button" className="bulletin-read" onClick={() => { if (!dragged.current) setOpenedStory(active); }}>Read the story <ArrowUpRight size={18} aria-hidden="true" /></button>
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>
-          <div className="flex items-center justify-between gap-3 px-4 py-2 sm:px-5">
+          <div className="flex flex-col items-stretch justify-between gap-4 px-1 py-4 sm:flex-row sm:items-start sm:px-5">
             <div className="min-w-0" aria-live={autoPlaying ? "off" : "polite"} aria-atomic="true">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#67705b]">{String(activeIndex + 1).padStart(2, "0")} / {String(updates.length).padStart(2, "0")}</p>
-              {active.title && <h3 className="mt-1 break-words text-lg font-extrabold text-[#344b30]">{active.title}</h3>}
-              {active.body && <p className="mt-2 whitespace-pre-wrap break-words text-sm text-[#636252]">{active.body}</p>}
+              <span className="sr-only">{active.title}</span>
             </div>
             {updates.length > 1 && <div className="flex shrink-0 items-center gap-2 sm:gap-4">
               <button type="button" className={controlClass} onClick={() => move(-1)} aria-label="Previous announcement"><ChevronLeft size={22} /></button>
@@ -134,6 +222,7 @@ export default function QashcampUpdatesSection({ updates = defaultUpdates }) {
           <a href="https://www.facebook.com/profile.php?id=61589566700509" target="_blank" rel="noopener noreferrer" aria-label="Qashcamp on Facebook (opens in a new tab)" className="flex items-center gap-2 rounded-xl border border-[#bdc1aa] bg-[#faf9f3] px-4 py-3 text-sm font-bold text-[#415337] hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#476440]"><FaFacebook aria-hidden="true" /> Facebook <ArrowUpRight size={16} aria-hidden="true" /></a>
         </div>
       </div>
+      {openedStory && <StoryDialog story={openedStory} onClose={() => setOpenedStory(null)} />}
     </section>
   );
 }
