@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import PageMetadata from "./components/PageMetadata";
 import HomePage from "./pages/HomePage";
 import CheckAvailabilityPage from "./pages/CheckAvailabilityPage";
 import Booking from "./pages/Booking";
@@ -15,6 +16,8 @@ import ReceiptPage from "./pages/ReceiptPage";
 
 export default function App() {
   return (
+    <>
+    <PageMetadata />
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/check-availability" element={<CheckAvailabilityPage />} />
@@ -33,5 +36,6 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
+    </>
   );
 }

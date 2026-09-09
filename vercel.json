@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/check-availability",
+      "destination": "/check-availability.html"
+    },
+    {
+      "source": "/check-availability/",
+      "destination": "/check-availability.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

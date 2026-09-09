@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
   const [params] = useSearchParams();
 
   const bookingIdParam =
@@ -280,6 +281,33 @@ export default function PaymentSuccess() {
             </motion.div>
           )}
 
+          <div className="rounded-2xl border-2 border-[#128C43] bg-[#effbf1] p-4 sm:p-5 space-y-3 shadow-[0_8px_24px_rgba(18,140,67,0.14)]">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#176337]">Before you leave</p>
+            <h3 className="text-xl font-extrabold leading-tight text-[#164b2b]">Please send your receipt to our team</h3>
+            <p className="text-sm leading-relaxed text-[#42624b]">Tap below to open WhatsApp, then press <strong>Send</strong> to share your booking details with Qashcamp.</p>
+            <motion.button
+              animate={reduceMotion ? {} : {
+                x: [0, -12, 12, -12, 12, -8, 8, 0],
+                rotate: [0, -3, 3, -3, 3, -2, 2, 0],
+                scale: [1, 1.04, 1.04, 1.04, 1.04, 1.02, 1.02, 1],
+              }}
+              transition={{
+                duration: 0.65,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatDelay: 0.7,
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full text-white py-5 rounded-xl text-base sm:text-lg font-extrabold tracking-wide transition flex items-center justify-center gap-2.5 shadow-lg hover:brightness-105"
+              onClick={sendWhatsAppToAdmin}
+              style={{ backgroundColor: "#128C43", boxShadow: "0 8px 22px rgba(37, 211, 102, 0.3)" }}
+            >
+              <FaWhatsapp className="h-7 w-7" aria-hidden="true" />
+              Send WhatsApp Receipt Now
+            </motion.button>
+            <p className="text-xs font-semibold text-[#42624b]">Your message is ready — just open WhatsApp and send it.</p>
+          </div>
           {/* Minimalist Corporate Receipt Layout */}
           <div className="border border-stone-100 rounded-xl bg-stone-50/50 overflow-hidden divide-y divide-stone-100 text-left">
             <div className="p-3.5 flex justify-between items-center text-sm font-semibold uppercase tracking-wider bg-[#ffe5cc]/30 text-stone-500">
@@ -303,26 +331,7 @@ export default function PaymentSuccess() {
 
           {/* High-End Clean UI Buttons with WhatsApp Priority Highlight */}
           <div className="space-y-3 pt-1">
-            <motion.button
-              animate={{
-                x: [0, -7, 7, -6, 6, -3, 3, 0],
-                rotate: [0, -1.5, 1.5, -1, 1, 0, 0, 0],
-              }}
-              transition={{
-                duration: 0.65,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatDelay: 1.8,
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full text-white py-4 rounded-xl text-sm font-bold tracking-wide transition flex items-center justify-center gap-2.5 shadow-lg hover:brightness-105"
-              onClick={sendWhatsAppToAdmin}
-              style={{ backgroundColor: "#25D366", boxShadow: "0 8px 22px rgba(37, 211, 102, 0.3)" }}
-            >
-              <FaWhatsapp className="h-6 w-6" aria-hidden="true" />
-              Send WhatsApp Receipt
-            </motion.button>
+
 
             <button
               className="w-full bg-white text-stone-700 border border-stone-200 py-3.5 rounded-xl text-sm font-semibold hover:bg-stone-50 transition tracking-wide active:scale-[0.99]"
