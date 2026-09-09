@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import BookingFlowGuide from "./BookingFlowGuide";
 import { useNavigate } from "react-router-dom"; 
 
 // Importing your image assets
-import img1 from "../assets/sewa_1.png";
-import img2 from "../assets/sewa_2.png";
-import img3 from "../assets/sewa_3.png"; // Price list board asset
+import img1 from "../assets/sewa_1-optimized.jpg";
+import img2 from "../assets/sewa_2-optimized.jpg";
+import img3 from "../assets/sewa_3-optimized.jpg"; // Price list board asset
 import img4 from "../assets/add_on1.png";
 import img5 from "../assets/add_on2.png";
 import img6 from "../assets/add_on3.png";
@@ -83,6 +84,10 @@ export default function GalleryPage() {
           </svg>
           Back to Home
         </button>
+      </div>
+
+      <div className="-mx-4 mb-12">
+        <BookingFlowGuide showAvailabilityShortcut={false} />
       </div>
 
       {/* HEADER SECTION */}

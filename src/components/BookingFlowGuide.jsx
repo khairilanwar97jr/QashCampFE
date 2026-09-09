@@ -1,12 +1,12 @@
 import { ArrowDown, ArrowUpRight, CalendarDays, CreditCard, MapPin, Tent, PackageCheck } from "lucide-react";
-import availabilityPhoto from "../assets/packageA.jpg";
-import paymentPhoto from "../assets/packageB.jpg";
-import pickupDetailsPhoto from "../assets/maintenance1.jpg";
-import campingPhoto from "../assets/packageC.jpg";
-import returnPhoto from "../assets/maintenance2.jpg";
+import availabilityPhoto from "../assets/checkavailabilityperson-optimized.jpg";
+import paymentPhoto from "../assets/payonline-optimized.jpg";
+import pickupDetailsPhoto from "../assets/getpickupdetail-optimized.jpg";
+import campingPhoto from "../assets/pickupcamping-optimized.jpg";
+import returnPhoto from "../assets/returnitem-optimized.jpg";
 import "./BookingFlowGuide.css";
 
-// Replace these five images with the final guide photos when ready.
+// Optimized photos for the five-step booking guide.
 const steps = [
   { title: "Check availability", text: "Choose your dates and find an available tent package.", image: availabilityPhoto, alt: "Qashcamp tent package", icon: CalendarDays, label: "Find your dates" },
   { title: "Book & pay online", text: "Complete your booking and payment through our system.", image: paymentPhoto, alt: "A Qashcamp camping setup", icon: CreditCard, label: "Make it official" },
@@ -15,7 +15,7 @@ const steps = [
   { title: "Return your equipment", text: "Return all items clean and packed as you received them.", image: returnPhoto, alt: "Qashcamp equipment care", icon: PackageCheck, label: "Pack it with care" },
 ];
 
-export default function BookingFlowGuide() {
+export default function BookingFlowGuide({ showAvailabilityShortcut = true }) {
   return (
     <section className="booking-flow" aria-labelledby="booking-flow-title">
       <div className="booking-flow-layout">
@@ -24,13 +24,13 @@ export default function BookingFlowGuide() {
           <p className="booking-flow-eyebrow">From booking to the great outdoors</p>
           <h2 id="booking-flow-title">Your next escape,<br /><em>in 5 easy steps.</em></h2>
           <p>A little planning, a lot of fresh air. Here’s how camping with us works.</p>
-          <a className="booking-flow-shortcut" href="#availability-checker" onClick={(event) => {
+          {showAvailabilityShortcut && <a className="booking-flow-shortcut" href="#availability-checker" onClick={(event) => {
             const checker = document.getElementById("availability-checker");
             if (!checker || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
             event.preventDefault();
             checker.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
             checker.focus({ preventScroll: true });
-          }}>Check availability <ArrowUpRight size={18} aria-hidden="true" /></a>
+          }}>Check availability <ArrowUpRight size={18} aria-hidden="true" /></a>}
           <span className="booking-flow-scroll"><ArrowDown size={16} aria-hidden="true" /> Scroll through the steps</span>
         </header>
         <ol className="booking-flow-stack">
