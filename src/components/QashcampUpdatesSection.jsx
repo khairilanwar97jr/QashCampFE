@@ -94,7 +94,8 @@ export default function QashcampUpdatesSection() {
         }
         const slides = [...result.buletin]
           .filter((post) => post && typeof post === "object")
-          .sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")))
+          // Start at the bottom of the API list and work backward.
+          .reverse()
           .map((post) => {
             const images = [post.image_url, post.image_url_2].filter((url) => typeof url === "string" && url.trim());
             return {
