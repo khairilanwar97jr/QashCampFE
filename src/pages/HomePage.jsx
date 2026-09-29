@@ -181,7 +181,7 @@ export default function HomePage() {
       <QashcampUpdatesSection />
 
 
-      <h2
+      {/* <h2
         className="text-5xl md:text-6xl font-bold text-center mt-10 mb-10"
         style={{
           fontFamily: "'Fredoka One', cursive",
@@ -197,7 +197,7 @@ export default function HomePage() {
         }}
       >
         Why Choose Us ?
-      </h2>
+      </h2> */}
       {/* <div>
         <WhyUsPreviewSection />
       </div> */}
