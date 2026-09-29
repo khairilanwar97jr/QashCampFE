@@ -92,10 +92,10 @@ export default function QashcampUpdatesSection() {
         if (!response.ok || result.success !== true || !Array.isArray(result.buletin)) {
           throw new Error(result.message || "Unable to load Qashcamp updates. Please try again.");
         }
-        const slides = [...result.buletin]
+        // Keep the timeline chronological from left to right, then select the latest event.
+        const slides = result.buletin
           .filter((post) => post && typeof post === "object")
-          // Start at the bottom of the API list and work backward.
-          .reverse()
+          .sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")))
           .map((post) => {
             const images = [post.image_url, post.image_url_2].filter((url) => typeof url === "string" && url.trim());
             return {
@@ -108,7 +108,7 @@ export default function QashcampUpdatesSection() {
           });
         if (!controller.signal.aborted) {
           setUpdates(slides);
-          setIndex(0);
+          setIndex(Math.max(0, slides.length - 1));
         }
       } catch (err) {
         if (!controller.signal.aborted) setError(err.message || "Unable to load Qashcamp updates. Please try again.");
