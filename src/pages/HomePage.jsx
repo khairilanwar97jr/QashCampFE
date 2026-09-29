@@ -6,6 +6,7 @@ import packageAImg from "../assets/packageA.jpg";
 import packageBImg from "../assets/packageB.jpg";
 import packageCImg from "../assets/packageC.jpg";
 import QashcampUpdatesSection from "../components/QashcampUpdatesSection";
+import CustomerReview from "../components/CustomerReview";
 import WhyUsPreviewSection from "../components/WhyUsPreviewSection";
 import PackagesSection from "../components/PackagesSection";
 import CheckAvailabilitySection from "../components/CheckAvailabilitySection";
@@ -176,6 +177,7 @@ export default function HomePage() {
         <BookingChecker/>
         <CheckAvailabilitySection />
 
+      <CustomerReview />
       <QashcampUpdatesSection />
 
 
@@ -196,9 +198,9 @@ export default function HomePage() {
       >
         Why Choose Us ?
       </h2>
-      <div>
+      {/* <div>
         <WhyUsPreviewSection />
-      </div>
+      </div> */}
       {/* Timeline Section Title */}
       <h2
         id="choosePackage"
