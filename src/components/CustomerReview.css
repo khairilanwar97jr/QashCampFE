@@ -1,3 +1,57 @@
+.customer-reviews-section {
+  position: relative;
+  isolation: isolate;
+  background: #f4f1ea;
+}
+
+.customer-reviews-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  /* Keep the viewport-fixed image visible only inside the review section. */
+  clip-path: inset(0);
+  pointer-events: none;
+}
+
+.customer-reviews-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh;
+  max-width: none;
+  object-fit: cover;
+  object-position: center 65%;
+}
+
+.customer-reviews-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #f4f1eae6, #f4f1ea59 35%, #f4f1ea59 75%, #f4f1eae6);
+}
+
+.customer-reviews-content { position: relative; }
+
+.customer-reviews-heading,
+.customer-reviews-footer {
+  text-shadow: 0 1px 2px #fffdf8e6, 0 3px 8px #24341e33;
+}
+
+.customer-reviews-heading h2 {
+  text-shadow: 0 2px 2px #fffdf8cc, 0 4px 10px #24341e40;
+}
+
+.customer-reviews-rating {
+  box-shadow: 0 6px 18px #24341e33;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .customer-reviews-background { position: absolute; height: 100%; }
+}
+
 .customer-review-stage {
   --review-width: 35%;
   position: relative;
@@ -30,12 +84,13 @@
   border-radius: 22px;
   background: #fffefa;
   text-align: left;
-  box-shadow: 0 16px 28px -16px #344b3050;
+  box-shadow: 0 4px 10px #00000040, 0 14px 24px -4px #00000073;
 }
 
 .customer-review-card.is-active {
   border-color: #9dab89;
   background: #fff;
+  box-shadow: 0 5px 12px #00000059, 0 16px 28px -4px #00000099;
 }
 
 .customer-review-copy {

@@ -23,7 +23,6 @@ export default function BookingFlowGuide({ showAvailabilityShortcut = true }) {
           <a className="booking-flow-brand" href="/">QASHCAMP <span> / YOUR CAMPING GUIDE</span></a>
           <p className="booking-flow-eyebrow">From booking to the great outdoors</p>
           <h2 id="booking-flow-title">Your next escape,<br /><em>in 5 easy steps.</em></h2>
-          <p>A little planning, a lot of fresh air. Here’s how camping with us works.</p>
           {showAvailabilityShortcut && <a className="booking-flow-shortcut" href="#availability-checker" onClick={(event) => {
             const checker = document.getElementById("availability-checker");
             if (!checker || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;

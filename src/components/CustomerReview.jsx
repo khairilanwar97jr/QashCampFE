@@ -2,6 +2,7 @@ import { memo, useCallback, useEffect, useId, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
 import { CalendarDays, ChevronLeft, ChevronRight, Expand, MapPin, MessageSquareQuote, Package, Star, X } from "lucide-react";
 import { loadCustomerReviews } from "./customerReviewData";
+import reviewBackground from "../assets/parraleximage.jpg";
 import "./CustomerReview.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -182,24 +183,27 @@ export default function CustomerReview() {
   }
 
   return (
-    <section ref={sectionRef} id="customer-reviews" aria-labelledby={titleId} className="bg-[#f4f1ea] px-4 py-12 sm:px-8 sm:py-16">
-      <div className="mx-auto max-w-6xl">
+    <section ref={sectionRef} id="customer-reviews" aria-labelledby={titleId} className="customer-reviews-section px-4 py-12 sm:px-8 sm:py-16">
+      <div className="customer-reviews-backdrop" aria-hidden="true">
+        <img className="customer-reviews-background" src={reviewBackground} alt="" loading="lazy" decoding="async" />
+      </div>
+      <div className="customer-reviews-content mx-auto max-w-6xl">
         <div className="mb-7 flex flex-col gap-5 sm:mb-9 sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-xl text-left">
+          <div className="customer-reviews-heading max-w-xl text-left">
             <p className="mb-3 flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#64764e]">
               <MessageSquareQuote size={16} aria-hidden="true" /> From our camping community
             </p>
             <h2 id={titleId} className="text-3xl leading-tight text-[#3f5d38] sm:text-4xl" style={{ fontFamily: "'Fredoka One', cursive" }}>
               Happy campers, honest reviews.
             </h2>
-            <p className="mt-3 text-sm leading-7 text-[#67695b] sm:text-base">
+            <p className="mt-3 text-sm leading-7 text-[#626953] sm:text-base">
               Little stories from the great outdoors. Hear what our campers have to say about their Qashcamp experience.
             </p>
           </div>
-          <div className="inline-flex w-fit shrink-0 items-center gap-3 rounded-full border border-[#d9ddce] bg-[#fffdf7] px-5 py-3 text-[#516247]">
+          <div className="customer-reviews-rating inline-flex w-fit shrink-0 items-center gap-3 rounded-full border border-[#d9ddce] bg-[#fffdf8] px-5 py-3 text-[#476440]">
             <Star size={22} fill="currentColor" className="text-[#b77912]" aria-hidden="true" />
             <div>
-              <p className="text-xl font-extrabold leading-tight" aria-label="Overall rating: 4.8 out of 5 stars">4.8 <span className="text-sm font-medium text-[#74766a]">/ 5</span></p>
+              <p className="text-xl font-extrabold leading-tight" aria-label="Overall rating: 4.8 out of 5 stars">4.8 <span className="text-sm font-medium text-[#626953]">/ 5</span></p>
               <p className="mt-0.5 text-xs font-semibold">Customer reviews</p>
             </div>
           </div>
@@ -276,7 +280,7 @@ export default function CustomerReview() {
             </p>
           </div>
         )}
-        <p className="mt-5 text-center text-xs leading-5 text-[#737766]">A little feedback goes a long way. Thank you for being part of Qashcamp.</p>
+        <p className="customer-reviews-footer mt-5 text-center text-xs leading-5 text-[#737766]">A little feedback goes a long way. Thank you for being part of Qashcamp.</p>
       </div>
       {selectedPhoto && <ReviewPhotoDialog selected={selectedPhoto} onClose={() => setSelectedPhoto(null)} />}
     </section>
