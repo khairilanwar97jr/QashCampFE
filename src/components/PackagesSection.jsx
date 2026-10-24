@@ -1,3 +1,4 @@
+import { belantaraPackage } from "../data/belantaraPackage";
 import awanAds1 from "@/assets/awan_ads1.webp";
 import awanAds2 from "@/assets/awan_ads2.webp";
 import awanAds3 from "@/assets/awan_ads3.webp";
@@ -70,7 +71,7 @@ export default function PackageSection() {
     });
 
     const slideTimer = window.setInterval(() => {
-      setPackageSlide((currentSlide) => (currentSlide + 1) % 5);
+      setPackageSlide((currentSlide) => currentSlide + 1);
     }, 3000);
 
     return () => window.clearInterval(slideTimer);
@@ -240,6 +241,7 @@ export default function PackageSection() {
         { label: "Setup", value: "Automatic" }
       ]
     },
+    belantaraPackage,
     {
       packageId: 7,
       displayName: "Package Rimbayu",
@@ -281,6 +283,18 @@ export default function PackageSection() {
 
   const handleSelectPackage = async (type, item) => {
     if (loadingTarget) return;
+    if (item.checkoutReady === false) {
+      navigate("/booking", {
+        state: {
+          type,
+          packageName: item.name,
+          packageId: item.packageId,
+          packagePrice: item.packagePrice,
+          depositAmount: item.depositAmount,
+        },
+      });
+      return;
+    }
     
     setLoadingTarget(`${item.packageId}-${type}`);
     let packageDetail = null;
@@ -373,9 +387,11 @@ export default function PackageSection() {
                   {item.images ? (
                     <AnimatePresence initial={false}>
                       <motion.img
-                        key={`${item.packageId}-${packageSlide}`}
-                        src={item.images[packageSlide]}
-                        alt={`${item.name} package view ${packageSlide + 1}`}
+                        key={`${item.name}-${packageSlide % item.images.length}`}
+                        src={item.images[packageSlide % item.images.length]}
+                        alt={`${item.name} package view ${(packageSlide % item.images.length) + 1}`}
+                        loading="lazy"
+                        decoding="async"
                         className="absolute inset-0 w-full h-full object-cover will-change-transform"
                         initial={{ x: "18%", opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
@@ -439,6 +455,7 @@ export default function PackageSection() {
 
                   {/* CALL TO ACTIONS AREA */}
                   <div className="mt-auto pt-4 border-t border-neutral-100">
+                    {item.checkoutReady === false && <p className="mb-3 text-xs text-neutral-500">Preview this package. Online booking opens soon.</p>}
                     {item.available ? (
                       <div className="flex gap-3">
                         

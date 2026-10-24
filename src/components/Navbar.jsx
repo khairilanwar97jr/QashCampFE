@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { HashLink } from "react-router-hash-link";
 import { Link, useLocation } from "react-router-dom";
-import LogoImg from "../assets/logo.jpg";
+import LogoImg from "../assets/qashcamp-navbar-invert-optimized.png";
 import AuthModal from "./AuthModal";
 import Login from "./LoginForm";
 import Register from "./Register";
@@ -59,21 +59,15 @@ export default function Navbar() {
           
           {/* LOGO & PREMIUM BRAND BRANDING */}
           <HashLink smooth to="/#top" onClick={() => setIsOpen(false)} className="flex items-center gap-3 group focus:outline-none">
-            <div 
-              className="h-10 w-10 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 shrink-0"
-              style={{ border: "2px solid #597E52" }}
+            <div
+              className="flex h-12 w-[88px] sm:h-14 sm:w-[100px] items-center justify-center rounded-lg px-1 transition-transform duration-300 group-hover:scale-105 shrink-0"
             >
-              <img
-                src={LogoImg}
-                alt="Kaiso Camp Logo"
-                className="h-full w-full object-cover scale-110"
-              />
+              <img src={LogoImg} alt="QashCamp Logo" width="668" height="319" className="h-auto w-full object-contain" />
             </div>
             <div className="text-left">
               <span className="font-mono text-[8px] md:text-[9px] block tracking-[0.22em] text-[#C6A969] font-black uppercase leading-none">
                 Outdoor Rental
               </span>
-              {/* Premium, High-Contrast Editorial Brand Header Execution */}
               <span className="text-sm md:text-base font-black tracking-[0.14em] text-gray-900 uppercase leading-none block mt-1 font-sans">
                 QASH CAMP<span className="text-[#597E52] ml-0.5 font-extrabold">.</span>
               </span>
@@ -81,7 +75,7 @@ export default function Navbar() {
           </HashLink>
 
           {/* DESKTOP LINKS */}
-          <div className="hidden md:flex items-center space-x-8 text-xs font-black uppercase tracking-wider text-gray-700">
+          <div className="hidden lg:flex items-center space-x-5 text-xs font-black uppercase tracking-wider text-gray-700">
             <HashLink
               smooth
               to={location.pathname === "/" ? "#choosePackage" : "/#choosePackage"}
@@ -103,6 +97,9 @@ export default function Navbar() {
             >
               Booking
             </HashLink>
+            <Link to="/terms" aria-current={location.pathname === "/terms" ? "page" : undefined} className="hover:text-[#597E52] transition-colors relative py-1">
+              T&amp;C
+            </Link>
 
             <HashLink
               smooth
@@ -115,7 +112,7 @@ export default function Navbar() {
           </div>
 
           {/* AUTH ACTIONS */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-4">
             {!user ? (
               <button
                 onClick={() => {
@@ -149,8 +146,10 @@ export default function Navbar() {
 
           {/* MOBILE MENU TOGGLE */}
           <button
+            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isOpen}
             onClick={() => setIsOpen(!isOpen)}
-            className="flex md:hidden flex-col justify-center items-center h-9 w-9 bg-[#fdf6ee] rounded-xl space-y-1 focus:outline-none shrink-0 transition-transform active:scale-95"
+            className="flex lg:hidden flex-col justify-center items-center h-9 w-9 bg-[#fdf6ee] rounded-xl space-y-1 focus:outline-none shrink-0 transition-transform active:scale-95"
             style={{ border: "2px solid #e2c8aa" }}
           >
             <span className={`h-0.5 w-3.5 bg-gray-800 transition-all duration-300 ${isOpen ? "transform rotate-45 translate-y-1.5" : ""}`} />
@@ -162,7 +161,7 @@ export default function Navbar() {
 
         {/* MOBILE DROPDOWN OVERLAY */}
         <div 
-          className={`md:hidden absolute left-0 right-0 top-full bg-[#fff7ed] px-6 py-6 transition-all duration-300 transform ease-in-out ${
+          className={`lg:hidden absolute left-0 right-0 top-full bg-[#fff7ed] px-6 py-6 transition-all duration-300 transform ease-in-out ${
             isOpen ? "opacity-100 translate-y-0 shadow-lg" : "opacity-0 -translate-y-4 pointer-events-none"
           }`}
           style={{
@@ -200,6 +199,9 @@ export default function Navbar() {
             >
               Booking
             </HashLink>
+            <Link to="/terms" onClick={() => setIsOpen(false)} aria-current={location.pathname === "/terms" ? "page" : undefined} className="hover:text-[#597E52] py-2">
+              T&amp;C
+            </Link>
 
             <HashLink
               smooth
@@ -210,6 +212,7 @@ export default function Navbar() {
             >
               Why Us?
             </HashLink>
+
 
             <div className="pt-2">
               {!user ? (

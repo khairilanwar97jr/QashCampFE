@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import tiktokProf from "../assets/tiktokProf.jpg";
-import termImg from "../assets/term.png";
+import termImg from "../assets/term-optimized.jpg";
 
 export default function WelcomeAdsCard({ onContinue }) {
   const slides = [

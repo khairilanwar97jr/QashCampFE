@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import AddOnImage from "./AddOnImage";
+import AddOnNotes from "./AddOnNotes";
 
 export default function AddOnModal({ onClose, onSave, selected, startDate, endDate, readOnly = false }) {
   const [addons, setAddons] = useState([]);
@@ -182,14 +184,13 @@ export default function AddOnModal({ onClose, onSave, selected, startDate, endDa
                       {isAvailable ? (readOnly ? "View Only" : "Ready") : "Sold Out"}
                     </span>
 
-                    <img
-                      src={addon.imageUrl || "https://via.placeholder.com/150"}
-                      alt={addon.name}
+                    <AddOnImage
+                      addon={addon}
                       className="w-20 h-20 sm:w-28 sm:h-28 object-cover rounded-lg mb-2 shadow-xs border bg-white"
-                      style={{ borderColor: "#D3C6A2" }}
                     />
                     
                     <h3 className="text-sm font-bold text-stone-800 tracking-tight">{addon.name}</h3>
+                    <AddOnNotes name={addon.name} />
                     <p className="text-xs font-bold mt-0.5" style={{ color: "#43613D" }}>RM {addon.price}</p>
                     {isAvailable && (
                       <span

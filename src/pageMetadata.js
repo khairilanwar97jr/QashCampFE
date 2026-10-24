@@ -1,4 +1,11 @@
 export function getPageMetadata(pathname) {
+  if (pathname.replace(/\/+$/, "") === "/terms") {
+    return {
+      title: "QashCamp | Terms & Regulations",
+      description: "Read QashCamp rental terms, equipment care requirements, security deposit rules, cancellation policies and privacy information.",
+      image: "/qashcamp-logo-2026.jpg",
+    };
+  }
   if (pathname.replace(/\/+$/, "") === "/check-availability") {
     return {
       title: "QashCamp | Check Tent Availability",
@@ -9,7 +16,7 @@ export function getPageMetadata(pathname) {
   return {
     title: "QashCamp",
     description: "Explore QashCamp camping equipment rentals, tent packages, and camping stories.",
-    image: "/logo.jpg",
+    image: "/qashcamp-logo-2026.jpg",
   };
 }
 

@@ -1,11 +1,17 @@
 import CheckAvailabilitySection from "../components/CheckAvailabilitySection";
 import BookingFlowGuide from "../components/BookingFlowGuide";
 import { FaFacebook, FaTiktok } from "react-icons/fa";
+import MoreSocialLinks from "../components/MoreSocialLinks";
+import watermarkLogo from "../assets/qashcamp-navbar-invert-optimized.png";
 
 export default function CheckAvailabilityPage() {
   return (
-    <div className="min-h-screen bg-[#fdf6ee]">
-      <main>
+    <div className="relative isolate min-h-screen bg-[#fdf6ee]">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 flex select-none items-center justify-center overflow-hidden">
+        <img src={watermarkLogo} alt="" width="668" height="319" draggable="false"
+          className="w-[88vw] max-w-[800px] -rotate-12 opacity-[0.10]" />
+      </div>
+      <main className="relative z-10">
         <BookingFlowGuide />
         <div id="availability-checker" tabIndex={-1}>
         <CheckAvailabilitySection showBookNow standalone />
@@ -13,7 +19,7 @@ export default function CheckAvailabilityPage() {
       </main>
 
       <footer
-        className="w-full bg-[#191C1A] font-sans text-gray-300"
+        className="relative z-10 w-full bg-[#191C1A] font-sans text-gray-300"
         style={{ borderTop: "3px solid #597E52" }}
       >
         <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
@@ -76,6 +82,7 @@ export default function CheckAvailabilityPage() {
                   <FaFacebook className="h-4 w-4 shrink-0" />
                   <span className="truncate">QashCamp Facebook</span>
                 </a>
+                <MoreSocialLinks />
               </div>
             </div>
           </div>

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import AddOnImage from "../components/AddOnImage";
+import AddOnNotes from "../components/AddOnNotes";
 
 export default function AddOn() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -40,12 +42,12 @@ export default function AddOn() {
                 key={addon.id}
                 className="bg-white shadow-md rounded-xl p-6 flex flex-col items-center border border-gray-200"
               >
-                <img
-                  src={addon.imageUrl || "https://via.placeholder.com/150"}
-                  alt={addon.name}
+                <AddOnImage
+                  addon={addon}
                   className="w-32 h-32 object-cover rounded-lg mb-4"
                 />
                 <h2 className="text-xl font-semibold">{addon.name}</h2>
+                <AddOnNotes name={addon.name} />
                 <p className="text-gray-600 mt-2">RM {addon.price}</p>
                 <p
                   className={`mt-1 text-sm ${

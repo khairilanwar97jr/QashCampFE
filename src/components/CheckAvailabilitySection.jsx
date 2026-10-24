@@ -81,7 +81,7 @@ export default function CheckAvailabilitySection({ showBookNow = false, standalo
     ).length;
 
     return (
-      <section className="min-h-[75vh] bg-[linear-gradient(180deg,#F0DFC0_0%,#FFF8EA_48%,#E9D2A8_100%)] px-4 py-10 sm:py-16">
+      <section className="min-h-[75vh] px-4 py-10 sm:py-16">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#191C1A] text-[#F4C95D] shadow-[0_8px_20px_rgba(25,28,26,0.28)]">

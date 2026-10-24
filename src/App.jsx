@@ -8,6 +8,7 @@ import ContactPage from "./pages/ContactPage";
 import WhyChooseUs from "./pages/WhyChooseUs";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import GalleryPage from "./components/GalleryPage";
+import TermsPage from "./pages/TermsPage";
 // Auth Pages
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -27,6 +28,7 @@ export default function App() {
       <Route path="/why-us" element={<WhyChooseUs />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="/gallery" element={<GalleryPage />} />
+      <Route path="/terms" element={<TermsPage />} />
       <Route path="/receipt/:bookingRef" element={<ReceiptPage />} />
       
       

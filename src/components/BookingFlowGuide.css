@@ -1,4 +1,26 @@
-.booking-flow { padding: 48px 24px 64px; background: #eeeadd; color: #344b30; }
+.booking-flow { padding: 48px 24px 64px; background: transparent; color: #344b30; }
+.booking-flow-scene { position: relative; isolation: isolate; padding: 44px 12px 62px; }
+.booking-flow-jungle { position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 50%; background: radial-gradient(ellipse, #597e5218, transparent 70%); }
+.booking-flow-trees { position: absolute; bottom: 24px; width: 30%; height: 65%; color: #597e52; opacity: .3; }
+.booking-flow-trees-left { left: -6px; }
+.booking-flow-trees-right { right: -6px; transform: scaleX(-1); }
+.booking-flow-leaf { position: absolute; top: 5px; right: 14%; width: 38px; height: 38px; color: #597e52; opacity: .45; transform: rotate(30deg); }
+.booking-flow-fire { position: absolute; bottom: 9px; left: calc(50% - 22px); width: 44px; height: 52px; }
+.booking-flow-fire svg { width: 44px; height: 44px; color: #b97c35; fill: #e6ca8d; transform-origin: bottom center; animation: booking-fire-flicker 2s ease-in-out infinite; }
+.booking-flow-fire span::before, .booking-flow-fire span::after { content: ""; position: absolute; bottom: 4px; left: 4px; width: 36px; height: 5px; border-radius: 4px; background: #786044; transform: rotate(15deg); }
+.booking-flow-fire span::after { transform: rotate(-15deg); }
+@keyframes booking-fire-flicker {
+  0%, 100% { transform: scale(.94, 1); opacity: .85; }
+  50% { transform: scale(1.05, .9) rotate(3deg); opacity: 1; }
+}
+.booking-flow-logo { animation: booking-logo-float 5s ease-in-out infinite; }
+@keyframes booking-logo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .booking-flow-logo, .booking-flow-fire svg { animation: none; }
+}
 .booking-flow-layout { display: grid; grid-template-columns: .85fr 1.15fr; align-items: start; gap: clamp(32px, 6vw, 90px); max-width: 1150px; margin: auto; }
 .booking-flow-heading { position: sticky; top: 48px; padding: 12px 0 24px; }
 .booking-flow-brand { display: inline-block; margin-bottom: 60px; color: #3e5734; font-size: 13px; font-weight: 900; letter-spacing: 1.5px; }

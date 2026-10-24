@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { rentalTerms } from "../data/rentalTerms";
 import SignatureCanvas from "react-signature-canvas";
 
 export default function TermsModal({ onClose, onAgree, existingSignature, setMainAgreed }) {
@@ -63,19 +64,14 @@ const handleAgree = () => {
           className="mx-4 mt-4 max-h-[42vh] p-4 text-xs space-y-3 rounded-xl border overflow-y-auto font-medium shadow-inner leading-relaxed text-stone-800"
           style={{ backgroundColor: "#EBE2CD", borderColor: "#D3C6A2" }}
         >
-          <div><strong>1. Equipment Responsibility</strong><p>Renters are responsible for all equipment during the rental period.</p></div>
-          <div><strong>2. Loss &amp; Damage</strong><p>Lost, damaged, or stolen items must be fully compensated.</p></div>
-          <div><strong>3. Security Deposit</strong><p>A security deposit is required before the camping period begins.</p></div>
-          <div><strong>4. Equipment Return</strong><p>Equipment can be returned after the camping activity ends, preferably on the day after camping. Late returns may be subject to additional charges.</p></div>
-          <div><strong>5. Return Condition</strong><p>All equipment must be returned in its original condition for a full deposit refund.</p></div>
-          <div><strong>6. Deposit Refund</strong><p>Deposits will be refunded within 2-3 working days after camping, subject to equipment inspection.</p></div>
-          <div><strong>7. No Smoking &amp; Fire</strong><p>Smoking and any fire-related activities are prohibited inside or near the tent.</p></div>
-          <div><strong>8. Tent Setup</strong><p>Setup order: sunshade → ground sheet → tent.</p></div>
-          <div><strong>9. Personal Safety</strong><p>QashCamp is not responsible for personal injuries or accidents during camping activities.</p></div>
-          <div><strong>10. Camp Rules</strong><p>Renters must follow all campsite rules and safety guidelines.</p></div>
-          <div><strong>11. Full Payment & Walk-In</strong><p>Once full payment is made, the booking will be considered Walk-In and is non-refundable, including bookings that proceed to full/final payment after the initial booking.</p></div>
-          <div><strong>12. Cancellation &amp; Refund</strong><p>For Booking category only, cancellation must be made at least 48 hours before camping to receive a refund. For last-minute bookings (less than 48 hours), cancellation must be made at least 12 hours before camping.</p></div>
-          <div><strong>13. Last-Minute Booking</strong><p>For bookings made less than 2 days before camping, cancellation must be informed at least 12 hours before camping to receive a refund. Otherwise, the booking is non-refundable.</p></div>
+          <p className="rounded-lg border border-stone-400/40 p-3 font-bold">Booking-payment-only reservations may qualify for a refund within the cancellation window. Once fully paid, rental payments are non-refundable for customer cancellations, subject to statutory rights. The refundable security deposit is separate.</p>
+          {rentalTerms.map((term, index) => (
+            <div key={term.id}>
+              <strong>{index + 1}. {term.title}</strong>
+              {term.paragraphs.map((paragraph) => <p key={paragraph} className="mt-2">{paragraph}</p>)}
+            </div>
+          ))}
+          <a href="/terms" target="_blank" rel="noopener noreferrer" className="inline-block py-2 underline underline-offset-4">Read Terms &amp; Regulations in a new tab</a>
         </div>
 
         {/* Signature Box */}

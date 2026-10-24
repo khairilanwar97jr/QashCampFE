@@ -3,6 +3,7 @@ import "./QashcampUpdatesSection.css";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Megaphone, Tent, Camera, ArrowUpRight } from "lucide-react";
 import { FaTiktok, FaFacebook } from "react-icons/fa";
+import MoreSocialLinks from "./MoreSocialLinks";
 const API_URL = import.meta.env.VITE_API_URL;
 
 function BulletinImage({ src, alt }) {
@@ -244,6 +245,7 @@ export default function QashcampUpdatesSection() {
       <div className="flex flex-col gap-4 border-t border-[#d8d1c1] bg-[#e6e2d5] px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <p className="text-sm font-bold text-[#4e5940]">Catch more of our everyday adventures</p>
         <div className="flex flex-wrap gap-3">
+          <MoreSocialLinks buttons />
           <a href="https://www.tiktok.com/@qashcamp" target="_blank" rel="noopener noreferrer" aria-label="Qashcamp on TikTok (opens in a new tab)" className="flex items-center gap-2 rounded-xl bg-[#476440] px-4 py-3 text-sm font-bold text-white hover:bg-[#344e2e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#476440]"><FaTiktok aria-hidden="true" /> TikTok <ArrowUpRight size={16} aria-hidden="true" /></a>
           <a href="https://www.facebook.com/profile.php?id=61589566700509" target="_blank" rel="noopener noreferrer" aria-label="Qashcamp on Facebook (opens in a new tab)" className="flex items-center gap-2 rounded-xl border border-[#bdc1aa] bg-[#faf9f3] px-4 py-3 text-sm font-bold text-[#415337] hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#476440]"><FaFacebook aria-hidden="true" /> Facebook <ArrowUpRight size={16} aria-hidden="true" /></a>
         </div>

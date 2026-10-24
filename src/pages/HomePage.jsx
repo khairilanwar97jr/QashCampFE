@@ -21,6 +21,7 @@ import CalendarBooked from "../components/CalendarBooked";
 import { motion } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
 import { FaFacebook, FaTiktok } from "react-icons/fa";
+import MoreSocialLinks from "../components/MoreSocialLinks";
 
 export default function HomePage() {
   const location = useLocation();
@@ -338,6 +339,7 @@ export default function HomePage() {
                 <FaFacebook className="h-4 w-4 shrink-0" />
                 <span className="truncate">QashCamp Facebook</span>
               </a>
+              <MoreSocialLinks />
             </div>
           </div>
 
