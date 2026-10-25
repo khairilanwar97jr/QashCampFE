@@ -1,30 +1,26 @@
 # Belantara activation
 
-The frontend package and booking preview are ready. Checkout is intentionally
-disabled in `src/data/belantaraPackage.js` until the real database ID and backend
-deposit rule are confirmed. The user deferred providing the ID; no live API,
-database or backend code was changed.
+The owner confirmed database package ID **10** and rental price **RM200**.
+The frontend now enables checkout through the same package-detail API flow as
+other packages, with RM200 as the fallback price and RM100 as the deposit.
+Belantara is included in the availability list and booked-calendar mapping.
 
-- Rental price: RM200, from the supplied price-list poster.
-- Deposit: RM100, explicitly provided by the user.
-- Brand/model: PAYUNG.CAMP Village L+.
-- Size: 360 × 260 × 195 cm; weight: 19.7 kg.
-- Type: 2 Bedrooms; setup: Automatic.
-- One company product image plus four supplied detail photos are optimized and
-  connected to the homepage carousel and booking preview. No I1/I2/I3 placeholders
-  or invented manufacturer photos are used.
+Production frontend build passed.
 
-To enable checkout:
+## Outstanding backend work
 
-1. Confirm/create the `Belantara` record in the backend `package` table with the
-   correct rental price, and use its actual ID (do not assume a sequential ID).
-2. Add Belantara to the backend RM100 deposit rule. The inspected backend currently
-   assigns RM100 only when the package name is Rimbayu or Gelora; other tent names
-   fall back to RM50. This would otherwise reject the frontend total.
-3. Verify the package-detail, blocked-date, availability and final-payment paths
-   using the actual record. Include Belantara in the frontend availability list
-   once the API supplies its availability.
-4. Set `packageId` and `checkoutReady: true` in `src/data/belantaraPackage.js`.
-5. Verify booking-only payment is RM100 and one-night walk-in total is RM300 before
-   add-ons and any existing payment fees, with the backend validating the same
-   values. Do not create a real paid booking just to test.
+The inspected sibling backend still assigns RM100 deposits only to Rimbayu and
+Gelora; Belantara currently falls back to RM50. Add `BELANTARA: "Belantara"` to
+`constants/packageConstants.js` and include `PACKAGE_NAMES.BELANTARA` in the
+RM100 condition in `services/bookingService.js`. Permission to edit that folder
+was declined, so these backend files have not been changed.
+
+Permission to query the live package API was also declined. The deployed
+record for ID 10 and its price have not been independently verified. The shared
+frontend flow reads the API price when present, so the database must also hold
+RM200. No database records or real bookings were created or changed.
+
+Before release, apply the backend deposit fix and verify package detail,
+blocked dates, availability, and payment totals without creating a paid booking.
+Booking-only deposit should be RM100; one-night walk-in should be RM300 before
+add-ons and existing payment fees. Frontend changes have not been deployed.

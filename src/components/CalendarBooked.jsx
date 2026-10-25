@@ -14,6 +14,7 @@ const PACKAGE_NAMES = {
   6: 'Aurora',
   7: 'Rimbayu',
   9: 'Gelora',
+  10: 'Belantara',
 };
 
 // Maximum contrast palette - zero overlapping hues
@@ -26,6 +27,7 @@ const PACKAGE_COLORS = {
   6: 'bg-red-500',
   7: 'bg-amber-900',
   9: 'bg-indigo-600',
+  10: 'bg-teal-700',
 };
 
 const addDays = (dateStr, days) => {

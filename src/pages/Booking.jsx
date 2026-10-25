@@ -1,4 +1,8 @@
-import { belantaraPackage } from "../data/belantaraPackage";
+import packageBelantaraImg from "../assets/packageI-optimized.jpg";
+import belantaraAds1 from "../assets/belantara_ads1-optimized.jpg";
+import belantaraAds2 from "../assets/belantara_ads2-optimized.jpg";
+import belantaraAds3 from "../assets/belantara_ads3-optimized.jpg";
+import belantaraAds4 from "../assets/belantara_ads4-optimized.jpg";
 import awanAds1 from "../assets/awan_ads1.webp";
 import awanAds2 from "../assets/awan_ads2.webp";
 import awanAds3 from "../assets/awan_ads3.webp";
@@ -122,7 +126,6 @@ export default function Booking() {
   const selectedPackageId =
     bookingData?.package?.id || location.state?.packageId;
 
-  const isPackagePreview = selectedPackage === belantaraPackage.name && !belantaraPackage.checkoutReady;
 
   const bookingType =
     bookingData?.booking_type || location.state?.type || "BOOKING";
@@ -147,7 +150,7 @@ export default function Booking() {
   );
 
   const packageThumbnails = {
-    Belantara: belantaraPackage.companyPhotos,
+    Belantara: [packageBelantaraImg],
     Awan: [packageA, packageA1, packageA2, packageA3, packageA4],
 
     Purnama: [packageB, packageB1, packageB2, packageB3, packageB4],
@@ -167,7 +170,7 @@ export default function Booking() {
   };
 
   const latestPackagePhotos = {
-    Belantara: belantaraPackage.currentPhotos,
+    Belantara: [packageBelantaraImg, belantaraAds1, belantaraAds2, belantaraAds3, belantaraAds4],
     Gelora: [geloraAds1, geloraAds2, geloraAds3, geloraAds4],
     Awan: [awanAds1, awanAds2, awanAds3, awanAds4],
     Purnama: [purnamaAds1, purnamaAds2, purnamaAds3, purnamaAds4],
@@ -179,7 +182,7 @@ export default function Booking() {
   };
 
   const packageImages = {
-    Belantara: belantaraPackage.img,
+    Belantara: packageBelantaraImg,
     Awan: packageAwanImg,
     Purnama: packagePurnamaImg,
     Senja: packageSenjaImg,
@@ -456,7 +459,7 @@ export default function Booking() {
   const [formErrors, setFormErrors] = useState([]);
 
   const packageIdMapping = {
-    Belantara: belantaraPackage.packageId,
+    Belantara: 10,
     Awan: 1,
     Purnama: 2,
     Senja: 3,
@@ -469,7 +472,16 @@ export default function Booking() {
   };
 
   const tentPackages = {
-    Belantara: { name: belantaraPackage.displayName, criteria: belantaraPackage.criteria },
+    Belantara: {
+      name: "Package Belantara",
+      criteria: {
+        brand: "PAYUNG.CAMP Village L+",
+        size: "360 × 260 × 195 cm",
+        weight: "19.7 kg",
+        type: "2 Bedrooms",
+        setup: "Automatic",
+      },
+    },
     Awan: {
       name: "Package Awan",
       criteria: {
@@ -1117,19 +1129,12 @@ export default function Booking() {
               )}
             </div>
           </div>
-
-          {isPackagePreview && (
-            <p role="status" className="mt-5 rounded-xl border border-[#C6A969] bg-[#fff7ed] p-4 text-sm leading-relaxed text-[#435B43]">
-              Belantara online booking is opening soon. You can explore the photos and package details here. Contact QashCamp for booking enquiries.
-            </p>
-          )}
           {/* Trigger Registration Form */}
           <p className="mt-4 w-full text-xs font-black sm:text-sm" style={{ color: "#B91C1C" }}>
             3. Customer Information
           </p>
           <button
             ref={registryButtonRef}
-            disabled={isPackagePreview}
             onClick={() => setOpenBookingForm(true)}
             className="mt-2 w-full text-white font-bold py-3.5 px-6 rounded-xl transition-all duration-200 text-center tracking-wider text-xs uppercase transform active:scale-98 shadow-md"
             style={{
@@ -1234,7 +1239,6 @@ export default function Booking() {
                   <p className="font-bold uppercase tracking-wider text-[10px]" style={{ color: "#9E8243" }}>Client Snapshot Log</p>
                   <button
                     type="button"
-                    disabled={isPackagePreview}
             onClick={() => setOpenBookingForm(true)}
                     className="rounded-md bg-stone-100 px-2 py-1 text-[10px] font-bold border transition-all shadow-xs"
                     style={{ borderColor: "#D3C6A2", color: "#544E45" }}
@@ -1370,8 +1374,6 @@ export default function Booking() {
                 type="submit"
                 onClick={async (e) => {
                   e.preventDefault();
-
-                  if (isPackagePreview) return;
                   const validationErrors = validateBookingForm();
 
                   if (validationErrors.length > 0) {
@@ -1507,18 +1509,18 @@ if (summaryRef.current) {
                     alert("Network connectivity layer mismatch. Link failure.");
                   }
                 }}
-                disabled={isPackagePreview || totalPrice === 0 || !agreed || loading}
+                disabled={totalPrice === 0 || !agreed || loading}
                 className="w-full py-3.5 px-6 rounded-xl transition-all flex-shrink-0 flex items-center justify-center min-h-[52px] text-xs font-bold uppercase tracking-widest text-white shadow-md"
                 style={{
-                  backgroundColor: isPackagePreview || totalPrice === 0 || !agreed || loading ? "#C8C0AF" : "#43613D",
-                  cursor: isPackagePreview || totalPrice === 0 || !agreed || loading ? "not-allowed" : "pointer",
-                  boxShadow: isPackagePreview || totalPrice === 0 || !agreed || loading ? "none" : "0 5px 15px rgba(67, 97, 61, 0.2)"
+                  backgroundColor: totalPrice === 0 || !agreed || loading ? "#C8C0AF" : "#43613D",
+                  cursor: totalPrice === 0 || !agreed || loading ? "not-allowed" : "pointer",
+                  boxShadow: totalPrice === 0 || !agreed || loading ? "none" : "0 5px 15px rgba(67, 97, 61, 0.2)"
                 }}
                 onMouseEnter={(e) => {
-                  if (!(isPackagePreview || totalPrice === 0 || !agreed || loading)) e.target.style.backgroundColor = "#32492D";
+                  if (!(totalPrice === 0 || !agreed || loading)) e.target.style.backgroundColor = "#32492D";
                 }}
                 onMouseLeave={(e) => {
-                  if (!(isPackagePreview || totalPrice === 0 || !agreed || loading)) e.target.style.backgroundColor = "#43613D";
+                  if (!(totalPrice === 0 || !agreed || loading)) e.target.style.backgroundColor = "#43613D";
                 }}
               >
                 {loading ? (

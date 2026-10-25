@@ -28,6 +28,7 @@ export default function CheckAvailabilitySection({ showBookNow = false, standalo
     { key: "Aurora", label: "Aurora" },
     { key: "Rimbayu", label: "Rimbayu" },
     { key: "Gelora", label: "Gelora" },
+    { key: "Belantara", label: "Belantara" },
   ];
 
   const handleReset = () => {

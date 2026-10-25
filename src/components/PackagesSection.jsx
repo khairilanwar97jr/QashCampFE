@@ -1,4 +1,8 @@
-import { belantaraPackage } from "../data/belantaraPackage";
+import packageBelantaraImg from "../assets/packageI-optimized.jpg";
+import belantaraAds1 from "../assets/belantara_ads1-optimized.jpg";
+import belantaraAds2 from "../assets/belantara_ads2-optimized.jpg";
+import belantaraAds3 from "../assets/belantara_ads3-optimized.jpg";
+import belantaraAds4 from "../assets/belantara_ads4-optimized.jpg";
 import awanAds1 from "@/assets/awan_ads1.webp";
 import awanAds2 from "@/assets/awan_ads2.webp";
 import awanAds3 from "@/assets/awan_ads3.webp";
@@ -54,6 +58,7 @@ export default function PackageSection() {
 
   useEffect(() => {
     const sliderImages = [
+      packageBelantaraImg, belantaraAds1, belantaraAds2, belantaraAds3, belantaraAds4,
       geloraAds1, geloraAds2, geloraAds3, geloraAds4,
       awanAds1, awanAds2, awanAds3, awanAds4,
       purnamaAds1, purnamaAds2, purnamaAds3, purnamaAds4,
@@ -241,7 +246,24 @@ export default function PackageSection() {
         { label: "Setup", value: "Automatic" }
       ]
     },
-    belantaraPackage,
+    {
+      packageId: 10,
+      displayName: "Package Belantara",
+      name: "Belantara",
+      img: packageBelantaraImg,
+      images: [packageBelantaraImg, belantaraAds1, belantaraAds2, belantaraAds3, belantaraAds4],
+      price: "RM200",
+      packagePrice: 200,
+      depositAmount: 100,
+      available: true,
+      specs: [
+        { label: "Brand", value: "PAYUNG.CAMP Village L+" },
+        { label: "Size", value: "360 × 260 × 195 cm" },
+        { label: "Weight", value: "19.7 kg" },
+        { label: "Type", value: "2 Bedrooms" },
+        { label: "Setup", value: "Automatic" },
+      ],
+    },
     {
       packageId: 7,
       displayName: "Package Rimbayu",
@@ -283,18 +305,7 @@ export default function PackageSection() {
 
   const handleSelectPackage = async (type, item) => {
     if (loadingTarget) return;
-    if (item.checkoutReady === false) {
-      navigate("/booking", {
-        state: {
-          type,
-          packageName: item.name,
-          packageId: item.packageId,
-          packagePrice: item.packagePrice,
-          depositAmount: item.depositAmount,
-        },
-      });
-      return;
-    }
+
     
     setLoadingTarget(`${item.packageId}-${type}`);
     let packageDetail = null;
@@ -455,7 +466,6 @@ export default function PackageSection() {
 
                   {/* CALL TO ACTIONS AREA */}
                   <div className="mt-auto pt-4 border-t border-neutral-100">
-                    {item.checkoutReady === false && <p className="mb-3 text-xs text-neutral-500">Preview this package. Online booking opens soon.</p>}
                     {item.available ? (
                       <div className="flex gap-3">
                         
